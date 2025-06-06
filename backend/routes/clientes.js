@@ -1,9 +1,10 @@
+const autenticarToken = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
 // POST /clientes
-router.post('/', async (req, res) => {
+router.post('/', autenticarToken, async (req, res) => {
   const { nome, telefone, alergias } = req.body;
 
   try {
@@ -23,7 +24,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /clientes
-router.get('/', async (req, res) => {
+router.get('/', autenticarToken, async (req, res) => {
   try {
     const resultado = await pool.query('SELECT * FROM clientes ORDER BY id');
     res.status(200).json(resultado.rows);
@@ -34,7 +35,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /clientes/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -52,7 +53,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT /clientes/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
   const { nome, telefone, alergias } = req.body;
 
@@ -77,7 +78,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /clientes/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
 
   try {
