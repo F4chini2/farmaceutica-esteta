@@ -8,6 +8,10 @@ app.use(express.json());
 // Importa o arquivo de rotas de clientes
 const rotasClientes = require('./routes/clientes');
 
+const rotasLogin = require('./routes/login');
+app.use('/login', rotasLogin);
+
+
 // Usa essas rotas quando a URL começar com /clientes
 app.use('/clientes', rotasClientes);
 
