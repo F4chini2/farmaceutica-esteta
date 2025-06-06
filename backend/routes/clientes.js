@@ -1,19 +1,36 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../db');
 
-// Simulação de banco de dados
-const clientes = [];
+// POST /clientes
+router.post('/', async (req, res) => {
+  const { nome, telefone, alergias } = req.body;
 
-// Rota GET - listar todos os clientes
-router.get('/', (req, res) => {
-  res.json(clientes);
+  try {
+    const resultado = await pool.query(
+      'INSERT INTO clientes (nome, telefone, alergias) VALUES ($1, $2, $3) RETURNING *',
+      [nome, telefone, alergias]
+    );
+
+    res.status(201).json({
+      mensagem: 'Cliente cadastrado com sucesso!',
+      cliente: resultado.rows[0]
+    });
+  } catch (err) {
+    console.error('Erro ao cadastrar cliente:', err);
+    res.status(500).json({ erro: 'Erro ao cadastrar cliente.' });
+  }
 });
 
-// Rota POST - cadastrar novo cliente
-router.post('/', (req, res) => {
-  const novoCliente = req.body;
-  clientes.push(novoCliente);
-  res.status(201).json({ mensagem: 'Cliente cadastrado com sucesso!', cliente: novoCliente });
+// GET /clientes
+router.get('/', async (req, res) => {
+  try {
+    const resultado = await pool.query('SELECT * FROM clientes ORDER BY id');
+    res.status(200).json(resultado.rows);
+  } catch (err) {
+    console.error('Erro ao buscar clientes:', err);
+    res.status(500).json({ erro: 'Erro ao buscar clientes.' });
+  }
 });
 
 module.exports = router;
