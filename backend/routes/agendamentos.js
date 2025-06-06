@@ -26,20 +26,31 @@ router.post('/', autenticarToken, async (req, res) => {
 
 // GET /agendamentos
 router.get('/', autenticarToken, async (req, res) => {
+  const { data } = req.query;
+
   try {
-    const resultado = await pool.query(`
+    let query = `
       SELECT a.*, c.nome AS nome_cliente 
       FROM agendamentos a 
-      JOIN clientes c ON a.cliente_id = c.id 
-      ORDER BY a.data, a.horario
-    `);
+      JOIN clientes c ON a.cliente_id = c.id
+    `;
+    let valores = [];
 
+    if (data) {
+      query += ' WHERE a.data = $1';
+      valores.push(data);
+    }
+
+    query += ' ORDER BY a.data, a.horario';
+
+    const resultado = await pool.query(query, valores);
     res.status(200).json(resultado.rows);
   } catch (err) {
     console.error('Erro ao buscar agendamentos:', err);
     res.status(500).json({ erro: 'Erro ao buscar agendamentos.' });
   }
 });
+
 
 // GET /agendamentos/:id
 router.get('/:id', autenticarToken, async (req, res) => {
