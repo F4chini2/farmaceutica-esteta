@@ -76,5 +76,23 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// DELETE /clientes/:id
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const resultado = await pool.query('DELETE FROM clientes WHERE id = $1 RETURNING *', [id]);
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: 'Cliente não encontrado' });
+    }
+
+    res.status(200).json({ mensagem: 'Cliente removido com sucesso!' });
+  } catch (err) {
+    console.error('Erro ao deletar cliente:', err);
+    res.status(500).json({ erro: 'Erro ao deletar cliente.' });
+  }
+});
+
 
 module.exports = router;
