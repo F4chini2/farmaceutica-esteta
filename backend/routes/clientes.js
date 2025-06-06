@@ -1,4 +1,5 @@
 const autenticarToken = require('../middleware/auth');
+const adminOnly = require('../middleware/admin');
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -78,7 +79,8 @@ router.put('/:id', autenticarToken, async (req, res) => {
 });
 
 // DELETE /clientes/:id
-router.delete('/:id', autenticarToken, async (req, res) => {
+router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
+
   const { id } = req.params;
 
   try {

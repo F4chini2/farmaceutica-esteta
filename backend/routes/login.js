@@ -25,9 +25,11 @@ router.post('/', async (req, res) => {
     }
 
     // Gera o token
-    const token = jwt.sign({ id: usuario.id, email: usuario.email }, SECRET, {
-      expiresIn: '2h'
-    });
+    const token = jwt.sign(
+  { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
+  SECRET,
+  { expiresIn: '2h' }
+);
 
     res.status(200).json({
       mensagem: 'Login realizado com sucesso!',
