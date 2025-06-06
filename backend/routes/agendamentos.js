@@ -1,3 +1,4 @@
+const adminOnly = require('../middleware/adminOnly');
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -26,6 +27,11 @@ router.post('/', autenticarToken, async (req, res) => {
 
 // GET /agendamentos
 router.get('/', autenticarToken, async (req, res) => {
+  // Verifica se é admin
+  if (req.usuario.tipo !== 'admin') {
+    return res.status(403).json({ erro: 'Acesso restrito a administradores' });
+  }
+
   const { data } = req.query;
 
   try {
@@ -104,7 +110,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
 });
 
 // DELETE /agendamentos/:id
-router.delete('/:id', autenticarToken, async (req, res) => {
+router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -120,5 +126,6 @@ router.delete('/:id', autenticarToken, async (req, res) => {
     res.status(500).json({ erro: 'Erro ao deletar agendamento.' });
   }
 });
+
 
 module.exports = router;
