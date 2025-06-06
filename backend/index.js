@@ -5,15 +5,15 @@ const PORT = 3001;
 // Permite receber dados em JSON
 app.use(express.json());
 
-// Importa o arquivo de rotas de clientes
+// Importa os arquivos de rotas
 const rotasClientes = require('./routes/clientes');
-
 const rotasLogin = require('./routes/login');
+const rotasAgendamentos = require('./routes/agendamentos'); // <-- NOVO
+
+// Aplica as rotas
 app.use('/login', rotasLogin);
-
-
-// Usa essas rotas quando a URL começar com /clientes
 app.use('/clientes', rotasClientes);
+app.use('/agendamentos', rotasAgendamentos); // <-- NOVO
 
 // Rota básica de teste
 app.get('/', (req, res) => {
