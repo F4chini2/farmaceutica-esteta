@@ -51,5 +51,30 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// PUT /clientes/:id
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { nome, telefone, alergias } = req.body;
+
+  try {
+    const resultado = await pool.query(
+      'UPDATE clientes SET nome = $1, telefone = $2, alergias = $3 WHERE id = $4 RETURNING *',
+      [nome, telefone, alergias, id]
+    );
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: 'Cliente não encontrado' });
+    }
+
+    res.status(200).json({
+      mensagem: 'Cliente atualizado com sucesso!',
+      cliente: resultado.rows[0]
+    });
+  } catch (err) {
+    console.error('Erro ao atualizar cliente:', err);
+    res.status(500).json({ erro: 'Erro ao atualizar cliente.' });
+  }
+});
+
 
 module.exports = router;
