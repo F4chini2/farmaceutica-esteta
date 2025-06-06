@@ -1,0 +1,39 @@
+name: Teste do Back-end
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: tccuser
+          POSTGRES_PASSWORD: tccpass
+          POSTGRES_DB: tccdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Baixar código do GitHub
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar dependências
+        run: npm install
+        working-directory: ./backend
+
+      - name: Testar conexão com banco
+        run: node setup.js
+        working-directory: ./backend
