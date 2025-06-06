@@ -33,4 +33,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /clientes/:id
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const resultado = await pool.query('SELECT * FROM clientes WHERE id = $1', [id]);
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: 'Cliente não encontrado' });
+    }
+
+    res.status(200).json(resultado.rows[0]);
+  } catch (err) {
+    console.error('Erro ao buscar cliente:', err);
+    res.status(500).json({ erro: 'Erro ao buscar cliente.' });
+  }
+});
+
+
 module.exports = router;

@@ -1,21 +1,24 @@
 const pool = require('./db');
 
-const criarTabelaClientes = async () => {
+const ajustarTabelaClientes = async () => {
   try {
+    await pool.query(`DROP TABLE IF EXISTS clientes;`);
+
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS clientes (
+      CREATE TABLE clientes (
         id SERIAL PRIMARY KEY,
         nome TEXT NOT NULL,
         telefone TEXT NOT NULL,
         alergias TEXT
-      )
+      );
     `);
-    console.log('✅ Tabela "clientes" criada com sucesso!');
+
+    console.log('✅ Tabela "clientes" recriada com coluna ID autoincrementada!');
   } catch (err) {
-    console.error('Erro ao criar a tabela:', err);
+    console.error('Erro ao ajustar tabela:', err);
   } finally {
     pool.end();
   }
 };
 
-criarTabelaClientes();
+ajustarTabelaClientes();
