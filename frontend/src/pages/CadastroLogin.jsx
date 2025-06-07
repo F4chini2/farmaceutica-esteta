@@ -1,12 +1,11 @@
-import logo from '../assets/LOGO.png';
 import './CadastroLogin.css';
+import logo from '../assets/LOGO.png';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function CadastroLogin() {
   const navigate = useNavigate();
 
-  // Estados do formulário de cadastro
   const [cadastro, setCadastro] = useState({
     nome: '',
     email: '',
@@ -15,13 +14,11 @@ function CadastroLogin() {
     confirmar: ''
   });
 
-  // Estados do formulário de login
   const [emailLogin, setEmailLogin] = useState('');
   const [senhaLogin, setSenhaLogin] = useState('');
 
   const handleCadastro = async (e) => {
     e.preventDefault();
-
     if (cadastro.senha !== cadastro.confirmar) {
       return alert('As senhas não coincidem.');
     }
@@ -71,32 +68,37 @@ function CadastroLogin() {
   };
 
   return (
-  <div className="container">
-    <img src={logo} alt="Logo Giselle Ferreira" className="logo" />
+    <>
+      <div className="top-bar">
+        <img src={logo} alt="Logo Giselle Ferreira" className="logo-bar" />
+      </div>
+      <div className="container">
+        <div className="form-container">
+          <form onSubmit={handleCadastro} className="form-box">
+            <h2>Cadastrar</h2>
+            <input placeholder="Nome" onChange={e => setCadastro({ ...cadastro, nome: e.target.value })} />
+            <input placeholder="Email" type="email" onChange={e => setCadastro({ ...cadastro, email: e.target.value })} />
+            <input placeholder="Telefone" onChange={e => setCadastro({ ...cadastro, telefone: e.target.value })} />
+            <input placeholder="Senha" type="password" onChange={e => setCadastro({ ...cadastro, senha: e.target.value })} />
+            <input placeholder="Confirmação Senha" type="password" onChange={e => setCadastro({ ...cadastro, confirmar: e.target.value })} />
+            <button type="submit">Registrar</button>
+          </form>
 
-    <div className="form-container">
-      {/* Cadastro */}
-      <form onSubmit={handleCadastro} className="form-box">
-        <h2>Cadastrar</h2>
-        <input placeholder="Nome" onChange={e => setCadastro({ ...cadastro, nome: e.target.value })} />
-        <input placeholder="Email" type="email" onChange={e => setCadastro({ ...cadastro, email: e.target.value })} />
-        <input placeholder="Telefone" onChange={e => setCadastro({ ...cadastro, telefone: e.target.value })} />
-        <input placeholder="Senha" type="password" onChange={e => setCadastro({ ...cadastro, senha: e.target.value })} />
-        <input placeholder="Confirmação Senha" type="password" onChange={e => setCadastro({ ...cadastro, confirmar: e.target.value })} />
-        <button type="submit">Registrar</button>
-      </form>
-
-      {/* Login */}
-      <form onSubmit={handleLogin} className="form-box">
-        <h2>Logar</h2>
-        <input placeholder="Email" type="email" value={emailLogin} onChange={e => setEmailLogin(e.target.value)} />
-        <input placeholder="Senha" type="password" value={senhaLogin} onChange={e => setSenhaLogin(e.target.value)} />
-        <button type="submit">Entrar</button>
-      </form>
-    </div>
-  </div>
-);
-
+          <form onSubmit={handleLogin} className="form-box">
+            <h2>Logar</h2>
+            <input placeholder="Nome ou Email" type="email" value={emailLogin} onChange={e => setEmailLogin(e.target.value)} />
+            <input placeholder="Senha" type="password" value={senhaLogin} onChange={e => setSenhaLogin(e.target.value)} />
+            <div className="link">Esqueceu sua senha?</div>
+            <button type="submit">Entrar</button>
+            <div className="checkbox-line">
+              <input type="checkbox" id="lembrar" />
+              <label htmlFor="lembrar">Lembre-me</label>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default CadastroLogin;
