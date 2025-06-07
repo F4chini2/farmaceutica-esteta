@@ -104,8 +104,46 @@ function ClienteDetalhes() {
           <button onClick={() => setEditando(true)}>Editar</button>
         )}
         <button onClick={() => navigate('/dashboard')}>Voltar</button>
+
+        <button
+  onClick={async () => {
+    const confirmar = window.confirm('Tem certeza que deseja excluir este cliente?');
+    if (!confirmar) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (resposta.ok) {
+        alert('Cliente excluído com sucesso!');
+        navigate('/dashboard');
+      } else {
+        const erro = await resposta.json();
+        alert(erro.erro || 'Erro ao excluir cliente');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao conectar com o servidor');
+    }
+  }}
+  style={{ backgroundColor: '#e96b6b', marginLeft: '10px' }}
+  >
+  🗑 Excluir Cliente
+  </button>
+
+
       </div>
+      
+                
+
     </div>
+
+    
   );
 }
 
