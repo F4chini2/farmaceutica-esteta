@@ -1,6 +1,7 @@
 import './Dashboard.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Tabs from '../components/Tabs'; // 👈 importa Tabs corretamente
 
 function Dashboard() {
   const [clientes, setClientes] = useState([]);
@@ -32,20 +33,26 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="dashboard-container">
-      <h1>Clientes</h1>
-      <div className="clientes-lista">
-        {clientes.map((cliente) => (
-          <div key={cliente.id} className="cliente-card">
-            <p><strong>🧍 Nome:</strong> {cliente.nome}</p>
-            <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
-            <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
-            <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍 Ver Detalhes</button>
-          </div>
-        ))}
-      </div>
+  <div className="dashboard-container">
+    <Tabs />
+    <h1>Clientes</h1>
+    <button className="btn-agendamentos" onClick={() => navigate('/agendamentos')}>
+      📅 Ver Agendamentos
+    </button>
+
+    <div className="clientes-lista">
+      {clientes.map((cliente) => (
+        <div key={cliente.id} className="cliente-card">
+          <p><strong>🧍 Nome:</strong> {cliente.nome}</p>
+          <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
+          <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
+          <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍 Ver Detalhes</button>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 }
 
 export default Dashboard;

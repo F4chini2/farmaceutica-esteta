@@ -75,3 +75,20 @@
   margin-bottom: 12px;
   line-height: 1.6;
 }
+
+
+.btn-agendamentos {
+  background-color: #dfbf8c;
+  color: #4d3b2f;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  transition: background-color 0.3s;
+}
+
+.btn-agendamentos:hover {
+  background-color: #c9a96f;
+}

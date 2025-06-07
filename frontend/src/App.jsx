@@ -10,6 +10,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/agendamentos" 
+        element={token ? <Agendamentos /> : <Navigate to="/" />}/>
         <Route path="/" element={<CadastroLogin />} />
         <Route
           path="/dashboard"

@@ -1,0 +1,27 @@
+.tabs-container {
+  display: flex;
+  gap: 20px;
+  background-color: #fceeee;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e1cfcf;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.tab {
+  padding: 8px 14px;
+  color: #b18787;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.tab:hover {
+  background-color: #f3dadb;
+}
+
+.tab.active {
+  background-color: #f8e4e4;
+  color: #5c3c3c;
+  font-weight: bold;
+}
