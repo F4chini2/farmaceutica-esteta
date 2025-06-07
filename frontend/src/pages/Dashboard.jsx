@@ -36,9 +36,6 @@ function Dashboard() {
   <div className="dashboard-container">
     <Tabs />
     <h1>Clientes</h1>
-    <button className="btn-agendamentos" onClick={() => navigate('/agendamentos')}>
-      📅 Ver Agendamentos
-    </button>
 
     <div className="clientes-lista">
       {clientes.map((cliente) => (
