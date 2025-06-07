@@ -18,8 +18,8 @@ function Login() {
 
       if (resposta.ok) {
         alert('Login bem-sucedido!');
-        // aqui você pode salvar o token no localStorage e redirecionar
-        localStorage.setItem('token', dados.token);
+        localStorage.setItem('token', dados.token); // Salva o token
+        window.location.href = '/clientes'; // Redireciona para a página protegida
       } else {
         alert(dados.erro || 'Erro no login');
       }
