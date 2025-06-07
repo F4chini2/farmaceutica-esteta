@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,8 +20,8 @@ function Login() {
 
       if (resposta.ok) {
         alert('Login bem-sucedido!');
-        localStorage.setItem('token', dados.token); // Salva o token
-        window.location.href = '/clientes'; // Redireciona para a página protegida
+        localStorage.setItem('token', dados.token);
+        navigate('/dashboard'); // Redireciona sem recarregar a página
       } else {
         alert(dados.erro || 'Erro no login');
       }
