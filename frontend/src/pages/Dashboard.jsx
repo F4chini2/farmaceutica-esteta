@@ -1,5 +1,18 @@
 import './Dashboard.css';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ClienteDetalhes from './pages/ClienteDetalhes';
+
+<Route
+  path="/clientes/:id"
+  element={token ? <ClienteDetalhes /> : <Navigate to="/" />}
+/>
+
+const navigate = useNavigate();
+
+<button onClick={() => navigate(`/clientes/${cliente.id}`)}>
+  🔍 Ver Detalhes
+</button>
 
 function Dashboard() {
   const [clientes, setClientes] = useState([]);

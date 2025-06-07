@@ -1,0 +1,53 @@
+.dashboard-container {
+  padding: 40px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fcfcfc;
+}
+
+.dashboard-container h1 {
+  color: #a2786a;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.clientes-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.cliente-card {
+  background: #fff;
+  border: 1px solid #e3cfcf;
+  border-radius: 12px;
+  padding: 20px;
+  width: 280px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cliente-card p {
+  margin: 8px 0;
+  color: #4e4e4e;
+}
+
+.cliente-card button {
+  margin-top: 10px;
+  background-color: #c5a5a0;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.cliente-card button:hover {
+  background-color: #a2786a;
+}
+
+@media (max-width: 768px) {
+  .cliente-card {
+    width: 100%;
+  }
+}
