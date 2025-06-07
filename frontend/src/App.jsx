@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CadastroLogin from './pages/CadastroLogin';
 import Dashboard from './pages/Dashboard';
 import ClienteDetalhes from './pages/ClienteDetalhes'; // 👈 Importa o novo
+import Agendamentos from './pages/Agendamentos';
 
 function App() {
   const token = localStorage.getItem('token');

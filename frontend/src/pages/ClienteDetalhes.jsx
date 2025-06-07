@@ -1,149 +1,124 @@
 import './ClienteDetalhes.css';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 function ClienteDetalhes() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [cliente, setCliente] = useState(null);
-  const [editando, setEditando] = useState(false);
-  const [form, setForm] = useState({ nome: '', telefone: '', alergias: '' });
+  const [form, setForm] = useState({
+    data: '',
+    horario: '',
+    servico: '',
+    observacoes: ''
+  });
+  const [servicos, setServicos] = useState([
+    'Limpeza de pele',
+    'Peeling químico',
+    'Microagulhamento'
+  ]);
+  const [novoServico, setNovoServico] = useState('');
 
   useEffect(() => {
     const fetchCliente = async () => {
       try {
         const token = localStorage.getItem('token');
         const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
-
         const dados = await resposta.json();
-        if (resposta.ok) {
-          setCliente(dados);
-          setForm({
-            nome: dados.nome,
-            telefone: dados.telefone,
-            alergias: dados.alergias || ''
-          });
-        } else {
-          alert(dados.erro || 'Erro ao buscar cliente');
-        }
+        if (resposta.ok) setCliente(dados);
+        else alert(dados.erro || 'Erro ao carregar cliente');
       } catch (err) {
-        console.error(err);
         alert('Erro ao conectar com o servidor');
       }
     };
+
     fetchCliente();
   }, [id]);
 
-  const handleSalvar = async () => {
+  const handleAgendamento = async (e) => {
+    e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
-        method: 'PUT',
+      const resposta = await fetch('http://localhost:3001/agendamentos', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify({
+          cliente_id: id,
+          ...form
+        })
       });
-
       const dados = await resposta.json();
-
       if (resposta.ok) {
-        alert('Cliente atualizado com sucesso!');
-        setCliente(dados);
-        setEditando(false);
+        alert('Agendamento criado com sucesso!');
+        setForm({ data: '', horario: '', servico: '', observacoes: '' });
       } else {
-        alert(dados.erro || 'Erro ao atualizar cliente');
+        alert(dados.erro || 'Erro ao agendar');
       }
     } catch (err) {
-      console.error(err);
-      alert('Erro ao conectar com o servidor');
+      alert('Erro de conexão');
     }
   };
 
-  if (!cliente) return <p>Carregando...</p>;
+  const adicionarNovoServico = () => {
+    if (novoServico.trim() && !servicos.includes(novoServico)) {
+      setServicos([...servicos, novoServico]);
+      setNovoServico('');
+    }
+  };
+
+  if (!cliente) return <p>Carregando cliente...</p>;
 
   return (
     <div className="detalhes-container">
-      <h2>Detalhes do Cliente</h2>
-      <div className="campo">
-        <label>Nome:</label>
-        {editando ? (
-          <input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
-        ) : (
-          <p>{cliente.nome}</p>
-        )}
-      </div>
+      <h2>Detalhes de {cliente.nome}</h2>
+      <p><strong>Telefone:</strong> {cliente.telefone}</p>
+      <p><strong>Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
 
-      <div className="campo">
-        <label>Telefone:</label>
-        {editando ? (
-          <input value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
-        ) : (
-          <p>{cliente.telefone}</p>
-        )}
-      </div>
-
-      <div className="campo">
-        <label>Alergias:</label>
-        {editando ? (
-          <input value={form.alergias} onChange={(e) => setForm({ ...form, alergias: e.target.value })} />
-        ) : (
-          <p>{cliente.alergias || 'Nenhuma'}</p>
-        )}
-      </div>
-
-      <div className="botoes">
-        {editando ? (
-          <button onClick={handleSalvar}>Salvar</button>
-        ) : (
-          <button onClick={() => setEditando(true)}>Editar</button>
-        )}
-        <button onClick={() => navigate('/dashboard')}>Voltar</button>
-
-        <button
-  onClick={async () => {
-    const confirmar = window.confirm('Tem certeza que deseja excluir este cliente?');
-    if (!confirmar) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      if (resposta.ok) {
-        alert('Cliente excluído com sucesso!');
-        navigate('/dashboard');
-      } else {
-        const erro = await resposta.json();
-        alert(erro.erro || 'Erro ao excluir cliente');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao conectar com o servidor');
-    }
-  }}
-  style={{ backgroundColor: '#e96b6b', marginLeft: '10px' }}
-  >
-  🗑 Excluir Cliente
-  </button>
-
-
-      </div>
-      
-                
-
+      <h3>➕ Novo Agendamento</h3>
+      <form onSubmit={handleAgendamento} className="form-agendamento">
+        <input
+          type="date"
+          value={form.data}
+          onChange={e => setForm({ ...form, data: e.target.value })}
+          required
+        />
+        <input
+          type="time"
+          value={form.horario}
+          onChange={e => setForm({ ...form, horario: e.target.value })}
+          required
+        />
+        <select
+          value={form.servico}
+          onChange={e => setForm({ ...form, servico: e.target.value })}
+          required
+        >
+          <option value="">Selecione um serviço</option>
+          {servicos.map((s, index) => (
+            <option key={index} value={s}>{s}</option>
+          ))}
+        </select>
+        <div className="novo-servico-linha">
+          <input
+            type="text"
+            placeholder="Novo serviço (opcional)"
+            value={novoServico}
+            onChange={e => setNovoServico(e.target.value)}
+          />
+          <button type="button" onClick={adicionarNovoServico}>➕</button>
+        </div>
+        <textarea
+          placeholder="Observações"
+          value={form.observacoes}
+          onChange={e => setForm({ ...form, observacoes: e.target.value })}
+        />
+        <button type="submit">Agendar</button>
+      </form>
     </div>
-
-    
   );
 }
 
