@@ -94,3 +94,47 @@
   background-color: #e8d0c8;
   color: #8c5e51;
 }
+
+.descricao-cliente {
+  background-color: #fff5f5;
+  border-left: 4px solid #d5a39e;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  font-style: italic;
+  color: #5a3e3e;
+}
+
+.editar-descricao {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editar-descricao textarea {
+  padding: 10px;
+  border: 1px solid #d4baba;
+  border-radius: 6px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 60px;
+  background-color: #fffaf9;
+  color: #5a3e3e;
+}
+
+.editar-descricao button {
+  align-self: flex-start;
+  padding: 8px 14px;
+  background-color: #a2786a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.editar-descricao button:hover {
+  background-color: #8c5e51;
+}

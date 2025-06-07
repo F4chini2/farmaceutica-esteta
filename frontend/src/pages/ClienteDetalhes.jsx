@@ -77,12 +77,54 @@ function ClienteDetalhes() {
   return (
     <div className="detalhes-container">
       <button onClick={() => navigate('/dashboard')} className="btn-voltar">
-  ⬅ Voltar para Clientes
-</button>
+        ⬅ Voltar para Clientes
+      </button>
 
       <h2>Detalhes de {cliente.nome}</h2>
-      <p><strong>Telefone:</strong> {cliente.telefone}</p>
-      <p><strong>Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
+      <p className="descricao-cliente">
+        <strong>Telefone:</strong> {cliente.telefone}
+      </p>
+      <p className="descricao-cliente">
+        <strong>Alergias:</strong> {cliente.alergias || 'Nenhuma'}
+      </p>
+      <p className="descricao-cliente">
+        <strong>Descrição:</strong> {cliente.descricao || 'Nenhuma'}
+      </p>
+
+     <div className="editar-descricao">
+  <textarea
+    placeholder="Atualizar descrição do cliente"
+    value={cliente.descricao}
+    onChange={(e) =>
+      setCliente({ ...cliente, descricao: e.target.value })
+    }
+  />
+  <button
+    onClick={async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...cliente,
+            descricao: cliente.descricao,
+          }),
+        });
+        const dados = await resposta.json();
+        if (resposta.ok) alert('Descrição atualizada!');
+        else alert(dados.erro || 'Erro ao atualizar');
+      } catch (err) {
+        alert('Erro de conexão');
+      }
+    }}
+  >
+    💾 Salvar Descrição
+  </button>
+</div>
 
       <h3>➕ Novo Agendamento</h3>
       <form onSubmit={handleAgendamento} className="form-agendamento">

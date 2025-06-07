@@ -37,8 +37,8 @@ function Agendamentos() {
           {agendamentos.map((ag) => (
             <div key={ag.id} className="card-agendamento">
               <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
-              <p><strong>🗓 Data:</strong> {ag.data}</p>
-              <p><strong>⏰ Horário:</strong> {ag.horario}</p>
+              <p><strong>🗓 Data:</strong> {new Date(ag.data).toLocaleDateString()}</p>
+              <p><strong>⏰ Horário:</strong> {ag.horario?.slice(0, 5)}</p>
               <p><strong>💆 Serviço:</strong> {ag.servico}</p>
               <p><strong>📝 Observações:</strong> {ag.observacoes || 'Nenhuma'}</p>
             </div>

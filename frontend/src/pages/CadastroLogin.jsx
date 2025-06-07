@@ -10,6 +10,7 @@ function CadastroLogin() {
     nome: '',
     email: '',
     telefone: '',
+    descricao: '',
     senha: '',
     confirmar: ''
   });
@@ -69,8 +70,7 @@ function CadastroLogin() {
 
   return (
     <>
-      <div className="top-bar">
-      </div>
+      <div className="top-bar"></div>
       <div className="container">
         <div className="form-container">
           <form onSubmit={handleCadastro} className="form-box">
@@ -78,6 +78,7 @@ function CadastroLogin() {
             <input placeholder="Nome" onChange={e => setCadastro({ ...cadastro, nome: e.target.value })} />
             <input placeholder="Email" type="email" onChange={e => setCadastro({ ...cadastro, email: e.target.value })} />
             <input placeholder="Telefone" onChange={e => setCadastro({ ...cadastro, telefone: e.target.value })} />
+            <input placeholder="Descrição" onChange={e => setCadastro({ ...cadastro, descricao: e.target.value })} />
             <input placeholder="Senha" type="password" onChange={e => setCadastro({ ...cadastro, senha: e.target.value })} />
             <input placeholder="Confirmação Senha" type="password" onChange={e => setCadastro({ ...cadastro, confirmar: e.target.value })} />
             <button type="submit">Registrar</button>
