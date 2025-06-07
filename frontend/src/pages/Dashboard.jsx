@@ -1,21 +1,10 @@
 import './Dashboard.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ClienteDetalhes from './pages/ClienteDetalhes';
-
-<Route
-  path="/clientes/:id"
-  element={token ? <ClienteDetalhes /> : <Navigate to="/" />}
-/>
-
-const navigate = useNavigate();
-
-<button onClick={() => navigate(`/clientes/${cliente.id}`)}>
-  🔍 Ver Detalhes
-</button>
 
 function Dashboard() {
   const [clientes, setClientes] = useState([]);
+  const navigate = useNavigate(); // ✅ Coloca aqui DENTRO do componente
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -51,7 +40,7 @@ function Dashboard() {
             <p><strong>🧍 Nome:</strong> {cliente.nome}</p>
             <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
             <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
-            <button onClick={() => alert('Função de detalhes em breve')}>🔍 Ver Detalhes</button>
+            <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍 Ver Detalhes</button>
           </div>
         ))}
       </div>
