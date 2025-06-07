@@ -5,7 +5,8 @@ const router = express.Router();
 const pool = require('../db');
 
 // POST /clientes
-router.post('/', autenticarToken, async (req, res) => {
+router.post('/', async (req, res) => {
+
   const { nome, telefone, alergias } = req.body;
 
   try {
