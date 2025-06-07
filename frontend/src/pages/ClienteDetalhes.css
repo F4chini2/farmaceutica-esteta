@@ -76,3 +76,21 @@
 .form-agendamento button:hover {
   background-color: #8c6257;
 }
+
+.btn-voltar {
+  background-color: #f3e0dc;
+  color: #a2786a;
+  border: 1px solid #d9b9b2;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+}
+
+.btn-voltar:hover {
+  background-color: #e8d0c8;
+  color: #8c5e51;
+}

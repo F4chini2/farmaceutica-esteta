@@ -1,9 +1,11 @@
 import './ClienteDetalhes.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function ClienteDetalhes() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [cliente, setCliente] = useState(null);
   const [form, setForm] = useState({
     data: '',
@@ -74,6 +76,10 @@ function ClienteDetalhes() {
 
   return (
     <div className="detalhes-container">
+      <button onClick={() => navigate('/dashboard')} className="btn-voltar">
+  ⬅ Voltar para Clientes
+</button>
+
       <h2>Detalhes de {cliente.nome}</h2>
       <p><strong>Telefone:</strong> {cliente.telefone}</p>
       <p><strong>Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
