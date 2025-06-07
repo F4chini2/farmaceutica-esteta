@@ -2,21 +2,17 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #fff0f3;
+  background-color: #fcfcfc;
 }
 
 .top-bar {
-  background: linear-gradient(to right, #d9c3bb, #e6d3cc);
-  padding: 30px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-image: url('../assets/LOGO.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 190px;
   position: relative;
-}
-
-.logo-bar {
-  height: 80px;
-  object-fit: contain;
+  width: 100%;
 }
 
 .top-bar::after {
@@ -25,7 +21,13 @@ body {
   bottom: 0;
   width: 100%;
   height: 3px;
-  background-color: #d0a96b;
+  background-color: #dfbf8c; /* linha dourada */
+}
+
+
+.logo-bar {
+  height: 100px;
+  object-fit: contain;
 }
 
 .container {
@@ -37,7 +39,7 @@ body {
 }
 
 .form-container {
-  background: white;
+  background: #f0e2e2;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -103,4 +105,26 @@ button:hover {
   gap: 6px;
   font-size: 13px;
   margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    gap: 40px;
+  }
+
+  .form-box {
+    max-width: 100%;
+  }
+
+  .top-bar {
+    height: 140px;
+    background-size: cover;
+  }
+
+  .container {
+    padding: 30px 20px;
+  }
 }

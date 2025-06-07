@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CadastroLogin from './pages/CadastroLogin'; // 👈 novo componente
+
 import Dashboard from './pages/Dashboard';
 
 function App() {

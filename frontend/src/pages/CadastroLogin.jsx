@@ -70,7 +70,6 @@ function CadastroLogin() {
   return (
     <>
       <div className="top-bar">
-        <img src={logo} alt="Logo Giselle Ferreira" className="logo-bar" />
       </div>
       <div className="container">
         <div className="form-container">
