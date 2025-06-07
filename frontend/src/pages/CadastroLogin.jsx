@@ -1,3 +1,5 @@
+import logo from '../assets/LOGO.png';
+import './CadastroLogin.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -69,9 +71,12 @@ function CadastroLogin() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '60px', padding: '40px' }}>
+  <div className="container">
+    <img src={logo} alt="Logo Giselle Ferreira" className="logo" />
+
+    <div className="form-container">
       {/* Cadastro */}
-      <form onSubmit={handleCadastro} style={{ display: 'flex', flexDirection: 'column' }}>
+      <form onSubmit={handleCadastro} className="form-box">
         <h2>Cadastrar</h2>
         <input placeholder="Nome" onChange={e => setCadastro({ ...cadastro, nome: e.target.value })} />
         <input placeholder="Email" type="email" onChange={e => setCadastro({ ...cadastro, email: e.target.value })} />
@@ -82,14 +87,16 @@ function CadastroLogin() {
       </form>
 
       {/* Login */}
-      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column' }}>
+      <form onSubmit={handleLogin} className="form-box">
         <h2>Logar</h2>
         <input placeholder="Email" type="email" value={emailLogin} onChange={e => setEmailLogin(e.target.value)} />
         <input placeholder="Senha" type="password" value={senhaLogin} onChange={e => setSenhaLogin(e.target.value)} />
         <button type="submit">Entrar</button>
       </form>
     </div>
-  );
+  </div>
+);
+
 }
 
 export default CadastroLogin;
