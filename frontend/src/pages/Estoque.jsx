@@ -6,6 +6,7 @@ import Tabs from '../components/Tabs';
 function Estoque() {
   const [itens, setItens] = useState([]);
   const [form, setForm] = useState({ nome: '', quantidade: '', unidade: '', validade: '' });
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -64,6 +65,13 @@ function Estoque() {
       <div className="topo-dashboard">
         <h1>📦 Controle de Estoque</h1>
       </div>
+      <input
+        className="barra-pesquisa"
+        type="text"
+        placeholder="🔍 Buscar item por nome..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
       <form className="estoque-form" onSubmit={cadastrarItem}>
         <input
           placeholder="Nome do item"
@@ -93,12 +101,14 @@ function Estoque() {
       </form>
 
       <div className="estoque-lista">
-        {itens.map((item) => (
-          <div key={item.id} className="estoque-item">
-            <strong>{item.nome}</strong>
-            <p>{item.quantidade} {item.unidade}</p>
-            <p>Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
-          </div>
+        {itens
+          .filter(item => item.nome.toLowerCase().includes(busca.toLowerCase()))
+          .map((item) => (
+            <div key={item.id} className="estoque-item">
+              <strong>{item.nome}</strong>
+              <p>{item.quantidade} {item.unidade}</p>
+              <p>Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
+            </div>
         ))}
       </div>
     </div>

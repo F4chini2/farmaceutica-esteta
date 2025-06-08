@@ -1,0 +1,48 @@
+
+/* Global Styles */
+
+.barra-pesquisa {
+  padding: 10px 16px;
+  border: 1px solid #d4baba;
+  border-radius: 8px;
+  font-size: 15px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 20px;
+  display: block;
+  background-color: #fffaf9;
+  color: #4d3b2f;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-excluir-agendamento,
+.btn-novo-cliente {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-excluir-agendamento {
+  background-color: #d96363;
+  color: white;
+}
+
+.btn-excluir-agendamento:hover {
+  background-color: #b84c4c;
+}
+
+.btn-novo-cliente {
+  background: linear-gradient(to right, #a2786a, #8c5e51);
+  color: white;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-novo-cliente:hover {
+  background: linear-gradient(to right, #8c5e51, #a2786a);
+  transform: scale(1.05);
+}

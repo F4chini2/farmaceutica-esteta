@@ -6,6 +6,7 @@ import Tabs from '../components/Tabs';
 function Fornecedores() {
   const [lista, setLista] = useState([]);
   const [form, setForm] = useState({ nome: '', contato: '', produtos: '' });
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -60,6 +61,13 @@ function Fornecedores() {
       <div className="topo-dashboard">
         <h1>🏭 Fornecedores</h1>
       </div>
+      <input
+        className="barra-pesquisa"
+        type="text"
+        placeholder="🔍 Buscar fornecedor por nome ou produto..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
       <form className="fornecedores-form" onSubmit={cadastrar}>
         <input
           placeholder="Nome"
@@ -82,12 +90,17 @@ function Fornecedores() {
       </form>
 
       <div className="fornecedores-lista">
-        {lista.map((f) => (
-          <div key={f.id} className="fornecedor-item">
-            <strong>{f.nome}</strong>
-            <p>Contato: {f.contato}</p>
-            <p>Produtos: {f.produtos}</p>
-          </div>
+        {lista
+          .filter(f =>
+            f.nome.toLowerCase().includes(busca.toLowerCase()) ||
+            f.produtos.toLowerCase().includes(busca.toLowerCase())
+          )
+          .map((f) => (
+            <div key={f.id} className="fornecedor-item">
+              <strong>{f.nome}</strong>
+              <p>Contato: {f.contato}</p>
+              <p>Produtos: {f.produtos}</p>
+            </div>
         ))}
       </div>
     </div>
