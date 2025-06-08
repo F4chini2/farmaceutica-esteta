@@ -64,7 +64,7 @@ function Dashboard() {
     <div className="dashboard-container">
       <Tabs />
       <div className="topo-dashboard">
-        <h1>Clientes</h1>
+        <h1>🛍️ Clientes</h1>
         <button
           className="btn-novo-cliente"
           onClick={() => navigate('/dashboard/novo-cliente')}
@@ -84,7 +84,7 @@ function Dashboard() {
           .filter(cliente => cliente.nome.toLowerCase().includes(busca.toLowerCase()))
           .map((cliente) => (
             <div key={cliente.id} className="cliente-card">
-              <p><strong>🧍 Nome:</strong> {cliente.nome}</p>
+              <p><strong>👤 Nome:</strong> {cliente.nome}</p>
               <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
               <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
               <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍 Ver Detalhes</button>

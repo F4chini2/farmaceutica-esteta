@@ -121,15 +121,6 @@
   background-color: #5f4037;
 }
 
-.cliente-card button:last-of-type {
-  background-color: #BB9380;
-  color: white;
-}
-
-.cliente-card button:last-of-type:hover {
-  background-color: #b94e4e;
-}
-
 .barra-pesquisa {
   padding: 10px 16px;
   border: 1px solid #d4baba;

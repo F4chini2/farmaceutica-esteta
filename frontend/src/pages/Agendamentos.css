@@ -112,3 +112,20 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+.btn-historico-agendamento {
+  background-color: #8c5e51;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  margin-right: 8px;
+}
+
+.btn-historico-agendamento:hover {
+  background-color: #a2786a;
+}

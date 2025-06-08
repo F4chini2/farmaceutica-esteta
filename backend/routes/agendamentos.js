@@ -27,7 +27,6 @@ router.post('/', autenticarToken, async (req, res) => {
 
 // GET /agendamentos
 router.get('/', autenticarToken, async (req, res) => {
-  // Verifica se é admin
   if (req.usuario.tipo !== 'admin') {
     return res.status(403).json({ erro: 'Acesso restrito a administradores' });
   }
@@ -38,8 +37,7 @@ router.get('/', autenticarToken, async (req, res) => {
     let query = `
       SELECT a.*, c.nome AS nome_cliente 
       FROM agendamentos a 
-      JOIN clientes c ON a.cliente_id = c.id
-    `;
+      JOIN clientes c ON a.cliente_id = c.id`;
     let valores = [];
 
     if (data) {
@@ -57,7 +55,6 @@ router.get('/', autenticarToken, async (req, res) => {
   }
 });
 
-
 // GET /agendamentos/:id
 router.get('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
@@ -67,8 +64,7 @@ router.get('/:id', autenticarToken, async (req, res) => {
       SELECT a.*, c.nome AS nome_cliente 
       FROM agendamentos a 
       JOIN clientes c ON a.cliente_id = c.id 
-      WHERE a.id = $1
-    `, [id]);
+      WHERE a.id = $1`, [id]);
 
     if (resultado.rows.length === 0) {
       return res.status(404).json({ erro: 'Agendamento não encontrado' });
@@ -127,5 +123,32 @@ router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   }
 });
 
+// NOVA ROTA: POST /agendamentos/:id/historico
+router.post('/:id/historico', autenticarToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const agendamento = await pool.query('SELECT * FROM agendamentos WHERE id = $1', [id]);
+
+    if (agendamento.rows.length === 0) {
+      return res.status(404).json({ erro: 'Agendamento não encontrado' });
+    }
+
+    const { cliente_id, data, horario, servico, observacoes } = agendamento.rows[0];
+
+    await pool.query(`
+      INSERT INTO historico (cliente_id, data, horario, servico, observacoes)
+      VALUES ($1, $2, $3, $4, $5)`,
+      [cliente_id, data, horario, servico, observacoes]
+    );
+
+    await pool.query('DELETE FROM agendamentos WHERE id = $1', [id]);
+
+    res.status(200).json({ mensagem: 'Agendamento movido para histórico com sucesso!' });
+  } catch (err) {
+    console.error('Erro ao mover para histórico:', err);
+    res.status(500).json({ erro: 'Erro ao mover para histórico.' });
+  }
+});
 
 module.exports = router;

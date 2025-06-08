@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const pool = require('../pool');
@@ -6,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configuração do armazenamento de imagens
+// Configura armazenamento de imagens dos procedimentos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(__dirname, '..', 'uploads', 'procedimentos');
@@ -14,14 +13,17 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: function (req, file, cb) {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, unique + path.extname(file.originalname));
   }
 });
 
 const upload = multer({ storage });
 
-// GET /clientes/:id/historico
+/**
+ * GET /clientes/:id/historico
+ * Lista todos os procedimentos históricos de um cliente
+ */
 router.get('/clientes/:id/historico', async (req, res) => {
   const { id } = req.params;
   try {
@@ -31,11 +33,31 @@ router.get('/clientes/:id/historico', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
+    console.error('Erro ao buscar histórico:', err);
     res.status(500).json({ erro: 'Erro ao buscar histórico' });
   }
 });
 
-// POST /clientes/:id/historico
+/**
+ * GET /historico/todos
+ * Lista todos os procedimentos históricos de todos os clientes
+ */
+router.get('/todos', async (req, res) => {
+  try {
+    const resultado = await pool.query(
+      'SELECT h.*, c.nome AS nome_cliente FROM historico h JOIN clientes c ON h.cliente_id = c.id ORDER BY h.data DESC, h.horario DESC'
+    );
+    res.json(resultado.rows);
+  } catch (err) {
+    console.error('Erro ao buscar todos históricos:', err);
+    res.status(500).json({ erro: 'Erro ao buscar histórico' });
+  }
+});
+
+/**
+ * POST /clientes/:id/historico
+ * Adiciona um novo registro ao histórico do cliente
+ */
 router.post('/clientes/:id/historico', async (req, res) => {
   const { id } = req.params;
   const { data, horario, servico, observacoes } = req.body;
@@ -47,12 +69,15 @@ router.post('/clientes/:id/historico', async (req, res) => {
     );
     res.status(201).json({ historico: resultado.rows[0] });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao cadastrar procedimento:', err);
     res.status(500).json({ erro: 'Erro ao cadastrar procedimento' });
   }
 });
 
-// POST /historico/:id/fotos
+/**
+ * POST /historico/:id/fotos
+ * Faz upload de imagens relacionadas a um procedimento
+ */
 router.post('/historico/:id/fotos', upload.array('fotos', 10), async (req, res) => {
   const { id } = req.params;
   const arquivos = req.files;
@@ -67,12 +92,15 @@ router.post('/historico/:id/fotos', upload.array('fotos', 10), async (req, res) 
     }));
     res.status(201).json({ fotos: insercoes.map(r => r.rows[0]) });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao salvar fotos:', err);
     res.status(500).json({ erro: 'Erro ao salvar fotos' });
   }
 });
 
-// GET /historico/:id/fotos
+/**
+ * GET /historico/:id/fotos
+ * Busca as fotos vinculadas a um procedimento
+ */
 router.get('/historico/:id/fotos', async (req, res) => {
   const { id } = req.params;
 
@@ -83,6 +111,7 @@ router.get('/historico/:id/fotos', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
+    console.error('Erro ao buscar fotos:', err);
     res.status(500).json({ erro: 'Erro ao buscar fotos' });
   }
 });

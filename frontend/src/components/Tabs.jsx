@@ -9,7 +9,8 @@ function Tabs() {
     { label: 'Clientes', path: '/dashboard' },
     { label: 'Agendamentos', path: '/agendamentos' },
     { label: 'Estoque', path: '/estoque' },
-    { label: 'Fornecedores', path: '/fornecedores' }
+    { label: 'Fornecedores', path: '/fornecedores' },
+    { label: 'Histórico', path: '/historico' } // ← atualizado para rota fixa
   ];
 
   return (
