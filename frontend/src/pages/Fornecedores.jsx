@@ -1,3 +1,4 @@
+
 import './Fornecedores.css';
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
@@ -54,40 +55,40 @@ function Fornecedores() {
   };
 
   return (
-    <div>
+    <div className="fornecedores-container">
       <Tabs />
-      <div className="fornecedores-container">
-        <h2>Fornecedores</h2>
-        <form className="fornecedores-form" onSubmit={cadastrar}>
-          <input
-            placeholder="Nome"
-            value={form.nome}
-            onChange={(e) => setForm({ ...form, nome: e.target.value })}
-            required
-          />
-          <input
-            placeholder="Contato"
-            value={form.contato}
-            onChange={(e) => setForm({ ...form, contato: e.target.value })}
-            required
-          />
-          <textarea
-            placeholder="Produtos fornecidos"
-            value={form.produtos}
-            onChange={(e) => setForm({ ...form, produtos: e.target.value })}
-          />
-          <button type="submit">Cadastrar</button>
-        </form>
+      <div className="topo-dashboard">
+        <h1>🏭 Fornecedores</h1>
+      </div>
+      <form className="fornecedores-form" onSubmit={cadastrar}>
+        <input
+          placeholder="Nome"
+          value={form.nome}
+          onChange={(e) => setForm({ ...form, nome: e.target.value })}
+          required
+        />
+        <input
+          placeholder="Contato"
+          value={form.contato}
+          onChange={(e) => setForm({ ...form, contato: e.target.value })}
+          required
+        />
+        <textarea
+          placeholder="Produtos fornecidos"
+          value={form.produtos}
+          onChange={(e) => setForm({ ...form, produtos: e.target.value })}
+        />
+        <button type="submit">Cadastrar</button>
+      </form>
 
-        <div className="fornecedores-lista">
-          {lista.map((f) => (
-            <div key={f.id} className="fornecedor-item">
-              <strong>{f.nome}</strong>
-              <p>Contato: {f.contato}</p>
-              <p>Produtos: {f.produtos}</p>
-            </div>
-          ))}
-        </div>
+      <div className="fornecedores-lista">
+        {lista.map((f) => (
+          <div key={f.id} className="fornecedor-item">
+            <strong>{f.nome}</strong>
+            <p>Contato: {f.contato}</p>
+            <p>Produtos: {f.produtos}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
