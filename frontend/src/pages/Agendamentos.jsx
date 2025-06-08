@@ -29,7 +29,9 @@ function Agendamentos() {
   return (
     <div className="agendamentos-container">
       <Tabs />
-      <h2>📅 Agendamentos</h2>
+      <div className="topo-agendamentos">
+        <h1>📅 Agendamentos</h1>
+      </div>
       {agendamentos.length === 0 ? (
         <p>Nenhum agendamento encontrado.</p>
       ) : (

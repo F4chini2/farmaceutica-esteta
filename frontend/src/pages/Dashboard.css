@@ -11,15 +11,8 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 30px;
   gap: 20px;
-  position: relative;
-}
-
-.titulo-container {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
+  margin-bottom: 30px;
 }
 
 .topo-dashboard h1 {
@@ -47,23 +40,6 @@
 .btn-novo-cliente:hover {
   background: linear-gradient(to right, #8c5e51, #a2786a);
   transform: scale(1.05);
-}
-
-@media (max-width: 600px) {
-  .topo-dashboard {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .titulo-container {
-    justify-content: center;
-    width: 100%;
-  }
-
-  .btn-novo-cliente {
-    width: 100%;
-    text-align: center;
-  }
 }
 
 .tabs-container {
@@ -146,7 +122,7 @@
 }
 
 .cliente-card button:last-of-type {
-  background-color: #cc6e6e;
+  background-color: #BB9380;
   color: white;
 }
 
