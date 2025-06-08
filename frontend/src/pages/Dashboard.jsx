@@ -32,10 +32,43 @@ function Dashboard() {
     fetchClientes();
   }, []);
 
+  const excluirCliente = async (id) => {
+  const confirmar = window.confirm('Tem certeza que deseja excluir este cliente?');
+  if (!confirmar) return;
+
+  try {
+    const token = localStorage.getItem('token');
+    const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const dados = await resposta.json();
+
+    if (resposta.ok) {
+      alert('Cliente excluído com sucesso!');
+      setClientes((clientesAtuais) => clientesAtuais.filter(c => c.id !== id));
+    } else {
+      alert(dados.erro || 'Erro ao excluir cliente');
+    }
+  } catch (err) {
+    alert('Erro ao conectar com o servidor');
+  }
+};
+
+
   return (
   <div className="dashboard-container">
     <Tabs />
     <h1>Clientes</h1>
+<button
+  className="btn-agendamentos"
+  onClick={() => navigate('/dashboard/novo-cliente')}
+>
+  ➕ Novo Cliente
+</button>
 
     <div className="clientes-lista">
       {clientes.map((cliente) => (
@@ -44,6 +77,8 @@ function Dashboard() {
           <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
           <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
           <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍 Ver Detalhes</button>
+          <button onClick={() => excluirCliente(cliente.id)}>🗑 Excluir</button>
+
         </div>
       ))}
     </div>
