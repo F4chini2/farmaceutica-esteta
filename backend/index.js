@@ -11,12 +11,15 @@ const rotasClientes = require('./routes/clientes');
 const rotasLogin = require('./routes/login');
 const rotasAgendamentos = require('./routes/agendamentos');
 const rotasEstoque = require('./routes/estoque');
+const rotasFornecedores = require('./routes/fornecedores');
+
 
 // Aplica as rotas
 app.use('/login', rotasLogin);
 app.use('/clientes', rotasClientes);
 app.use('/agendamentos', rotasAgendamentos);
 app.use('/estoque', rotasEstoque);
+app.use('/fornecedores', rotasFornecedores);
 
 // Rota básica de teste
 app.get('/', (req, res) => {

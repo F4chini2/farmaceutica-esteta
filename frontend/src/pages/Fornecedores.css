@@ -1,0 +1,86 @@
+.fornecedores-container {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #fcf1ef;
+  border-radius: 20px;
+  box-shadow: 0 24px 36px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+  border: 1px solid #E1CFCF;
+}
+
+.fornecedores-container h2 {
+  color: #a2786a;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.fornecedores-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.fornecedores-form input,
+.fornecedores-form textarea {
+  padding: 10px;
+  border: 1px solid #c5a5a0;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fff;
+  flex: 1;
+  min-width: 180px;
+  transition: border-color 0.3s ease;
+}
+
+.fornecedores-form input:focus,
+.fornecedores-form textarea:focus {
+  outline: none;
+  border-color: #a2786a;
+  box-shadow: 0 0 0 2px rgba(162, 120, 106, 0.2);
+}
+
+.fornecedores-form button {
+  padding: 10px 16px;
+  background-color: #a2786a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.fornecedores-form button:hover {
+  background-color: #8c5e51;
+}
+
+.fornecedores-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.fornecedor-item {
+  background-color: #FFF5F8;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  width: 260px;
+  text-align: left;
+}
+
+.fornecedor-item strong {
+  display: block;
+  color: #a2786a;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.fornecedor-item p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #444;
+}

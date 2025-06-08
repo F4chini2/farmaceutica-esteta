@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import ClienteDetalhes from './pages/ClienteDetalhes'; // 👈 Importa o novo
 import Agendamentos from './pages/Agendamentos';
 import Estoque from './pages/Estoque';
+import Fornecedores from './pages/Fornecedores';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -11,6 +12,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/fornecedores" element={<Fornecedores />} />
         <Route path="/agendamentos" 
         element={token ? <Agendamentos /> : <Navigate to="/" />}/>
         <Route path="/" element={<CadastroLogin />} />
