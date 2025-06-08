@@ -5,6 +5,8 @@ const PORT = 3001;
 
 app.use(cors()); // 👈 ativando o CORS
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
 
 // Importa os arquivos de rotas
 const rotasClientes = require('./routes/clientes');
@@ -12,7 +14,7 @@ const rotasLogin = require('./routes/login');
 const rotasAgendamentos = require('./routes/agendamentos');
 const rotasEstoque = require('./routes/estoque');
 const rotasFornecedores = require('./routes/fornecedores');
-
+const historicoRoutes = require('./routes/historico');
 
 // Aplica as rotas
 app.use('/login', rotasLogin);
@@ -20,6 +22,7 @@ app.use('/clientes', rotasClientes);
 app.use('/agendamentos', rotasAgendamentos);
 app.use('/estoque', rotasEstoque);
 app.use('/fornecedores', rotasFornecedores);
+app.use('/historico', historicoRoutes);
 
 // Rota básica de teste
 app.get('/', (req, res) => {
