@@ -55,6 +55,32 @@ function Fornecedores() {
     }
   };
 
+  const excluirFornecedor = async (id) => {
+    const confirmar = window.confirm('Tem certeza que deseja excluir este fornecedor?');
+    if (!confirmar) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const resposta = await fetch(`http://localhost:3001/fornecedores/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        alert('Fornecedor excluído com sucesso!');
+        setLista((atual) => atual.filter(f => f.id !== id));
+      } else {
+        alert(dados.erro || 'Erro ao excluir');
+      }
+    } catch (err) {
+      alert('Erro ao conectar com o servidor');
+    }
+  };
+
   return (
     <div className="fornecedores-container">
       <Tabs />
@@ -100,6 +126,9 @@ function Fornecedores() {
               <strong>{f.nome}</strong>
               <p>Contato: {f.contato}</p>
               <p>Produtos: {f.produtos}</p>
+              <button className="btn-excluir-agendamento" onClick={() => excluirFornecedor(f.id)}>
+                🗑️ Excluir
+              </button>
             </div>
         ))}
       </div>

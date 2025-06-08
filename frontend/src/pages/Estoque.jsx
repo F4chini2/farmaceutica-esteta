@@ -9,23 +9,21 @@ function Estoque() {
   const [busca, setBusca] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const carregarEstoque = async () => {
-      try {
-        const resposta = await fetch('http://localhost:3001/estoque', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const dados = await resposta.json();
-        setItens(dados);
-      } catch (err) {
-        console.error('Erro ao buscar estoque:', err);
-      }
-    };
-
-    carregarEstoque();
+    carregarItens();
   }, []);
+
+  const carregarItens = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const resposta = await fetch('http://localhost:3001/estoque', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const dados = await resposta.json();
+      setItens(dados);
+    } catch {
+      alert('Erro ao buscar estoque');
+    }
+  };
 
   const cadastrarItem = async (e) => {
     e.preventDefault();
@@ -46,16 +44,65 @@ function Estoque() {
       if (resposta.ok) {
         alert('Item cadastrado com sucesso!');
         setForm({ nome: '', quantidade: '', unidade: '', validade: '' });
-        const novaResposta = await fetch('http://localhost:3001/estoque', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const novosDados = await novaResposta.json();
-        setItens(novosDados);
+        carregarItens();
       } else {
         alert(dados.erro || 'Erro ao cadastrar');
       }
     } catch (err) {
       alert('Erro ao conectar');
+    }
+  };
+
+  const excluirItem = async (id) => {
+    if (!window.confirm('Tem certeza que deseja excluir este item?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:3001/estoque/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setItens(prev => prev.filter(i => i.id !== id));
+      alert('Item excluído com sucesso!');
+    } catch {
+      alert('Erro ao excluir');
+    }
+  };
+
+  const atualizarQuantidade = async (id, delta) => {
+    const token = localStorage.getItem('token');
+    const item = itens.find(i => i.id === id);
+    if (!item) return;
+
+    const novaQuantidade = Math.max(0, Number(item.quantidade) + delta);
+
+    try {
+      const resposta = await fetch(`http://localhost:3001/estoque/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nome: item.nome,
+          quantidade: novaQuantidade,
+          unidade: item.unidade,
+          validade: item.validade
+        })
+      });
+
+      if (resposta.ok) {
+        setItens(prev =>
+          prev.map(i =>
+            i.id === id ? { ...i, quantidade: novaQuantidade } : i
+          )
+        );
+      } else {
+        alert('Erro ao atualizar quantidade');
+      }
+    } catch {
+      alert('Erro de conexão');
     }
   };
 
@@ -108,6 +155,11 @@ function Estoque() {
               <strong>{item.nome}</strong>
               <p>{item.quantidade} {item.unidade}</p>
               <p>Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                <button onClick={() => atualizarQuantidade(item.id, +1)}>➕</button>
+                <button onClick={() => atualizarQuantidade(item.id, -1)}>➖</button>
+                <button className="btn-excluir-agendamento" onClick={() => excluirItem(item.id)}>🗑️</button>
+              </div>
             </div>
         ))}
       </div>
