@@ -1,0 +1,63 @@
+.estoque-container {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #fef9f8;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.estoque-container h2 {
+  color: #a2786a;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.form-estoque {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.form-estoque input,
+.form-estoque select {
+  padding: 10px;
+  border: 1px solid #d4baba;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  flex: 1 1 45%;
+}
+
+.form-estoque button {
+  background-color: #a2786a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  flex: 1 1 100%;
+  margin-top: 10px;
+}
+
+.form-estoque button:hover {
+  background-color: #8c6257;
+}
+
+.lista-estoque {
+  margin-top: 20px;
+}
+
+.item-estoque {
+  background-color: #fff5f5;
+  border-left: 4px solid #d5a39e;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  color: #5a3e3e;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}

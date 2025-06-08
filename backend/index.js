@@ -10,11 +10,13 @@ app.use(express.json());
 const rotasClientes = require('./routes/clientes');
 const rotasLogin = require('./routes/login');
 const rotasAgendamentos = require('./routes/agendamentos');
+const rotasEstoque = require('./routes/estoque');
 
 // Aplica as rotas
 app.use('/login', rotasLogin);
 app.use('/clientes', rotasClientes);
 app.use('/agendamentos', rotasAgendamentos);
+app.use('/estoque', rotasEstoque);
 
 // Rota básica de teste
 app.get('/', (req, res) => {

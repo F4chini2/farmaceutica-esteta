@@ -10,6 +10,7 @@ const ajustarTabelaClientes = async () => {
         nome TEXT NOT NULL,
         telefone TEXT NOT NULL,
         alergias TEXT
+        descricao TEXT
       );
     `);
 

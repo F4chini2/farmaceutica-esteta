@@ -3,6 +3,7 @@ import CadastroLogin from './pages/CadastroLogin';
 import Dashboard from './pages/Dashboard';
 import ClienteDetalhes from './pages/ClienteDetalhes'; // 👈 Importa o novo
 import Agendamentos from './pages/Agendamentos';
+import Estoque from './pages/Estoque';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -20,6 +21,10 @@ function App() {
         <Route
           path="/clientes/:id"
           element={token ? <ClienteDetalhes /> : <Navigate to="/" />} // 👈 Nova rota protegida
+        />
+        <Route
+          path="/estoque"
+          element={token ? <Estoque /> : <Navigate to="/" />}
         />
       </Routes>
     </BrowserRouter>
