@@ -1,63 +1,97 @@
+
 .estoque-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 60px auto;
   padding: 40px;
-  background-color: #fef9f8;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background-color: #fcf1ef;
+  border-radius: 20px;
+  box-shadow: 0 24px 36px rgba(0, 0, 0, 0.05);
   font-family: 'Segoe UI', sans-serif;
+   border: 1px solid #E1CFCF;
 }
 
 .estoque-container h2 {
   color: #a2786a;
   text-align: center;
   margin-bottom: 30px;
-  font-size: 28px;
 }
 
-.form-estoque {
+.estoque-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  justify-content: center;
   margin-bottom: 30px;
 }
 
-.form-estoque input,
-.form-estoque select {
+.estoque-form input {
   padding: 10px;
-  border: 1px solid #d4baba;
+  border: 1px solid #FFF5F8;
   border-radius: 6px;
   font-size: 14px;
   background-color: #fff;
-  flex: 1 1 45%;
+  flex: 1;
+  min-width: 180px;
 }
 
-.form-estoque button {
+.estoque-form button {
+  padding: 10px 16px;
   background-color: #a2786a;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 12px 20px;
   font-weight: bold;
   cursor: pointer;
-  flex: 1 1 100%;
-  margin-top: 10px;
 }
 
-.form-estoque button:hover {
-  background-color: #8c6257;
+.estoque-form button:hover {
+  background-color: #8c5e51;
 }
 
-.lista-estoque {
-  margin-top: 20px;
+.estoque-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
-.item-estoque {
-  background-color: #fff5f5;
-  border-left: 4px solid #d5a39e;
-  padding: 15px;
-  margin-bottom: 12px;
+.estoque-item {
+  background-color: #FFF5F8;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  width: 260px;
+  text-align: left;
+}
+
+.estoque-item strong {
+  display: block;
+  color: #a2786a;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.estoque-item p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.estoque-form input,
+.estoque-form select,
+.estoque-form textarea {
+  border: 1px solid #c5a5a0; /* cor da borda */
   border-radius: 8px;
-  color: #5a3e3e;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 10px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.estoque-form input:focus,
+.estoque-form select:focus,
+.estoque-form textarea:focus {
+  outline: none;
+  border-color: #a2786a; /* cor de foco */
+  box-shadow: 0 0 0 2px rgba(162, 120, 106, 0.2); /* realce suave */
 }
