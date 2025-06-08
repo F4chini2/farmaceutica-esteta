@@ -83,7 +83,7 @@
 
 .btn-excluir-agendamento {
   margin-top: 10px;
-  background-color: #d96363;
+  background-color: #BB9380;
   color: white;
   border: none;
   padding: 8px 12px;
@@ -96,5 +96,19 @@
 
 .btn-excluir-agendamento:hover {
   background-color: #b84c4c;
+}
+
+.barra-pesquisa {
+  padding: 10px 16px;
+  border: 1px solid #d4baba;
+  border-radius: 8px;
+  font-size: 15px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 20px;
+  display: block;
+  background-color: #fffaf9;
+  color: #4d3b2f;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
