@@ -1,17 +1,33 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
+}
+
 .detalhes-container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 60px auto;
-  padding: 40px;
-  background-color: #fef9f8;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 50px 40px;
+  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', sans-serif;
 }
 
 .detalhes-container h2 {
   color: #a2786a;
-  margin-bottom: 20px;
-  font-size: 28px;
+  margin-bottom: 24px;
+  font-size: 32px;
+  text-align: center;
+}
+
+.detalhes-container h3 {
+  font-size: 24px;
+  color: #6d4c41;
+  margin-top: 40px;
+  margin-bottom: 16px;
   text-align: center;
 }
 
@@ -21,7 +37,8 @@
   color: #444;
 }
 
-.form-agendamento {
+.form-agendamento,
+.editar-descricao {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -30,17 +47,14 @@
 
 .form-agendamento input,
 .form-agendamento select,
-.form-agendamento textarea {
+.form-agendamento textarea,
+.editar-descricao textarea {
   padding: 10px;
   border: 1px solid #d4baba;
   border-radius: 6px;
   font-size: 14px;
   background-color: #fff;
-}
-
-.form-agendamento textarea {
   resize: vertical;
-  min-height: 80px;
 }
 
 .novo-servico-linha {
@@ -62,7 +76,8 @@
   cursor: pointer;
 }
 
-.form-agendamento button[type="submit"] {
+.form-agendamento button[type="submit"],
+.editar-descricao button {
   background-color: #a2786a;
   color: white;
   border: none;
@@ -71,9 +86,11 @@
   font-weight: bold;
   cursor: pointer;
   font-size: 15px;
+  transition: background-color 0.3s ease;
 }
 
-.form-agendamento button:hover {
+.form-agendamento button:hover,
+.editar-descricao button:hover {
   background-color: #8c6257;
 }
 
@@ -103,38 +120,4 @@
   border-radius: 8px;
   font-style: italic;
   color: #5a3e3e;
-}
-
-.editar-descricao {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.editar-descricao textarea {
-  padding: 10px;
-  border: 1px solid #d4baba;
-  border-radius: 6px;
-  font-size: 14px;
-  resize: vertical;
-  min-height: 60px;
-  background-color: #fffaf9;
-  color: #5a3e3e;
-}
-
-.editar-descricao button {
-  align-self: flex-start;
-  padding: 8px 14px;
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.editar-descricao button:hover {
-  background-color: #8c5e51;
 }
