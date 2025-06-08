@@ -94,7 +94,7 @@ function Agendamentos() {
                 <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
                 <p><strong>🗓 Data:</strong> {new Date(ag.data).toLocaleDateString()}</p>
                 <p><strong>⏰ Horário:</strong> {ag.horario?.slice(0, 5)}</p>
-                <p><strong>💆 Serviço:</strong> {ag.servico}</p>
+                <p><strong>💼 Serviço:</strong> {ag.servico}</p>
                 <p><strong>📝 Observações:</strong> {ag.observacoes || 'Nenhuma'}</p>
                 <button className="btn-historico-agendamento" onClick={() => enviarParaHistorico(ag)}>📁 Enviar para Histórico</button>
                 <button className="btn-excluir-agendamento" onClick={() => excluirAgendamento(ag)}>🗑️ Excluir</button>

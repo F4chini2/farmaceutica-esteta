@@ -74,7 +74,7 @@ function Historico() {
               <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
               <p><strong>🗓 Data:</strong> {new Date(proc.data).toLocaleDateString()}</p>
               <p><strong>⏰ Horário:</strong> {proc.horario?.slice(0, 5)}</p>
-              <p><strong>💆 Serviço:</strong> {proc.servico}</p>
+              <p><strong>💼 Serviço:</strong> {proc.servico}</p>
               <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
               <div className="upload-wrapper">

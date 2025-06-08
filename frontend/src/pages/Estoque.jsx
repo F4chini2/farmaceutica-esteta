@@ -153,8 +153,8 @@ function Estoque() {
           .map((item) => (
             <div key={item.id} className="estoque-item">
               <strong>{item.nome}</strong>
-              <p>{item.quantidade} {item.unidade}</p>
-              <p>Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
+              <p>🧾{item.quantidade} {item.unidade}</p>
+              <p>⏳ Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
               <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                 <button onClick={() => atualizarQuantidade(item.id, +1)}>➕</button>
                 <button onClick={() => atualizarQuantidade(item.id, -1)}>➖</button>

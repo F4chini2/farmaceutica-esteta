@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../components/Tabs';
-import './ClienteDetalhes.css';
+import './NovoCliente.css';
 
 function NovoCliente() {
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ function NovoCliente() {
 
   return (
     <div className="detalhes-container">
-      <Tabs />
       <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
         ⬅ Voltar para lista
       </button>

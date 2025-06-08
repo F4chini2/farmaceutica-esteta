@@ -124,8 +124,8 @@ function Fornecedores() {
           .map((f) => (
             <div key={f.id} className="fornecedor-item">
               <strong>{f.nome}</strong>
-              <p>Contato: {f.contato}</p>
-              <p>Produtos: {f.produtos}</p>
+              <p>📞 Contato: {f.contato}</p>
+              <p>🧪 Produtos: {f.produtos}</p>
               <button className="btn-excluir-agendamento" onClick={() => excluirFornecedor(f.id)}>
                 🗑️ Excluir
               </button>
