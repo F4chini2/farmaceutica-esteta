@@ -62,13 +62,12 @@ function Dashboard() {
   return (
   <div className="dashboard-container">
     <Tabs />
-    <h1>Clientes</h1>
-<button
-  className="btn-agendamentos"
-  onClick={() => navigate('/dashboard/novo-cliente')}
->
-  ➕ Novo Cliente
-</button>
+  <div className="topo-dashboard">
+  <button className="btn-novo-cliente" onClick={() => navigate('/dashboard/novo-cliente')}>
+    ➕ Novo Cliente
+  </button>
+  <h1>Clientes</h1>
+</div>
 
     <div className="clientes-lista">
       {clientes.map((cliente) => (
