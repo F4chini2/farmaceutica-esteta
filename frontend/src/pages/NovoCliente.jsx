@@ -1,7 +1,8 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../components/Tabs';
-import './ClienteDetalhes.css'; // usa o mesmo estilo
+import './ClienteDetalhes.css';
 
 function NovoCliente() {
   const navigate = useNavigate();
@@ -42,13 +43,30 @@ function NovoCliente() {
   return (
     <div className="detalhes-container">
       <Tabs />
-      <button className="btn-voltar" onClick={() => navigate('/dashboard')}>⬅ Voltar para lista</button>
+      <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
+        ⬅ Voltar para lista
+      </button>
       <h2>Novo Cliente</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
-        <input placeholder="Nome" required onChange={e => setForm({ ...form, nome: e.target.value })} />
-        <input placeholder="Telefone" required onChange={e => setForm({ ...form, telefone: e.target.value })} />
-        <input placeholder="Alergias" onChange={e => setForm({ ...form, alergias: e.target.value })} />
-        <textarea placeholder="Descrição" onChange={e => setForm({ ...form, descricao: e.target.value })} />
+        <input
+          placeholder="Nome"
+          required
+          onChange={e => setForm({ ...form, nome: e.target.value })}
+        />
+        <input
+          placeholder="Telefone"
+          required
+          onChange={e => setForm({ ...form, telefone: e.target.value })}
+        />
+        <input
+          placeholder="Alergias"
+          onChange={e => setForm({ ...form, alergias: e.target.value })}
+        />
+        <textarea
+          placeholder="Descrição"
+          value={form.descricao || ''}
+          onChange={e => setForm({ ...form, descricao: e.target.value })}
+        />
         <button type="submit">Cadastrar Cliente</button>
       </form>
     </div>

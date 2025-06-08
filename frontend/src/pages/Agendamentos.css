@@ -1,24 +1,45 @@
+
 .agendamentos-container {
+  max-width: 900px;
+  margin: 60px auto;
   padding: 40px;
-  background-color: #fcfcfc;
+  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
+  border-radius: 20px;
+  box-shadow: 0 24px 36px rgba(0, 0, 0, 0.05);
   font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
+  border: 1px solid #e1cfcc;
+}
+
+.agendamentos-container h2 {
+  font-size: 42px;
+  color: #6d4c41;
   text-align: center;
+  margin-bottom: 30px;
 }
 
 .lista-agendamentos {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 24px;
   justify-content: center;
-  margin-top: 20px;
 }
 
 .card-agendamento {
-  background: #fff5f8;
-  border-radius: 12px;
-  padding: 20px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: left;
+  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  width: 280px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-agendamento:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card-agendamento p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #4d3b2f;
 }
