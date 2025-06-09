@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./CadastrarBoletos.css";
@@ -16,7 +15,7 @@ function CadastrarBoleto() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    formData.append("fornecedor_id", id); // ✅ Corrigido
+    formData.append("fornecedor_id", id);
     formData.append("numero", numero);
     formData.append("valor", valor);
     formData.append("vencimento", vencimento);
@@ -57,9 +56,16 @@ function CadastrarBoleto() {
         <label>Observações:
           <textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} />
         </label>
-        <label>Arquivo PDF:
-          <input type="file" accept=".pdf" onChange={(e) => setArquivo(e.target.files[0])} />
-        </label>
+
+        <div className="upload-wrapper">
+          <span>📎 Arquivo PDF:</span>
+          <label className="custom-file-upload">
+            <input type="file" accept=".pdf" onChange={(e) => setArquivo(e.target.files[0])} />
+            Escolher arquivo
+          </label>
+          {arquivo && <span>{arquivo.name}</span>}
+        </div>
+
         <button type="submit">💾 Cadastrar Boleto</button>
       </form>
     </div>

@@ -1,10 +1,12 @@
 import './Boletos.css';
+import './Historico.css'; // Para zoom e overlay
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 
 function BoletosPagos() {
   const [boletos, setBoletos] = useState([]);
   const [busca, setBusca] = useState('');
+  const [imagemSelecionada, setImagemSelecionada] = useState(null);
 
   useEffect(() => {
     const fetchBoletos = async () => {
@@ -56,10 +58,32 @@ function BoletosPagos() {
             <p><strong>Valor:</strong> R$ {b.valor}</p>
             <p><strong>Vencimento:</strong> {new Date(b.vencimento).toLocaleDateString()}</p>
             <p><strong>Observações:</strong> {b.observacoes || 'Nenhuma'}</p>
+
+            {b.arquivo && (
+              b.arquivo.endsWith('.pdf') ? (
+                <a href={`http://localhost:3001${b.arquivo}`} target="_blank" rel="noopener noreferrer">
+                  📄 Ver PDF
+                </a>
+              ) : (
+                <img
+                  src={`http://localhost:3001${b.arquivo}`}
+                  alt="arquivo"
+                  className="foto-procedimento"
+                  onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
+                />
+              )
+            )}
+
             <button onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
           </div>
         ))}
       </div>
+
+      {imagemSelecionada && (
+        <div className="overlay" onClick={() => setImagemSelecionada(null)}>
+          <img src={imagemSelecionada} alt="Visualização" className="imagem-grande" />
+        </div>
+      )}
     </div>
   );
 }
