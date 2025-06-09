@@ -1,126 +1,42 @@
-
-.fornecedores-container {
-  padding: 40px;
-  font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
-  box-sizing: border-box;
-}
-
-.fornecedores-container h2,
-.topo-dashboard h1 {
-  font-size: 48px;
-  font-weight: bold;
-  color: #6d4c41;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.barra-pesquisa {
-  padding: 10px;
-  font-size: 14px;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto 20px;
-  display: block;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.clientes-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
-}
-
-.cliente-card {
-  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
-  padding: 24px;
+.fornecedores-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fdf7f5;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: 280px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.cliente-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+.fornecedores-form textarea {
+  grid-column: span 2;
+  resize: vertical;
+  min-height: 60px;
 }
 
-.cliente-card p {
-  margin: 6px 0;
+.fornecedores-form input,
+.fornecedores-form textarea {
+  padding: 10px;
+  border: 1px solid #c5a5a0;
+  border-radius: 8px;
   font-size: 14px;
-  color: #4d3b2f;
+  background-color: #fff;
 }
 
-.cliente-card strong {
-  color: #6d4c41;
-}
-
-.cliente-card button {
-  margin-top: 10px;
-  padding: 8px 12px;
+.fornecedores-form button {
+  grid-column: span 2;
+  padding: 10px 16px;
+  background-color: #a2786a;
+  color: white;
   border: none;
   border-radius: 8px;
   font-weight: bold;
-  font-size: 13px;
   cursor: pointer;
-  background-color: #a2786a;
-  color: white;
   transition: background-color 0.3s ease;
 }
 
-.cliente-card button:hover {
+.fornecedores-form button:hover {
   background-color: #8c5e51;
-}
-
-.upload-wrapper {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.custom-file-upload {
-  display: inline-block;
-  padding: 10px 16px;
-  border: 1px solid #c6a89d;
-  border-radius: 8px;
-  background-color: #fffaf9;
-  color: #6d4c41;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-  width: fit-content;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.custom-file-upload:hover {
-  background-color: #f2e1db;
-  border-color: #a2786a;
-}
-
-.custom-file-upload input[type="file"] {
-  display: none;
-}
-
-.arquivo-pdf-link {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 8px 14px;
-  background-color: #7b4a3a;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.arquivo-pdf-link:hover {
-  background-color: #5d3325;
 }

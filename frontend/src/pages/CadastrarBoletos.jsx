@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./CadastrarBoleto.css";
+import "./CadastrarBoletos.css";
 
 function CadastrarBoleto() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ function CadastrarBoleto() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     const formData = new FormData();
+    formData.append("fornecedor_id", id); // ✅ Corrigido
     formData.append("numero", numero);
     formData.append("valor", valor);
     formData.append("vencimento", vencimento);
@@ -22,7 +24,7 @@ function CadastrarBoleto() {
     if (arquivo) formData.append("arquivo", arquivo);
 
     try {
-      const resp = await fetch(`http://localhost:3001/boletos/fornecedor/${id}`, {
+      const resp = await fetch("http://localhost:3001/boletos", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

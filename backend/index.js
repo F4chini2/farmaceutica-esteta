@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -6,8 +7,8 @@ const PORT = 3001;
 
 // 🔓 Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // 👈 Adicionado para suportar form-data
+app.use(express.json()); // ✅ necessário para JSON (ex: cadastrar fornecedor)
+app.use(express.urlencoded({ extended: true })); // ✅ necessário para form-data (ex: upload de boletos)
 
 // 📂 Servir arquivos da pasta /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

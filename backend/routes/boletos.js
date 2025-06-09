@@ -6,7 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configuração do multer para armazenar arquivos na pasta /uploads/boletos
+// Configuração do multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, '..', 'uploads', 'boletos');
@@ -14,19 +14,21 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
     const nomeArquivo = `${Date.now()}-${file.originalname}`;
     cb(null, nomeArquivo);
   }
 });
-
 const upload = multer({ storage });
 
-// Criar novo boleto com upload
+// Criar boleto
 router.post('/', autenticarToken, upload.single('arquivo'), async (req, res) => {
   try {
     const { fornecedor_id, numero, valor, vencimento, observacoes } = req.body;
     const arquivoPath = req.file ? `/uploads/boletos/${req.file.filename}` : null;
+
+    if (!fornecedor_id) {
+      return res.status(400).json({ erro: "fornecedor_id é obrigatório." });
+    }
 
     const resultado = await pool.query(
       `INSERT INTO boletos (fornecedor_id, numero, valor, vencimento, observacoes, arquivo)
@@ -53,6 +55,7 @@ router.get('/', autenticarToken, async (req, res) => {
     `);
     res.status(200).json(resultado.rows);
   } catch (err) {
+    console.error("Erro ao buscar boletos:", err);
     res.status(500).json({ erro: 'Erro ao buscar boletos.' });
   }
 });
@@ -69,6 +72,7 @@ router.get('/pagos', autenticarToken, async (req, res) => {
     `);
     res.status(200).json(resultado.rows);
   } catch (err) {
+    console.error("Erro ao buscar boletos pagos:", err);
     res.status(500).json({ erro: 'Erro ao buscar boletos pagos.' });
   }
 });
@@ -77,11 +81,12 @@ router.get('/pagos', autenticarToken, async (req, res) => {
 router.patch('/:id/pagar', autenticarToken, async (req, res) => {
   try {
     const resultado = await pool.query(
-      `UPDATE boletos SET pago = true WHERE id = $1 RETURNING *`,
+      'UPDATE boletos SET pago = true WHERE id = $1 RETURNING *',
       [req.params.id]
     );
     res.status(200).json(resultado.rows[0]);
   } catch (err) {
+    console.error("Erro ao marcar como pago:", err);
     res.status(500).json({ erro: 'Erro ao marcar como pago.' });
   }
 });
@@ -89,9 +94,9 @@ router.patch('/:id/pagar', autenticarToken, async (req, res) => {
 // Excluir boleto
 router.delete('/:id', autenticarToken, async (req, res) => {
   try {
-    // Remove o arquivo do disco (se houver)
     const { rows } = await pool.query('SELECT arquivo FROM boletos WHERE id = $1', [req.params.id]);
     const arquivo = rows[0]?.arquivo;
+
     if (arquivo) {
       const caminho = path.join(__dirname, '..', arquivo);
       fs.unlink(caminho, () => {});
@@ -100,6 +105,7 @@ router.delete('/:id', autenticarToken, async (req, res) => {
     await pool.query('DELETE FROM boletos WHERE id = $1', [req.params.id]);
     res.sendStatus(204);
   } catch (err) {
+    console.error("Erro ao excluir boleto:", err);
     res.status(500).json({ erro: 'Erro ao excluir boleto.' });
   }
 });

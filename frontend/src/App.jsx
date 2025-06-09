@@ -8,8 +8,9 @@ import Fornecedores from './pages/Fornecedores';
 import Historico from './pages/Historico';
 import ClientesFull from './pages/ClientesFull';
 import Agendar from './pages/Agendar';
-import Boletos from './pages/Boletos'; // ✅ NOVO
-import BoletosPagos from './pages/BoletosPagos'; // ✅ NOVO
+import Boletos from './pages/Boletos';
+import BoletosPagos from './pages/BoletosPagos';
+import CadastrarBoleto from './pages/CadastrarBoletos'; // ✅ Adicionado
 
 function App() {
   const token = localStorage.getItem('token');
@@ -26,9 +27,10 @@ function App() {
         <Route path="/agendamentos" element={token ? <Agendamentos /> : <Navigate to="/" />} />
         <Route path="/estoque" element={token ? <Estoque /> : <Navigate to="/" />} />
         <Route path="/fornecedores" element={token ? <Fornecedores /> : <Navigate to="/" />} />
+        <Route path="/fornecedores/:id/boletos" element={token ? <CadastrarBoleto /> : <Navigate to="/" />} /> {/* ✅ NOVA ROTA */}
         <Route path="/clientesfull" element={token ? <ClientesFull /> : <Navigate to="/" />} />
-        <Route path="/boletos" element={token ? <Boletos /> : <Navigate to="/" />} /> {/* ✅ NOVA ROTA */}
-        <Route path="/boletos-pagos" element={token ? <BoletosPagos /> : <Navigate to="/" />} /> {/* ✅ NOVA ROTA */}
+        <Route path="/boletos" element={token ? <Boletos /> : <Navigate to="/" />} />
+        <Route path="/boletos-pagos" element={token ? <BoletosPagos /> : <Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
