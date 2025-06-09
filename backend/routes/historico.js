@@ -107,11 +107,23 @@ router.delete('/foto/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const resultado = await pool.query('DELETE FROM fotos_procedimentos WHERE id = $1 RETURNING *', [id]);
+    const resultado = await pool.query(
+      'DELETE FROM fotos_procedimentos WHERE id = $1 RETURNING *',
+      [id]
+    );
 
     if (resultado.rowCount === 0) {
       return res.status(404).json({ erro: 'Foto não encontrada.' });
     }
+
+    const foto = resultado.rows[0];
+    const caminho = path.join(__dirname, '..', foto.url); // Monta o caminho do arquivo
+
+    fs.unlink(caminho, (err) => {
+      if (err) {
+        console.error('Erro ao excluir arquivo:', err);
+      }
+    });
 
     res.status(200).json({ mensagem: 'Foto excluída com sucesso.' });
   } catch (err) {
@@ -119,6 +131,7 @@ router.delete('/foto/:id', async (req, res) => {
     res.status(500).json({ erro: 'Erro ao excluir foto.' });
   }
 });
+
 
 
 
