@@ -47,13 +47,13 @@ html, body {
 
 .form-agendamento {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   max-width: 700px;
   margin: 0 auto;
 }
 
-.form-agendamento label {
+.campo-formulario {
   display: flex;
   flex-direction: column;
   font-weight: 600;

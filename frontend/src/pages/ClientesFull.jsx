@@ -59,7 +59,7 @@ function ClientesFull() {
       <h2>Cadastro Completo do Cliente</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
         {Object.entries(form).map(([campo, valor]) => (
-          <label key={campo}>
+          <label key={campo} className="campo-formulario">
             {campo.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
             {campo.startsWith('usa_') || campo === 'gravida' ? (
               <select value={valor} onChange={e => handleChange(campo, e.target.value)}>
