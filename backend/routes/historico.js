@@ -116,7 +116,9 @@ router.delete('/foto/:id', async (req, res) => {
     }
 
     const foto = resultado.rows[0];
-    const caminho = path.join(__dirname, '..', foto.url); // Monta o caminho do arquivo
+
+    // Monta o caminho do arquivo para a remoção
+    const caminho = path.resolve(__dirname, '..', foto.url.replace(/^\/+/, '')); 
 
     fs.unlink(caminho, (err) => {
       if (err) {
