@@ -1,5 +1,3 @@
-// index.js
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -9,8 +7,9 @@ const PORT = 3001;
 // 🔓 Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // 👈 Adicionado para suportar form-data
 
-// 📂 Servir imagens da pasta /uploads
+// 📂 Servir arquivos da pasta /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 📦 Importa rotas

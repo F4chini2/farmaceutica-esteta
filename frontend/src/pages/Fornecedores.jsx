@@ -41,14 +41,19 @@ function Fornecedores() {
   const cadastrarBoleto = async (e, id) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+    const formData = new FormData();
     const dados = boletos[id];
+    formData.append('fornecedor_id', id);
+    formData.append('numero', dados.numero);
+    formData.append('valor', dados.valor);
+    formData.append('vencimento', dados.vencimento);
+    formData.append('observacoes', dados.observacoes);
+    if (dados.arquivo) formData.append('arquivo', dados.arquivo);
+
     const resp = await fetch('http://localhost:3001/boletos', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ ...dados, fornecedor_id: id })
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
     });
     if (resp.ok) {
       alert('Boleto cadastrado com sucesso!');
@@ -62,13 +67,15 @@ function Fornecedores() {
     <div className="fornecedores-container">
       <Tabs />
       <h2>📦 Fornecedores</h2>
-<input
+
+      <input
         className="barra-pesquisa"
         type="text"
         placeholder="🔍 Buscar por nome, email ou telefone..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
+
       <form className="fornecedores-form" onSubmit={cadastrarFornecedor}>
         <input placeholder="Nome" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
         <input placeholder="Contato" value={form.contato} onChange={e => setForm({ ...form, contato: e.target.value })} />
@@ -113,6 +120,11 @@ function Fornecedores() {
                   placeholder="Observações"
                   value={boletos[f.id]?.observacoes || ''}
                   onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], observacoes: e.target.value } }))}
+                />
+                <input
+                  type="file"
+                  accept="application/pdf,image/*"
+                  onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], arquivo: e.target.files[0] } }))}
                 />
                 <button type="submit">💳 Cadastrar Boleto</button>
               </form>
