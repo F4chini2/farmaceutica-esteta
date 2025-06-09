@@ -72,9 +72,10 @@ function ClientesFull() {
             )}
           </label>
         ))}
-        <button type="submit" style={{ gridColumn: 'span 2' }}>
-          Cadastrar Cliente
-        </button>
+        <button type="submit">
+  Cadastrar Cliente
+</button>
+
       </form>
     </div>
   );
