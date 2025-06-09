@@ -4,7 +4,7 @@ const router = express.Router();
 const pool = require('../db');
 const autenticarToken = require('../middleware/auth');
 
-// POST /agendamentos
+// Cadastrar novo agendamento para um cliente
 router.post('/', autenticarToken, async (req, res) => {
   const { cliente_id, data, horario, servico, observacoes } = req.body;
 
@@ -25,7 +25,7 @@ router.post('/', autenticarToken, async (req, res) => {
   }
 });
 
-// GET /agendamentos
+// Listar todos os agendamentos
 router.get('/', autenticarToken, async (req, res) => {
   if (req.usuario.tipo !== 'admin') {
     return res.status(403).json({ erro: 'Acesso restrito a administradores' });
@@ -55,7 +55,7 @@ router.get('/', autenticarToken, async (req, res) => {
   }
 });
 
-// GET /agendamentos/:id
+// Buscar detalhes de um agendamento específico pelo ID
 router.get('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
 
@@ -77,7 +77,7 @@ router.get('/:id', autenticarToken, async (req, res) => {
   }
 });
 
-// PUT /agendamentos/:id
+// Atualizar as informações de um agendamento existente
 router.put('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
   const { cliente_id, data, horario, servico, observacoes } = req.body;
@@ -105,7 +105,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
   }
 });
 
-// DELETE /agendamentos/:id
+// Excluir um agendamento específico
 router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   const { id } = req.params;
 
@@ -123,7 +123,7 @@ router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   }
 });
 
-// NOVA ROTA: POST /agendamentos/:id/historico
+// Mover um agendamento específico para o histórico de procedimentos
 router.post('/:id/historico', autenticarToken, async (req, res) => {
   const { id } = req.params;
 

@@ -30,7 +30,7 @@ router.post('/', autenticarToken, async (req, res) => {
   }
 });
 
-// PUT /estoque/:id - atualizar item
+// Atualizar as informações de um item do estoque
 router.put('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
   const { nome, quantidade, unidade, validade } = req.body;
@@ -49,7 +49,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
   }
 });
 
-// DELETE /estoque/:id - remover item
+// Remover um item do estoque pelo ID
 router.delete('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
   try {

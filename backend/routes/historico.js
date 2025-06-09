@@ -20,10 +20,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/**
- * GET /clientes/:id/historico
- * Lista todos os procedimentos históricos de um cliente
- */
+// Listar todos os procedimentos históricos de um cliente pelo ID
 router.get('/clientes/:id/historico', async (req, res) => {
   const { id } = req.params;
   try {
@@ -38,10 +35,7 @@ router.get('/clientes/:id/historico', async (req, res) => {
   }
 });
 
-/**
- * GET /historico/todos
- * Lista todos os procedimentos históricos de todos os clientes
- */
+// Listar todos os procedimentos históricos de todos os clientes
 router.get('/todos', async (req, res) => {
   try {
     const resultado = await pool.query(
@@ -54,10 +48,7 @@ router.get('/todos', async (req, res) => {
   }
 });
 
-/**
- * POST /clientes/:id/historico
- * Adiciona um novo registro ao histórico do cliente
- */
+// Adicionar um novo procedimento ao histórico de um cliente
 router.post('/clientes/:id/historico', async (req, res) => {
   const { id } = req.params;
   const { data, horario, servico, observacoes } = req.body;
@@ -74,10 +65,7 @@ router.post('/clientes/:id/historico', async (req, res) => {
   }
 });
 
-/**
- * POST /historico/:id/fotos
- * Faz upload de imagens relacionadas a um procedimento
- */
+// Enviar imagens relacionadas a um procedimento do histórico
 router.post('/historico/:id/fotos', upload.array('fotos', 10), async (req, res) => {
   const { id } = req.params;
   const arquivos = req.files;
@@ -97,10 +85,7 @@ router.post('/historico/:id/fotos', upload.array('fotos', 10), async (req, res) 
   }
 });
 
-/**
- * GET /historico/:id/fotos
- * Busca as fotos vinculadas a um procedimento
- */
+// Buscar imagens vinculadas a um procedimento do histórico
 router.get('/historico/:id/fotos', async (req, res) => {
   const { id } = req.params;
 
@@ -117,10 +102,7 @@ router.get('/historico/:id/fotos', async (req, res) => {
 });
 
 
-/**
- * DELETE /historico/foto/:id
- * Remove uma foto de procedimento
- */
+// Remover uma imagem de um procedimento do histórico
 router.delete('/foto/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -140,10 +122,7 @@ router.delete('/foto/:id', async (req, res) => {
 
 
 
-/**
- * DELETE /historico/:id
- * Remove um histórico e suas imagens associadas
- */
+// Remover um procedimento do histórico junto com suas imagens
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 

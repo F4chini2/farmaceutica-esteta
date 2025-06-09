@@ -1,5 +1,3 @@
-// clientesfull.js
-
 const autenticarToken = require('../middleware/auth');
 const adminOnly = require('../middleware/adminOnly');
 const express = require('express');
@@ -12,7 +10,7 @@ async function clienteTemAgendamentos(id) {
   return parseInt(resultado.rows[0].count) > 0;
 }
 
-// POST /clientesfull
+// Cadastrar um novo cliente
 router.post('/', autenticarToken, async (req, res) => {
   try {
     const cliente = req.body;
@@ -50,7 +48,7 @@ router.post('/', autenticarToken, async (req, res) => {
   }
 });
 
-// PUT /clientesfull/:id
+// Atualizar os dados de um cliente existente
 router.put('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
   const cliente = req.body;
@@ -88,7 +86,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
   }
 });
 
-// GET /clientesfull
+// Listar todos os clientes cadastrados
 router.get('/', autenticarToken, async (req, res) => {
   try {
     const resultado = await pool.query('SELECT * FROM clientes ORDER BY id');
@@ -99,7 +97,7 @@ router.get('/', autenticarToken, async (req, res) => {
   }
 });
 
-// GET /clientesfull/:id
+// Buscar os dados de um cliente específico pelo ID
 router.get('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
 
@@ -117,7 +115,7 @@ router.get('/:id', autenticarToken, async (req, res) => {
   }
 });
 
-// DELETE /clientesfull/:id
+// Excluir um cliente específico pelo ID
 router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   const { id } = req.params;
 
