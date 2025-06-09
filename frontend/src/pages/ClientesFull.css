@@ -11,7 +11,7 @@ html, body {
 }
 
 .detalhes-container {
-  max-width: 700px;
+  max-width: 1000px;
   margin: 60px auto;
   padding: 50px 40px;
   background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
