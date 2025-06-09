@@ -15,7 +15,6 @@ function Tabs() {
   { label: 'Boletos Pagos', path: '/boletos-pagos' },
 ];
 
-
   return (
     <div className="tabs-container">
       {tabs.map((tab) => (

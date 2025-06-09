@@ -7,7 +7,8 @@
   box-sizing: border-box;
 }
 
-.fornecedores-container h2 {
+.fornecedores-container h2,
+.topo-dashboard h1 {
   font-size: 48px;
   font-weight: bold;
   color: #6d4c41;
@@ -26,48 +27,14 @@
   border: 1px solid #ccc;
 }
 
-.fornecedores-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.fornecedores-form input,
-.fornecedores-form textarea {
-  padding: 10px;
-  border: 1px solid #c5a5a0;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #fff;
-  flex: 1;
-  min-width: 180px;
-}
-
-.fornecedores-form button {
-  padding: 10px 16px;
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.fornecedores-form button:hover {
-  background-color: #8c5e51;
-}
-
-.fornecedores-lista {
+.clientes-lista {
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
   justify-content: center;
 }
 
-.fornecedor-item {
+.cliente-card {
   background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
   padding: 24px;
   border-radius: 16px;
@@ -76,25 +43,22 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.fornecedor-item:hover {
+.cliente-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
 }
 
-.fornecedor-item p {
+.cliente-card p {
   margin: 6px 0;
   font-size: 14px;
   color: #4d3b2f;
 }
 
-.fornecedor-item strong {
-  display: block;
-  color: #a2786a;
-  font-size: 18px;
-  margin-bottom: 10px;
+.cliente-card strong {
+  color: #6d4c41;
 }
 
-.fornecedor-item button {
+.cliente-card button {
   margin-top: 10px;
   padding: 8px 12px;
   border: none;
@@ -107,7 +71,7 @@
   transition: background-color 0.3s ease;
 }
 
-.fornecedor-item button:hover {
+.cliente-card button:hover {
   background-color: #8c5e51;
 }
 
@@ -143,4 +107,20 @@
 
 .custom-file-upload input[type="file"] {
   display: none;
+}
+
+.arquivo-pdf-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background-color: #7b4a3a;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.arquivo-pdf-link:hover {
+  background-color: #5d3325;
 }

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 import './Fornecedores.css';
+import './Historico.css';
 
 function Fornecedores() {
   const [fornecedores, setFornecedores] = useState([]);
   const [form, setForm] = useState({ nome: '', contato: '', email: '', observacoes: '' });
   const [boletos, setBoletos] = useState({});
   const [busca, setBusca] = useState('');
+  const [visualizacoes, setVisualizacoes] = useState({});
 
   useEffect(() => {
     carregarFornecedores();
@@ -63,10 +65,26 @@ function Fornecedores() {
     }
   };
 
+  const excluirFornecedor = async (id) => {
+    if (!window.confirm('Tem certeza que deseja excluir este fornecedor?')) return;
+    const token = localStorage.getItem('token');
+    const resp = await fetch(`http://localhost:3001/fornecedores/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (resp.ok) {
+      setFornecedores(prev => prev.filter(f => f.id !== id));
+    } else {
+      alert('Erro ao excluir fornecedor');
+    }
+  };
+
   return (
-    <div className="fornecedores-container">
+    <div className="dashboard-container">
       <Tabs />
-      <h2>📦 Fornecedores</h2>
+      <div className="topo-dashboard">
+        <h1>📦 Fornecedores</h1>
+      </div>
 
       <input
         className="barra-pesquisa"
@@ -76,15 +94,7 @@ function Fornecedores() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      <form className="fornecedores-form" onSubmit={cadastrarFornecedor}>
-        <input placeholder="Nome" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
-        <input placeholder="Contato" value={form.contato} onChange={e => setForm({ ...form, contato: e.target.value })} />
-        <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-        <textarea placeholder="Observações" value={form.observacoes} onChange={e => setForm({ ...form, observacoes: e.target.value })} />
-        <button type="submit">Cadastrar Fornecedor</button>
-      </form>
-
-      <div className="fornecedores-lista">
+      <div className="clientes-lista">
         {fornecedores
           .filter(f =>
             f.nome.toLowerCase().includes(busca.toLowerCase()) ||
@@ -92,11 +102,11 @@ function Fornecedores() {
             f.contato.toLowerCase().includes(busca.toLowerCase())
           )
           .map(f => (
-            <div key={f.id} className="fornecedor-item">
-              <strong>{f.nome}</strong>
-              <p><b>📞</b> {f.contato}</p>
-              <p><b>📧</b> {f.email}</p>
-              <p><b>📝</b> {f.observacoes || 'Nenhuma'}</p>
+            <div key={f.id} className="cliente-card">
+              <p><strong>📦 Nome:</strong> {f.nome}</p>
+              <p><strong>📞 Contato:</strong> {f.contato}</p>
+              <p><strong>📧 Email:</strong> {f.email}</p>
+              <p><strong>📝 Observações:</strong> {f.observacoes || 'Nenhuma'}</p>
 
               <form onSubmit={(e) => cadastrarBoleto(e, f.id)}>
                 <input
@@ -121,16 +131,67 @@ function Fornecedores() {
                   value={boletos[f.id]?.observacoes || ''}
                   onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], observacoes: e.target.value } }))}
                 />
-                <input
-                  type="file"
-                  accept="application/pdf,image/*"
-                  onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], arquivo: e.target.files[0] } }))}
-                />
-                <button type="submit">💳 Cadastrar Boleto</button>
+                <div className="upload-wrapper">
+                  <span>📎 Anexar boleto:</span>
+                  <label className="custom-file-upload">
+                    <input
+                      type="file"
+                      accept="application/pdf,image/*"
+                      onChange={(e) => setBoletos(prev => ({
+                        ...prev,
+                        [f.id]: {
+                          ...prev[f.id],
+                          arquivo: e.target.files[0],
+                          url: URL.createObjectURL(e.target.files[0]),
+                          nome: e.target.files[0].name,
+                          tipo: e.target.files[0].type
+                        }
+                      }))}
+                    />
+                    Escolher arquivo
+                  </label>
+                </div>
               </form>
+
+              {boletos[f.id]?.url && (
+                <div className="fotos-wrapper">
+                  <div className="foto-container">
+                    {boletos[f.id].tipo === 'application/pdf' ? (
+                      <a
+                        href={boletos[f.id].url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="arquivo-pdf-link"
+                      >
+                        📄 Ver PDF
+                      </a>
+                    ) : (
+                      <img
+                        src={boletos[f.id].url}
+                        alt="preview"
+                        className="foto-procedimento"
+                        onClick={() => setVisualizacoes({ ...visualizacoes, [f.id]: boletos[f.id].url })}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+              <button type="submit">💳 Cadastrar Boleto</button>
+              <button onClick={() => excluirFornecedor(f.id)}>🗑️ Excluir Fornecedor</button>
             </div>
           ))}
       </div>
+
+      {Object.values(visualizacoes).length > 0 && (
+        <div className="overlay" onClick={() => setVisualizacoes({})}>
+          <img
+            src={Object.values(visualizacoes)[0]}
+            alt="visualização"
+            className="imagem-grande"
+          />
+        </div>
+      )}
     </div>
   );
 }
