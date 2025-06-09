@@ -1,7 +1,7 @@
 // clientesfull.js
 
 const autenticarToken = require('../middleware/auth');
-const adminOnly = require('../middleware/admin');
+const adminOnly = require('../middleware/adminOnly');
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
