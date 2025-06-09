@@ -1,0 +1,63 @@
+
+.agendar-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 40px;
+  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.agendar-container h2 {
+  text-align: center;
+  color: #a2786a;
+  margin-bottom: 24px;
+}
+
+.form-agendamento {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-agendamento input,
+.form-agendamento textarea {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+.form-agendamento button {
+  background-color: #a2786a;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-agendamento button:hover {
+  background-color: #8c6257;
+}
+
+.btn-voltar {
+  background-color: #f3e0dc;
+  color: #a2786a;
+  border: 1px solid #d9b9b2;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+}
+
+.btn-voltar:hover {
+  background-color: #e8d0c8;
+  color: #8c5e51;
+}

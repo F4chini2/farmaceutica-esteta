@@ -65,11 +65,12 @@ function Dashboard() {
       <div className="topo-dashboard">
         <h1>🛍️ Clientes</h1>
         <button
-          className="btn-novo-cliente"
-          onClick={() => navigate('/dashboard/novo-cliente')}
-        >
-          ➕ Novo Cliente
-        </button>
+  className="btn-novo-cliente"
+  onClick={() => navigate('/clientesfull')}
+>
+  ➕ Novo Cliente
+</button>
+
       </div>
       <input
         className="barra-pesquisa"
