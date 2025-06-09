@@ -1,4 +1,3 @@
-
 import './Agendar.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -6,8 +5,12 @@ import { useState } from 'react';
 function Agendar() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    data: '', hora: '', procedimento: '', observacoes: ''
+    data: '',
+    horario: '',
+    servico: '',
+    observacao: ''
   });
 
   const handleChange = (campo, valor) => {
@@ -17,6 +20,11 @@ function Agendar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+
+    if (!form.data || !form.horario || !form.servico) {
+      alert('Preencha a data, o horário e o serviço.');
+      return;
+    }
 
     try {
       const resposta = await fetch('http://localhost:3001/agendamentos', {
@@ -29,29 +37,60 @@ function Agendar() {
       });
 
       const dados = await resposta.json();
+
       if (resposta.ok) {
         alert('Agendamento realizado com sucesso!');
-        navigate('/dashboard');
+        navigate('/agendamentos');
       } else {
-        alert(dados.erro || 'Erro ao agendar');
+        alert(dados.erro || 'Erro ao criar agendamento');
       }
     } catch (err) {
-      alert('Erro de conexão');
+      alert('Erro ao conectar com o servidor');
     }
   };
 
   return (
-    <div className="agendar-container">
-      <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
+    <div className="detalhes-container">
+      <button className="btn-voltar" onClick={() => navigate(-1)}>
         ⬅ Voltar
       </button>
-      <h2>📅 Novo Agendamento</h2>
+      <h2>Novo Agendamento</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
-        <input type="date" value={form.data} onChange={e => handleChange('data', e.target.value)} required />
-        <input type="time" value={form.hora} onChange={e => handleChange('hora', e.target.value)} required />
-        <input type="text" placeholder="Procedimento" value={form.procedimento} onChange={e => handleChange('procedimento', e.target.value)} required />
-        <textarea placeholder="Observações" value={form.observacoes} onChange={e => handleChange('observacoes', e.target.value)} />
-        <button type="submit">Agendar</button>
+        <label>
+          Data:
+          <input
+            type="date"
+            value={form.data}
+            onChange={e => handleChange('data', e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Horário:
+          <input
+            type="time"
+            value={form.horario}
+            onChange={e => handleChange('horario', e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Serviço:
+          <input
+            type="text"
+            value={form.servico}
+            onChange={e => handleChange('servico', e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Observação:
+          <textarea
+            value={form.observacao}
+            onChange={e => handleChange('observacao', e.target.value)}
+          />
+        </label>
+        <button type="submit">📅 Agendar</button>
       </form>
     </div>
   );

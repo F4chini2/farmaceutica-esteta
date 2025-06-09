@@ -48,6 +48,54 @@ function Historico() {
     }
   };
 
+  const deletarHistorico = async (id) => {
+    const confirmar = window.confirm("Deseja mesmo excluir este histórico?");
+    if (!confirmar) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const resp = await fetch(`http://localhost:3001/historico/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (resp.ok) {
+        setProcedimentos(prev => prev.filter(p => p.id !== id));
+        setFotos(prev => {
+          const novo = { ...prev };
+          delete novo[id];
+          return novo;
+        });
+      } else {
+        alert("Erro ao excluir histórico.");
+      }
+    } catch (err) {
+      alert("Erro de conexão.");
+    }
+  };
+
+  const deletarFoto = async (fotoId, historicoId) => {
+    const confirmar = window.confirm("Deseja excluir esta foto?");
+    if (!confirmar) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const resp = await fetch(`http://localhost:3001/historico/foto/${fotoId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (resp.ok) {
+        setFotos(prev => ({
+          ...prev,
+          [historicoId]: prev[historicoId].filter(f => f.id !== fotoId)
+        }));
+      } else {
+        alert("Erro ao excluir a foto.");
+      }
+    } catch (err) {
+      alert("Erro de conexão ao excluir foto.");
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <Tabs />
@@ -74,8 +122,10 @@ function Historico() {
               <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
               <p><strong>🗓 Data:</strong> {new Date(proc.data).toLocaleDateString()}</p>
               <p><strong>⏰ Horário:</strong> {proc.horario?.slice(0, 5)}</p>
-              <p><strong>💼 Serviço:</strong> {proc.servico}</p>
+              <p><strong>💆 Serviço:</strong> {proc.servico}</p>
               <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
+
+              <button onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
 
               <div className="upload-wrapper">
                 <span>📸 Enviar fotos:</span>
@@ -88,14 +138,16 @@ function Historico() {
               {fotos[proc.id] && fotos[proc.id].length > 0 && (
                 <div className="fotos-wrapper">
                   {fotos[proc.id].map(f => (
-                    <img
-                      key={f.id}
-                      src={`http://localhost:3001${f.url}`}
-                      alt="procedimento"
-                      className="foto-procedimento"
-                      onClick={() => setImagemSelecionada(`http://localhost:3001${f.url}`)}
-                      style={{ cursor: 'pointer' }}
-                    />
+                    <div className="foto-container" key={f.id}>
+                      <button className="btn-excluir-foto" onClick={() => deletarFoto(f.id, proc.id)}>🗑️</button>
+                      <img
+                        src={`http://localhost:3001${f.url}`}
+                        alt="procedimento"
+                        className="foto-procedimento"
+                        onClick={() => setImagemSelecionada(`http://localhost:3001${f.url}`)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </div>
                   ))}
                 </div>
               )}

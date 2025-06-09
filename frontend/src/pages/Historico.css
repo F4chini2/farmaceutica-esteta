@@ -1,47 +1,19 @@
-.cliente-detalhes {
-  background: linear-gradient(to bottom, #fffaf9, #f2e4de);
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.cliente-detalhes p {
-  margin: 8px 0;
-  font-size: 15px;
-}
-
-.upload-wrapper {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.custom-file-upload {
-  display: inline-block;
-  padding: 10px 16px;
-  border: 1px solid #c6a89d;
-  border-radius: 8px;
-  background-color: #fffaf9;
-  color: #6d4c41;
-  font-weight: bold;
-  font-size: 14px;
+.btn-excluir-foto {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-  width: fit-content;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.custom-file-upload:hover {
-  background-color: #f2e1db;
-  border-color: #a2786a;
-}
-
-.custom-file-upload input[type="file"] {
-  display: none;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 }
 
 .fotos-wrapper {
@@ -49,11 +21,16 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 10px;
-  justify-content: flex-start;
+}
+
+.foto-container {
+  position: relative;
+  display: inline-block;
 }
 
 .foto-procedimento {
   width: 120px;
+  height: 120px;
   border-radius: 8px;
   border: 1px solid #ccc;
   object-fit: cover;
@@ -77,4 +54,54 @@
   max-height: 90%;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.cliente-card button {
+  margin-top: 8px;
+  background-color: #a2786a;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cliente-card button:hover {
+  background-color: #8c5e51;
+}
+
+.upload-wrapper {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid #a2786a;
+  border-radius: 8px;
+  background-color: #f9e6e0;
+  color: #5e3d3d;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-file-upload:hover {
+  background-color: #f2d5cc;
+  border-color: #8c5e51;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
 }

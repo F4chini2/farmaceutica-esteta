@@ -116,4 +116,51 @@ router.get('/historico/:id/fotos', async (req, res) => {
   }
 });
 
+
+/**
+ * DELETE /historico/foto/:id
+ * Remove uma foto de procedimento
+ */
+router.delete('/foto/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const resultado = await pool.query('DELETE FROM fotos_procedimentos WHERE id = $1 RETURNING *', [id]);
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ erro: 'Foto não encontrada.' });
+    }
+
+    res.status(200).json({ mensagem: 'Foto excluída com sucesso.' });
+  } catch (err) {
+    console.error('Erro ao excluir foto:', err);
+    res.status(500).json({ erro: 'Erro ao excluir foto.' });
+  }
+});
+
+
+
+/**
+ * DELETE /historico/:id
+ * Remove um histórico e suas imagens associadas
+ */
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await pool.query('DELETE FROM fotos_procedimentos WHERE historico_id = $1', [id]);
+    const resultado = await pool.query('DELETE FROM historico WHERE id = $1 RETURNING *', [id]);
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ erro: 'Histórico não encontrado.' });
+    }
+
+    res.status(200).json({ mensagem: 'Histórico excluído com sucesso.' });
+  } catch (err) {
+    console.error('Erro ao excluir histórico:', err);
+    res.status(500).json({ erro: 'Erro ao excluir histórico.' });
+  }
+});
+
+
 module.exports = router;
