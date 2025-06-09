@@ -1,43 +1,55 @@
 
-body {
+body, html {
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
+  background: linear-gradient(to bottom, #f4f4f4, #eaeaea, #dcdcdc);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .detalhes-container {
-  max-width: 700px;
+  max-width: 1100px;
   margin: 60px auto;
-  padding: 50px 40px;
-  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
+  padding: 40px 30px;
+  background: linear-gradient(to bottom, #f9f5f1, #f4f1ed);
   border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .detalhes-container h2 {
   color: #a2786a;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   font-size: 32px;
   text-align: center;
 }
 
-.detalhes-container h3 {
-  font-size: 24px;
-  color: #6d4c41;
-  margin-top: 40px;
-  margin-bottom: 16px;
-  text-align: center;
+.descricao-cliente {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 32px;
+  margin-bottom: 30px;
 }
 
-.detalhes-container p {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #444;
+.descricao-cliente p {
+  background-color: #F9F5F1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #f0d6d2;
+  font-style: normal;
+  color: #5e3d3d;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
 
-.form-agendamento,
+.descricao-cliente p strong {
+  display: block;
+  font-weight: 600;
+  color: #4c2f2f;
+  margin-bottom: 4px;
+}
+
 .editar-descricao {
   display: flex;
   flex-direction: column;
@@ -45,38 +57,15 @@ body {
   margin-top: 30px;
 }
 
-.form-agendamento input,
-.form-agendamento select,
-.form-agendamento textarea,
 .editar-descricao textarea {
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #d4baba;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   background-color: #fff;
   resize: vertical;
 }
 
-.novo-servico-linha {
-  display: flex;
-  gap: 10px;
-}
-
-.novo-servico-linha input {
-  flex: 1;
-}
-
-.novo-servico-linha button {
-  padding: 8px 12px;
-  background-color: #c5a5a0;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.form-agendamento button[type="submit"],
 .editar-descricao button {
   background-color: #a2786a;
   color: white;
@@ -89,7 +78,6 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.form-agendamento button:hover,
 .editar-descricao button:hover {
   background-color: #8c6257;
 }
@@ -110,14 +98,4 @@ body {
 .btn-voltar:hover {
   background-color: #e8d0c8;
   color: #8c5e51;
-}
-
-.descricao-cliente {
-  background-color: #E9D8CF;
-  border-left: 4px solid #d5a39e;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 8px;
-  font-style: italic;
-  color: #5a3e3e;
 }
