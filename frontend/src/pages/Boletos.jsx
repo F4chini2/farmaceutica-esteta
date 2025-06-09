@@ -1,10 +1,10 @@
-
 import './Boletos.css';
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 
 function Boletos() {
   const [boletos, setBoletos] = useState([]);
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
     const fetchBoletos = async () => {
@@ -37,12 +37,28 @@ function Boletos() {
     setBoletos(prev => prev.filter(b => b.id !== id));
   };
 
+  const boletosFiltrados = boletos.filter(b =>
+    b.nome_fornecedor.toLowerCase().includes(busca.toLowerCase()) ||
+    b.numero.toLowerCase().includes(busca.toLowerCase()) ||
+    String(b.valor).includes(busca) ||
+    b.vencimento.includes(busca)
+  );
+
   return (
     <div className="dashboard-container">
       <Tabs />
       <h1>📄 Boletos Pendentes</h1>
+
+      <input
+        className="barra-pesquisa"
+        type="text"
+        placeholder="🔍 Buscar por fornecedor, número, valor ou vencimento..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
+
       <div className="clientes-lista">
-        {boletos.map(b => (
+        {boletosFiltrados.map(b => (
           <div key={b.id} className="cliente-card">
             <p><strong>Fornecedor:</strong> {b.nome_fornecedor}</p>
             <p><strong>Número:</strong> {b.numero}</p>
