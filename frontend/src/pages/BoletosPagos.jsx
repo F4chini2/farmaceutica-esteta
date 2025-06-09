@@ -61,9 +61,15 @@ function BoletosPagos() {
 
             {b.arquivo && (
               b.arquivo.endsWith('.pdf') ? (
-                <a href={`http://localhost:3001${b.arquivo}`} target="_blank" rel="noopener noreferrer">
-                  📄 Ver PDF
-                </a>
+                <a
+  href={`http://localhost:3001${b.arquivo}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="botao-ver-pdf"
+>
+  📄 Ver PDF
+</a>
+
               ) : (
                 <img
                   src={`http://localhost:3001${b.arquivo}`}

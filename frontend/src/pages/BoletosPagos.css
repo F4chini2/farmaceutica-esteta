@@ -69,3 +69,21 @@ h1 {
 .cliente-card button:last-of-type:hover {
   background-color: #b94e4e;
 }
+
+.botao-ver-pdf {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #a2786a;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.botao-ver-pdf:hover {
+  background-color: #8c5e51;
+}
+
