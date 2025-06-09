@@ -1,4 +1,3 @@
-
 import './Dashboard.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +66,7 @@ function Dashboard() {
         <h1>🛍️ Clientes</h1>
         <button
           className="btn-novo-cliente"
-          onClick={() => navigate('/dashboard/novo-cliente')}
+          onClick={() => navigate('/clientesfull')}
         >
           ➕ Novo Cliente
         </button>

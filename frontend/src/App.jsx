@@ -1,3 +1,5 @@
+// App.jsx
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CadastroLogin from './pages/CadastroLogin';
 import Dashboard from './pages/Dashboard';
@@ -6,7 +8,8 @@ import Agendamentos from './pages/Agendamentos';
 import Estoque from './pages/Estoque';
 import Fornecedores from './pages/Fornecedores';
 import NovoCliente from './pages/NovoCliente';
-import Historico from './pages/Historico'; // 👈 IMPORTADO
+import Historico from './pages/Historico';
+import ClienteFull from './pages/ClientesFull';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -18,11 +21,12 @@ function App() {
         <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/" />} />
         <Route path="/clientes/:id" element={token ? <ClienteDetalhes /> : <Navigate to="/" />} />
         <Route path="/clientes/:id/historico" element={token ? <Historico /> : <Navigate to="/" />} />
-        <Route path="/historico" element={token ? <Historico /> : <Navigate to="/" />} /> {/* 👈 NOVA ROTA */}
+        <Route path="/historico" element={token ? <Historico /> : <Navigate to="/" />} />
         <Route path="/agendamentos" element={token ? <Agendamentos /> : <Navigate to="/" />} />
         <Route path="/estoque" element={token ? <Estoque /> : <Navigate to="/" />} />
-        <Route path="/fornecedores" element={<Fornecedores />} />
-        <Route path="/dashboard/novo-cliente" element={<NovoCliente />} />
+        <Route path="/fornecedores" element={token ? <Fornecedores /> : <Navigate to="/" />} />
+        <Route path="/dashboard/novo-cliente" element={token ? <NovoCliente /> : <Navigate to="/" />} />
+        <Route path="/clientesfull" element={token ? <ClienteFull /> : <Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
