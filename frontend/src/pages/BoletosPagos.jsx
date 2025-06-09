@@ -1,5 +1,5 @@
 
-import './BoletosPagos.css';
+import './Boletos.css';
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 

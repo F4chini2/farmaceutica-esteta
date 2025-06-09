@@ -1,136 +1,123 @@
-
-import './Fornecedores.css';
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
+import './Fornecedores.css';
 
 function Fornecedores() {
-  const [lista, setLista] = useState([]);
-  const [form, setForm] = useState({ nome: '', contato: '', produtos: '' });
+  const [fornecedores, setFornecedores] = useState([]);
+  const [form, setForm] = useState({ nome: '', contato: '', email: '', observacoes: '' });
+  const [boletos, setBoletos] = useState({});
   const [busca, setBusca] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const carregarFornecedores = async () => {
-      try {
-        const resposta = await fetch('http://localhost:3001/fornecedores', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const dados = await resposta.json();
-        setLista(dados);
-      } catch (err) {
-        console.error('Erro ao buscar fornecedores:', err);
-      }
-    };
-
     carregarFornecedores();
   }, []);
 
-  const cadastrar = async (e) => {
+  const carregarFornecedores = async () => {
+    const token = localStorage.getItem('token');
+    const resposta = await fetch('http://localhost:3001/fornecedores', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const dados = await resposta.json();
+    setFornecedores(dados);
+  };
+
+  const cadastrarFornecedor = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-
-    try {
-      const resposta = await fetch('http://localhost:3001/fornecedores', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
-      });
-
-      const dados = await resposta.json();
-
-      if (resposta.ok) {
-        alert('Fornecedor cadastrado!');
-        setForm({ nome: '', contato: '', produtos: '' });
-        setLista((prev) => [...prev, dados.fornecedor]);
-      } else {
-        alert(dados.erro || 'Erro ao cadastrar');
-      }
-    } catch (err) {
-      alert('Erro ao conectar');
+    const resp = await fetch('http://localhost:3001/fornecedores', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(form)
+    });
+    if (resp.ok) {
+      setForm({ nome: '', contato: '', email: '', observacoes: '' });
+      carregarFornecedores();
     }
   };
 
-  const excluirFornecedor = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja excluir este fornecedor?');
-    if (!confirmar) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const resposta = await fetch(`http://localhost:3001/fornecedores/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const dados = await resposta.json();
-
-      if (resposta.ok) {
-        alert('Fornecedor excluído com sucesso!');
-        setLista((atual) => atual.filter(f => f.id !== id));
-      } else {
-        alert(dados.erro || 'Erro ao excluir');
-      }
-    } catch (err) {
-      alert('Erro ao conectar com o servidor');
+  const cadastrarBoleto = async (e, id) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    const dados = boletos[id];
+    const resp = await fetch('http://localhost:3001/boletos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ ...dados, fornecedor_id: id })
+    });
+    if (resp.ok) {
+      alert('Boleto cadastrado com sucesso!');
+      setBoletos(prev => ({ ...prev, [id]: {} }));
+    } else {
+      alert('Erro ao cadastrar boleto');
     }
   };
 
   return (
     <div className="fornecedores-container">
       <Tabs />
-      <div className="topo-dashboard">
-        <h1>🏭 Fornecedores</h1>
-      </div>
-      <input
+      <h2>📦 Fornecedores</h2>
+<input
         className="barra-pesquisa"
         type="text"
-        placeholder="🔍 Buscar fornecedor por nome ou produto..."
+        placeholder="🔍 Buscar por nome, email ou telefone..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
-      <form className="fornecedores-form" onSubmit={cadastrar}>
-        <input
-          placeholder="Nome"
-          value={form.nome}
-          onChange={(e) => setForm({ ...form, nome: e.target.value })}
-          required
-        />
-        <input
-          placeholder="Contato"
-          value={form.contato}
-          onChange={(e) => setForm({ ...form, contato: e.target.value })}
-          required
-        />
-        <textarea
-          placeholder="Produtos fornecidos"
-          value={form.produtos}
-          onChange={(e) => setForm({ ...form, produtos: e.target.value })}
-        />
-        <button type="submit">Cadastrar</button>
+      <form className="fornecedores-form" onSubmit={cadastrarFornecedor}>
+        <input placeholder="Nome" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
+        <input placeholder="Contato" value={form.contato} onChange={e => setForm({ ...form, contato: e.target.value })} />
+        <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+        <textarea placeholder="Observações" value={form.observacoes} onChange={e => setForm({ ...form, observacoes: e.target.value })} />
+        <button type="submit">Cadastrar Fornecedor</button>
       </form>
 
       <div className="fornecedores-lista">
-        {lista
+        {fornecedores
           .filter(f =>
             f.nome.toLowerCase().includes(busca.toLowerCase()) ||
-            f.produtos.toLowerCase().includes(busca.toLowerCase())
+            f.email.toLowerCase().includes(busca.toLowerCase()) ||
+            f.contato.toLowerCase().includes(busca.toLowerCase())
           )
-          .map((f) => (
+          .map(f => (
             <div key={f.id} className="fornecedor-item">
               <strong>{f.nome}</strong>
-              <p>📞 Contato: {f.contato}</p>
-              <p>🧪 Produtos: {f.produtos}</p>
-              <button className="btn-excluir-agendamento" onClick={() => excluirFornecedor(f.id)}>
-                🗑️ Excluir
-              </button>
+              <p><b>📞</b> {f.contato}</p>
+              <p><b>📧</b> {f.email}</p>
+              <p><b>📝</b> {f.observacoes || 'Nenhuma'}</p>
+
+              <form onSubmit={(e) => cadastrarBoleto(e, f.id)}>
+                <input
+                  placeholder="Nº do Boleto"
+                  value={boletos[f.id]?.numero || ''}
+                  onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], numero: e.target.value } }))}
+                />
+                <input
+                  placeholder="Valor"
+                  type="number"
+                  step="0.01"
+                  value={boletos[f.id]?.valor || ''}
+                  onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], valor: e.target.value } }))}
+                />
+                <input
+                  type="date"
+                  value={boletos[f.id]?.vencimento || ''}
+                  onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], vencimento: e.target.value } }))}
+                />
+                <textarea
+                  placeholder="Observações"
+                  value={boletos[f.id]?.observacoes || ''}
+                  onChange={(e) => setBoletos(prev => ({ ...prev, [f.id]: { ...prev[f.id], observacoes: e.target.value } }))}
+                />
+                <button type="submit">💳 Cadastrar Boleto</button>
+              </form>
             </div>
-        ))}
+          ))}
       </div>
     </div>
   );
