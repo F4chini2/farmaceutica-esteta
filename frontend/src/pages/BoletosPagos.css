@@ -1,0 +1,46 @@
+
+.dashboard-container {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h1 {
+  color: #a2786a;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.clientes-lista {
+  display: grid;
+  gap: 16px;
+}
+
+.cliente-card {
+  background: #fff;
+  border: 1px solid #e0cfc6;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cliente-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #5e3d3d;
+}
+
+.cliente-card button {
+  margin-right: 8px;
+  padding: 8px 14px;
+  background-color: #a2786a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cliente-card button:hover {
+  background-color: #8c5e51;
+}
