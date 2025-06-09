@@ -5,16 +5,15 @@ const path = require('path');
 const app = express();
 const PORT = 3001;
 
-// 🔓 Middleware
+// Middleware
 app.use(cors());
 app.use(express.json()); // ✅ necessário para JSON (ex: cadastrar fornecedor)
 app.use(express.urlencoded({ extended: true })); // ✅ necessário para form-data (ex: upload de boletos)
 
-// 📂 Servir arquivos da pasta /uploads
+// Servir arquivos da pasta /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 📦 Importa rotas
-const rotasClientes = require('./routes/clientes');
+// Importa rotas
 const rotasClientesFull = require('./routes/clientesfull');
 const rotasLogin = require('./routes/login');
 const rotasAgendamentos = require('./routes/agendamentos');
@@ -23,9 +22,8 @@ const rotasFornecedores = require('./routes/fornecedores');
 const historicoRoutes = require('./routes/historico');
 const boletosRouter = require('./routes/boletos');
 
-// 🚏 Define as rotas
+// Define as rotas
 app.use('/login', rotasLogin);
-app.use('/clientes', rotasClientes);
 app.use('/clientesfull', rotasClientesFull);
 app.use('/agendamentos', rotasAgendamentos);
 app.use('/estoque', rotasEstoque);
@@ -33,12 +31,12 @@ app.use('/fornecedores', rotasFornecedores);
 app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
 
-// 🔁 Teste de API
+// Teste de API
 app.get('/', (req, res) => {
   res.send('API da Farmacêutica Esteta funcionando!');
 });
 
-// 🚀 Inicia servidor
+// Inicia servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
