@@ -101,7 +101,6 @@ router.get('/historico/:id/fotos', async (req, res) => {
   }
 });
 
-
 // Remover uma imagem de um procedimento do histórico
 router.delete('/foto/:id', async (req, res) => {
   const { id } = req.params;
@@ -132,9 +131,6 @@ router.delete('/foto/:id', async (req, res) => {
   }
 });
 
-
-
-
 // Remover um procedimento do histórico junto com suas imagens
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
@@ -153,6 +149,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ erro: 'Erro ao excluir histórico.' });
   }
 });
-
 
 module.exports = router;
