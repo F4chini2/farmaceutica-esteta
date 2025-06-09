@@ -66,7 +66,7 @@ function Dashboard() {
         <h1>🛍️ Clientes</h1>
         <button
           className="btn-novo-cliente"
-          onClick={() => navigate('/clientesfull')}
+          onClick={() => navigate('/dashboard/novo-cliente')}
         >
           ➕ Novo Cliente
         </button>
@@ -86,8 +86,9 @@ function Dashboard() {
               <p><strong>👤 Nome:</strong> {cliente.nome}</p>
               <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
               <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
-              <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍 Ver Detalhes</button>
-              <button onClick={() => excluirCliente(cliente.id)}>🗑️ Excluir</button>
+              <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍Detalhes</button>
+              <button onClick={() => navigate(`/clientes/${cliente.id}/agendar`)}>📅Agendar</button>
+              <button onClick={() => excluirCliente(cliente.id)}>🗑️Excluir</button>
             </div>
         ))}
       </div>
