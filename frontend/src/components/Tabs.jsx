@@ -8,8 +8,8 @@ function Tabs() {
   const tabs = [
   { label: 'Clientes', path: '/dashboard' },
   { label: 'Agendamentos', path: '/agendamentos' },
-  { label: 'Estoque', path: '/estoque' },
   { label: 'Histórico', path: '/historico' },
+  { label: 'Estoque', path: '/estoque' },
   { label: 'Fornecedores', path: '/fornecedores' },
   { label: 'Boletos', path: '/boletos' },
   { label: 'Boletos Pagos', path: '/boletos-pagos' },
