@@ -1,0 +1,49 @@
+.cadastro-boleto-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.cadastro-boleto-container h2 {
+  text-align: center;
+  color: #7b4a3a;
+  margin-bottom: 24px;
+}
+
+.form-boleto {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-boleto label {
+  font-weight: bold;
+  color: #4e342e;
+  font-size: 14px;
+}
+
+.form-boleto input,
+.form-boleto textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.form-boleto button {
+  background-color: #7b4a3a;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.form-boleto button:hover {
+  background-color: #5d3325;
+}
