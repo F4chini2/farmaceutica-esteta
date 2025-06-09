@@ -51,24 +51,31 @@ body {
 }
 
 .estoque-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fdf7f5;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .estoque-form input {
   padding: 10px;
   border: 1px solid #c5a5a0;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   background-color: #fff;
-  flex: 1;
-  min-width: 180px;
+}
+
+.estoque-form input[type="date"] {
+  color: #555;
 }
 
 .estoque-form button {
+  grid-column: span 2;
   padding: 10px 16px;
   background-color: #a2786a;
   color: white;
