@@ -9,7 +9,7 @@ import Estoque from './pages/Estoque';
 import Fornecedores from './pages/Fornecedores';
 import NovoCliente from './pages/NovoCliente';
 import Historico from './pages/Historico';
-import ClienteFull from './pages/ClientesFull';
+import ClientesFull from './pages/ClientesFull';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -26,7 +26,7 @@ function App() {
         <Route path="/estoque" element={token ? <Estoque /> : <Navigate to="/" />} />
         <Route path="/fornecedores" element={token ? <Fornecedores /> : <Navigate to="/" />} />
         <Route path="/dashboard/novo-cliente" element={token ? <NovoCliente /> : <Navigate to="/" />} />
-        <Route path="/clientesfull" element={token ? <ClienteFull /> : <Navigate to="/" />} />
+        <Route path="/clientesfull" element={token ? <ClientesFull /> : <Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );

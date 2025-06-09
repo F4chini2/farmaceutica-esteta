@@ -34,7 +34,9 @@ router.post('/', autenticarToken, async (req, res) => {
       )
       RETURNING *`,
       [
-        cliente.nome, cliente.telefone, cliente.alergias, cliente.descricao, cliente.idade, cliente.endereco, cliente.instagram, cliente.motivo_avaliacao,
+        cliente.nome, cliente.telefone, cliente.alergias, cliente.descricao,
+        cliente.idade === '' ? null : parseInt(cliente.idade),
+        cliente.endereco, cliente.instagram, cliente.motivo_avaliacao,
         cliente.tratamento_anterior, cliente.alergia_medicamento, cliente.uso_medicamento,
         cliente.usa_filtro_solar === 'true', cliente.usa_acido_peeling === 'true', cliente.problema_pele, cliente.gravida === 'true',
         cliente.cor_pele, cliente.biotipo_pele, cliente.hidratacao, cliente.acne,
@@ -65,7 +67,9 @@ router.put('/:id', autenticarToken, async (req, res) => {
         WHERE id = $24
         RETURNING *`,
       [
-        cliente.nome, cliente.telefone, cliente.alergias, cliente.descricao, cliente.idade, cliente.endereco, cliente.instagram, cliente.motivo_avaliacao,
+        cliente.nome, cliente.telefone, cliente.alergias, cliente.descricao,
+        cliente.idade === '' ? null : parseInt(cliente.idade),
+        cliente.endereco, cliente.instagram, cliente.motivo_avaliacao,
         cliente.tratamento_anterior, cliente.alergia_medicamento, cliente.uso_medicamento,
         cliente.usa_filtro_solar === 'true', cliente.usa_acido_peeling === 'true', cliente.problema_pele, cliente.gravida === 'true',
         cliente.cor_pele, cliente.biotipo_pele, cliente.hidratacao, cliente.acne,
