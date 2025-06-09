@@ -84,9 +84,9 @@ function Fornecedores() {
       <div className="clientes-lista">
         {fornecedores
           .filter(f =>
-            f.nome.toLowerCase().includes(busca.toLowerCase()) ||
-            f.email.toLowerCase().includes(busca.toLowerCase()) ||
-            f.contato.toLowerCase().includes(busca.toLowerCase())
+            (f.nome || '').toLowerCase().includes(busca.toLowerCase()) ||
+            (f.email || '').toLowerCase().includes(busca.toLowerCase()) ||
+            (f.contato || '').toLowerCase().includes(busca.toLowerCase())
           )
           .map(f => (
             <div key={f.id} className="cliente-card">
