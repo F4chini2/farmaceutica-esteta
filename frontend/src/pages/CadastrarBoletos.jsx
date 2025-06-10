@@ -43,6 +43,9 @@ function CadastrarBoleto() {
 
   return (
     <div className="cadastro-boleto-container">
+      <button className="btn-voltar" onClick={() => navigate(-1)}>
+        ⬅ Voltar
+      </button>
       <h2>📄 Cadastrar Boleto</h2>
       <form onSubmit={handleSubmit} className="form-boleto">
         <label>Número do Boleto:
@@ -61,7 +64,7 @@ function CadastrarBoleto() {
         <div className="upload-wrapper">
           <span>📎 Arquivo PDF:</span>
           <label className="custom-file-upload">
-            <input type="file" accept=".pdf" onChange={(e) => setArquivo(e.target.files[0])} />
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setArquivo(e.target.files[0])} />
             Escolher arquivo
           </label>
           {arquivo && <span>{arquivo.name}</span>}

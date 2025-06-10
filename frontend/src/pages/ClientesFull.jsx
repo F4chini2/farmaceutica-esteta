@@ -52,7 +52,7 @@ function ClientesFull() {
   return (
     <div className="container-box">
       <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
-        ⬅ Voltar para lista
+        ⬅ Voltar
       </button>
       <h2>🧍 Cadastro Completo do Cliente</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
