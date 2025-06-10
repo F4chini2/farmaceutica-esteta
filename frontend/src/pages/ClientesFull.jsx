@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Tabs from '../components/Tabs';
 import './ClientesFull.css';
 
 function ClientesFull() {
@@ -75,7 +74,12 @@ function ClientesFull() {
             )}
           </label>
         ))}
+
         <button type="submit">Cadastrar Cliente</button>
+
+        <button type="submit" style={{ gridColumn: 'span 2' }}>
+          Cadastrar Cliente
+        </button>
       </form>
     </div>
   );

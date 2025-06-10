@@ -21,6 +21,7 @@ const rotasEstoque = require('./routes/estoque');
 const rotasFornecedores = require('./routes/fornecedores');
 const historicoRoutes = require('./routes/historico');
 const boletosRouter = require('./routes/boletos');
+const clientesRouter = require('./routes/clientes');
 
 // Define as rotas
 app.use('/login', rotasLogin);
@@ -30,6 +31,7 @@ app.use('/estoque', rotasEstoque);
 app.use('/fornecedores', rotasFornecedores);
 app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
+app.use('/clientes', clientesRouter);
 
 // Teste de API
 app.get('/', (req, res) => {
