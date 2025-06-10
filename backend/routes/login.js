@@ -4,7 +4,7 @@ const pool = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const SECRET = 'Chave-de-segurança';
+const SECRET = 'chave-super-secreta';
 
 // POST /login
 router.post('/', async (req, res) => {
