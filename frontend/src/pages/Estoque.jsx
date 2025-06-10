@@ -112,13 +112,7 @@ function Estoque() {
       <div className="topo-dashboard">
         <h2>📦 Controle de Estoque</h2>
       </div>
-      <input
-        className="barra-pesquisa"
-        type="text"
-        placeholder="🔍 Buscar item por nome..."
-        value={busca}
-        onChange={(e) => setBusca(e.target.value)}
-      />
+    
       <form className="estoque-form" onSubmit={cadastrarItem}>
         <input
           placeholder="Nome do item"
@@ -147,6 +141,14 @@ function Estoque() {
         <button type="submit" className="btn-primary">➕ Adicionar Item</button>
       </form>
 
+      <input
+        className="barra-pesquisa"
+        type="text"
+        placeholder="🔍 Buscar item por nome..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
+      
       <div className="estoque-lista">
         {itens
           .filter(item => item.nome.toLowerCase().includes(busca.toLowerCase()))

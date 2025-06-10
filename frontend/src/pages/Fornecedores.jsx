@@ -64,14 +64,6 @@ function Fornecedores() {
         <h1>📦 Fornecedores</h1>
       </div>
 
-      <input
-        className="barra-pesquisa"
-        type="text"
-        placeholder="🔍 Buscar por nome, email ou telefone..."
-        value={busca}
-        onChange={(e) => setBusca(e.target.value)}
-      />
-
       <form className="fornecedores-form" onSubmit={cadastrarFornecedor}>
         <input placeholder="Nome" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
         <input placeholder="CNPJ" value={form.cnpj} onChange={e => setForm({ ...form, cnpj: e.target.value })} />
@@ -81,6 +73,14 @@ function Fornecedores() {
         <textarea placeholder="Observações" value={form.observacoes} onChange={e => setForm({ ...form, observacoes: e.target.value })} />
         <button type="submit" className="btn-primary">➕ Cadastrar Fornecedor</button>
       </form>
+
+      <input
+        className="barra-pesquisa"
+        type="text"
+        placeholder="🔍 Buscar por nome, email ou telefone..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
 
       <div className="clientes-lista">
         {fornecedores
