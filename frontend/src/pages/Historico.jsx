@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 import './ClienteDetalhes.css';
@@ -12,7 +13,7 @@ function Historico() {
   useEffect(() => {
     const carregarHistorico = async () => {
       const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/historico/todos`, {
+      const resp = await fetch('http://localhost:3001/historico/todos', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const dados = await resp.json();
@@ -118,14 +119,14 @@ function Historico() {
             proc.servico.toLowerCase().includes(busca.toLowerCase())
           )
           .map(proc => (
-            <div key={proc.id} className="cliente-card">
+            <div key={proc.id} className="card">
               <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
               <p><strong>🗓 Data:</strong> {new Date(proc.data).toLocaleDateString()}</p>
               <p><strong>⏰ Horário:</strong> {proc.horario?.slice(0, 5)}</p>
               <p><strong>💆 Serviço:</strong> {proc.servico}</p>
               <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
-              <button onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
+              <button className="btn-danger" onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
 
               <div className="upload-wrapper">
                 <span>📸 Enviar fotos:</span>

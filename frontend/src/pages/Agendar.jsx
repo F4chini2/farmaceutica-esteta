@@ -1,3 +1,4 @@
+
 import './Agendar.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -50,11 +51,11 @@ function Agendar() {
   };
 
   return (
-    <div className="detalhes-container">
+    <div className="container-box">
       <button className="btn-voltar" onClick={() => navigate(-1)}>
         ⬅ Voltar
       </button>
-      <h2>Novo Agendamento</h2>
+      <h2>📅 Novo Agendamento</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
         <label>
           Data:
@@ -90,7 +91,7 @@ function Agendar() {
             onChange={e => handleChange('observacao', e.target.value)}
           />
         </label>
-        <button type="submit">📅 Agendar</button>
+        <button type="submit" className="btn-primary">📅 Agendar</button>
       </form>
     </div>
   );

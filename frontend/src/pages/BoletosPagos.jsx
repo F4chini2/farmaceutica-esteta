@@ -1,3 +1,4 @@
+
 import './Boletos.css';
 import './Historico.css'; // Para zoom e overlay
 import { useEffect, useState } from 'react';
@@ -52,7 +53,7 @@ function BoletosPagos() {
 
       <div className="clientes-lista">
         {boletosFiltrados.map(b => (
-          <div key={b.id} className="cliente-card">
+          <div key={b.id} className="card">
             <p><strong>Fornecedor:</strong> {b.nome_fornecedor}</p>
             <p><strong>Número:</strong> {b.numero}</p>
             <p><strong>Valor:</strong> R$ {b.valor}</p>
@@ -74,7 +75,7 @@ function BoletosPagos() {
               )
             )}
 
-            <button onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
+            <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
           </div>
         ))}
       </div>

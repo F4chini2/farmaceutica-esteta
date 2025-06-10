@@ -1,3 +1,4 @@
+
 import './CadastroLogin.css';
 import logo from '../assets/LOGO.png';
 import { useState } from 'react';
@@ -81,7 +82,7 @@ function CadastroLogin() {
             <input placeholder="Descrição" onChange={e => setCadastro({ ...cadastro, descricao: e.target.value })} />
             <input placeholder="Senha" type="password" onChange={e => setCadastro({ ...cadastro, senha: e.target.value })} />
             <input placeholder="Confirmação Senha" type="password" onChange={e => setCadastro({ ...cadastro, confirmar: e.target.value })} />
-            <button type="submit">Registrar</button>
+            <button type="submit" className="btn-primary">Registrar</button>
           </form>
 
           <form onSubmit={handleLogin} className="form-box">
@@ -89,7 +90,7 @@ function CadastroLogin() {
             <input placeholder="Nome ou Email" type="email" value={emailLogin} onChange={e => setEmailLogin(e.target.value)} />
             <input placeholder="Senha" type="password" value={senhaLogin} onChange={e => setSenhaLogin(e.target.value)} />
             <div className="link">Esqueceu sua senha?</div>
-            <button type="submit">Entrar</button>
+            <button type="submit" className="btn-primary">Entrar</button>
             <div className="checkbox-line">
               <input type="checkbox" id="lembrar" />
               <label htmlFor="lembrar">Lembre-me</label>

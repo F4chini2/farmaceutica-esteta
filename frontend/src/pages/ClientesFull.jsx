@@ -1,4 +1,3 @@
-// ClientesFull.jsx
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -51,15 +50,15 @@ function ClientesFull() {
   };
 
   return (
-    <div className="detalhes-container">
+    <div className="container-box">
       <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
         ⬅ Voltar para lista
       </button>
-      <h2>Cadastro Completo do Cliente</h2>
+      <h2>🧍 Cadastro Completo do Cliente</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
         {Object.entries(form).map(([campo, valor]) => (
           <label key={campo} className="campo-formulario">
-            {campo.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            {campo.replaceAll('_', ' ').replace(/\w/g, l => l.toUpperCase())}
             {campo.startsWith('usa_') || campo === 'gravida' ? (
               <select value={valor} onChange={e => handleChange(campo, e.target.value)}>
                 <option value="false">Não</option>
@@ -74,10 +73,7 @@ function ClientesFull() {
             )}
           </label>
         ))}
-
-        <button type="submit">Cadastrar Cliente</button>
-
-        <button type="submit" style={{ gridColumn: 'span 2' }}>
+        <button type="submit" className="btn-primary" style={{ gridColumn: 'span 2' }}>
           Cadastrar Cliente
         </button>
       </form>

@@ -1,3 +1,5 @@
+/* Específicos da tela de fornecedores */
+
 .fornecedores-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -5,7 +7,7 @@
   max-width: 600px;
   margin: 30px auto;
   padding: 20px;
-  background-color: #fdf7f5;
+  background-color: var(--cor-fundo-claro);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
@@ -16,27 +18,6 @@
   min-height: 60px;
 }
 
-.fornecedores-form input,
-.fornecedores-form textarea {
-  padding: 10px;
-  border: 1px solid #c5a5a0;
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: #fff;
-}
-
 .fornecedores-form button {
   grid-column: span 2;
-  padding: 10px 16px;
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.fornecedores-form button:hover {
-  background-color: #8c5e51;
 }

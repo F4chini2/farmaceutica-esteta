@@ -110,7 +110,7 @@ function Estoque() {
     <div className="estoque-container">
       <Tabs />
       <div className="topo-dashboard">
-        <h1>📦 Controle de Estoque</h1>
+        <h2>📦 Controle de Estoque</h2>
       </div>
       <input
         className="barra-pesquisa"
@@ -144,21 +144,21 @@ function Estoque() {
           value={form.validade}
           onChange={(e) => setForm({ ...form, validade: e.target.value })}
         />
-        <button type="submit">Adicionar</button>
+        <button type="submit" className="btn-primary">➕ Adicionar Item</button>
       </form>
 
       <div className="estoque-lista">
         {itens
           .filter(item => item.nome.toLowerCase().includes(busca.toLowerCase()))
           .map((item) => (
-            <div key={item.id} className="estoque-item">
+            <div key={item.id} className="card">
               <strong>{item.nome}</strong>
-              <p>🧾{item.quantidade} {item.unidade}</p>
+              <p>🧾 {item.quantidade} {item.unidade}</p>
               <p>⏳ Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
               <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                 <button onClick={() => atualizarQuantidade(item.id, +1)}>➕</button>
                 <button onClick={() => atualizarQuantidade(item.id, -1)}>➖</button>
-                <button className="btn-excluir-agendamento" onClick={() => excluirItem(item.id)}>🗑️</button>
+                <button className="btn-danger" onClick={() => excluirItem(item.id)}>🗑️</button>
               </div>
             </div>
         ))}

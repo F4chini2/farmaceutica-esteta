@@ -30,7 +30,7 @@ function ClienteDetalhes() {
   if (!cliente) return <p>Carregando cliente...</p>;
 
   return (
-    <div className="detalhes-container">
+    <div className="container-box">
       <button onClick={() => navigate('/dashboard')} className="btn-voltar">
         ⬅ Voltar para Clientes
       </button>
@@ -71,6 +71,7 @@ function ClienteDetalhes() {
           }
         />
         <button
+          className="btn-primary"
           onClick={async () => {
             try {
               const token = localStorage.getItem('token');

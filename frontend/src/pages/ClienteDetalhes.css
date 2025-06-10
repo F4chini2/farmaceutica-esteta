@@ -1,29 +1,9 @@
-
-body, html {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #f4f4f4, #eaeaea, #dcdcdc);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
+/* Estilos específicos de ClienteDetalhes */
 
 .detalhes-container {
   max-width: 1100px;
   margin: 60px auto;
   padding: 40px 30px;
-  background: linear-gradient(to bottom, #f9f5f1, #f4f1ed);
-  border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.detalhes-container h2 {
-  color: #a2786a;
-  margin-bottom: 32px;
-  font-size: 32px;
-  text-align: center;
 }
 
 .descricao-cliente {
@@ -34,11 +14,10 @@ body, html {
 }
 
 .descricao-cliente p {
-  background-color: #F9F5F1;
+  background-color: #f9f5f1;
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid #f0d6d2;
-  font-style: normal;
   color: #5e3d3d;
   box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
@@ -55,47 +34,4 @@ body, html {
   flex-direction: column;
   gap: 12px;
   margin-top: 30px;
-}
-
-.editar-descricao textarea {
-  padding: 12px;
-  border: 1px solid #d4baba;
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: #fff;
-  resize: vertical;
-}
-
-.editar-descricao button {
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 15px;
-  transition: background-color 0.3s ease;
-}
-
-.editar-descricao button:hover {
-  background-color: #8c6257;
-}
-
-.btn-voltar {
-  background-color: #f3e0dc;
-  color: #a2786a;
-  border: 1px solid #d9b9b2;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
-  display: inline-block;
-}
-
-.btn-voltar:hover {
-  background-color: #e8d0c8;
-  color: #8c5e51;
 }

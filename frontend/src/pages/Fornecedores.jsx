@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../components/Tabs';
@@ -78,7 +79,7 @@ function Fornecedores() {
         <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
         <input placeholder="Produtos fornecidos" value={form.produtos} onChange={e => setForm({ ...form, produtos: e.target.value })} />
         <textarea placeholder="Observações" value={form.observacoes} onChange={e => setForm({ ...form, observacoes: e.target.value })} />
-        <button type="submit">➕ Cadastrar Fornecedor</button>
+        <button type="submit" className="btn-primary">➕ Cadastrar Fornecedor</button>
       </form>
 
       <div className="clientes-lista">
@@ -89,15 +90,15 @@ function Fornecedores() {
             (f.contato || '').toLowerCase().includes(busca.toLowerCase())
           )
           .map(f => (
-            <div key={f.id} className="cliente-card">
+            <div key={f.id} className="card">
               <p><strong>📦 Nome:</strong> {f.nome}</p>
               <p><strong>🧾 CNPJ:</strong> {f.cnpj}</p>
               <p><strong>📞 Contato:</strong> {f.contato}</p>
               <p><strong>📧 Email:</strong> {f.email}</p>
               <p><strong>📦 Produtos:</strong> {f.produtos || 'Não informado'}</p>
               <p><strong>📝 Observações:</strong> {f.observacoes || 'Nenhuma'}</p>
-              <button onClick={() => navigate(`/fornecedores/${f.id}/boletos`)}>➕ Cadastrar Boleto</button>
-              <button onClick={() => excluirFornecedor(f.id)}>🗑️ Excluir Fornecedor</button>
+              <button className="btn-secondary" onClick={() => navigate(`/fornecedores/${f.id}/boletos`)}>➕ Cadastrar Boleto</button>
+              <button className="btn-danger" onClick={() => excluirFornecedor(f.id)}>🗑️ Excluir Fornecedor</button>
             </div>
           ))}
       </div>

@@ -1,3 +1,4 @@
+
 import './Dashboard.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -64,13 +65,9 @@ function Dashboard() {
       <Tabs />
       <div className="topo-dashboard">
         <h1>🛍️ Clientes</h1>
-        <button
-  className="btn-novo-cliente"
-  onClick={() => navigate('/clientesfull')}
->
-  ➕ Novo Cliente
-</button>
-
+        <button className="btn-primary" onClick={() => navigate('/clientesfull')}>
+          ➕ Novo Cliente
+        </button>
       </div>
       <input
         className="barra-pesquisa"
@@ -83,13 +80,19 @@ function Dashboard() {
         {clientes
           .filter(cliente => cliente.nome.toLowerCase().includes(busca.toLowerCase()))
           .map((cliente) => (
-            <div key={cliente.id} className="cliente-card">
+            <div key={cliente.id} className="card">
               <p><strong>👤 Nome:</strong> {cliente.nome}</p>
               <p><strong>📞 Telefone:</strong> {cliente.telefone}</p>
               <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
-              <button onClick={() => navigate(`/clientes/${cliente.id}`)}>🔍Detalhes</button>
-              <button onClick={() => navigate(`/clientes/${cliente.id}/agendar`)}>📅Agendar</button>
-              <button onClick={() => excluirCliente(cliente.id)}>🗑️Excluir</button>
+              <button className="btn-secondary" onClick={() => navigate(`/clientes/${cliente.id}`)}>
+                🔍Detalhes
+              </button>
+              <button className="btn-primary" onClick={() => navigate(`/clientes/${cliente.id}/agendar`)}>
+                📅Agendar
+              </button>
+              <button className="btn-danger" onClick={() => excluirCliente(cliente.id)}>
+                🗑️Excluir
+              </button>
             </div>
         ))}
       </div>

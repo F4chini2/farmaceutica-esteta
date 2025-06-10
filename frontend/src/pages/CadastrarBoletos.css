@@ -1,26 +1,17 @@
-html, body {
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
+/* Específicos do cadastro de boletos */
 
 .cadastro-boleto-container {
   max-width: 700px;
   margin: 60px auto;
   padding: 50px 40px;
-  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
+  background: linear-gradient(to bottom, var(--cor-fundo-claro), var(--cor-fundo-medio));
   border-radius: 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
 
 .cadastro-boleto-container h2 {
-  color: #a2786a;
+  color: var(--cor-primaria);
   margin-bottom: 24px;
   font-size: 32px;
   text-align: center;
@@ -43,71 +34,7 @@ html, body {
   letter-spacing: 0.3px;
 }
 
-.form-boleto input,
-.form-boleto textarea {
-  padding: 10px;
-  border: 1px solid #d4baba;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #fff;
-  margin-top: 6px;
-  transition: border-color 0.2s ease;
-}
-
-.form-boleto input:focus,
-.form-boleto textarea:focus {
-  border-color: #a2786a;
-  outline: none;
-}
-
 .form-boleto button {
   grid-column: span 2;
-  padding: 12px;
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
   margin-top: 16px;
-}
-
-.form-boleto button:hover {
-  background-color: #8c5e51;
-}
-
-.upload-wrapper {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.custom-file-upload {
-  display: inline-block;
-  padding: 10px 16px;
-  border: 1px solid #a2786a;
-  border-radius: 8px;
-  background-color: #f9e6e0;
-  color: #5e3d3d;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-  width: fit-content;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.custom-file-upload:hover {
-  background-color: #f2d5cc;
-  border-color: #8c5e51;
-}
-
-.custom-file-upload input[type="file"] {
-  display: none;
 }

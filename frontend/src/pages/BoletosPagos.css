@@ -1,9 +1,4 @@
-.dashboard-container {
-  padding: 40px;
-  font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
-}
+/* Estilos específicos para a tela de boletos */
 
 h1 {
   font-size: 42px;
@@ -11,61 +6,4 @@ h1 {
   color: #6d4c41;
   text-align: center;
   margin-bottom: 30px;
-}
-
-.clientes-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
-}
-
-.cliente-card {
-  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: 280px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.cliente-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
-}
-
-.cliente-card p {
-  margin: 6px 0;
-  font-size: 14px;
-  color: #4d3b2f;
-}
-
-.cliente-card button {
-  margin-top: 10px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.cliente-card button:first-of-type {
-  background-color: #7d5a4f;
-  color: #fff;
-  margin-right: 8px;
-}
-
-.cliente-card button:first-of-type:hover {
-  background-color: #5f4037;
-}
-
-.cliente-card button:last-of-type {
-  background-color: #BB9380;
-  color: white;
-}
-
-.cliente-card button:last-of-type:hover {
-  background-color: #b94e4e;
 }

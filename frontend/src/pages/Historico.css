@@ -1,3 +1,5 @@
+/* Específicos desta tela */
+
 .btn-excluir-foto {
   position: absolute;
   top: 6px;
@@ -54,54 +56,4 @@
   max-height: 90%;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(255,255,255,0.2);
-}
-
-.cliente-card button {
-  margin-top: 8px;
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.cliente-card button:hover {
-  background-color: #8c5e51;
-}
-
-.upload-wrapper {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.custom-file-upload {
-  display: inline-block;
-  padding: 10px 16px;
-  border: 1px solid #a2786a;
-  border-radius: 8px;
-  background-color: #f9e6e0;
-  color: #5e3d3d;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-  width: fit-content;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.custom-file-upload:hover {
-  background-color: #f2d5cc;
-  border-color: #8c5e51;
-}
-
-.custom-file-upload input[type="file"] {
-  display: none;
 }

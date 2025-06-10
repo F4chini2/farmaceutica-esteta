@@ -1,49 +1,4 @@
-/* Garante que o fundo da tela toda fique uniforme */
-html, body {
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.detalhes-container {
-  max-width: 700px;
-  margin: 60px auto;
-  padding: 50px 40px;
-  background: linear-gradient(to bottom, #fdf7f5, #f2e4de);
-  border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-}
-
-.detalhes-container h2 {
-  color: #a2786a;
-  margin-bottom: 24px;
-  font-size: 32px;
-  text-align: center;
-}
-
-.btn-voltar {
-  background-color: #f3e0dc;
-  color: #a2786a;
-  border: 1px solid #d9b9b2;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
-  display: inline-block;
-}
-
-.btn-voltar:hover {
-  background-color: #e8d0c8;
-  color: #8c5e51;
-}
+/* Específicos do formulário de cliente */
 
 .form-agendamento {
   display: grid;
@@ -62,44 +17,4 @@ html, body {
   letter-spacing: 0.3px;
   padding-bottom: 2px;
   transition: all 0.3s ease;
-}
-
-.form-agendamento input,
-.form-agendamento textarea,
-.form-agendamento select {
-  padding: 10px;
-  border: 1px solid #d4baba;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #fff;
-  resize: vertical;
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 6px;
-  transition: border-color 0.2s ease;
-}
-
-.form-agendamento input:focus,
-.form-agendamento textarea:focus,
-.form-agendamento select:focus {
-  border-color: #a2786a;
-  outline: none;
-}
-
-.form-agendamento button {
-  grid-column: span 2;
-  padding: 12px;
-  background-color: #a2786a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 16px;
-}
-
-.form-agendamento button:hover {
-  background-color: #8c5e51;
 }

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./CadastrarBoletos.css";
@@ -66,7 +67,7 @@ function CadastrarBoleto() {
           {arquivo && <span>{arquivo.name}</span>}
         </div>
 
-        <button type="submit">💾 Cadastrar Boleto</button>
+        <button type="submit" className="btn-primary">💾 Cadastrar Boleto</button>
       </form>
     </div>
   );

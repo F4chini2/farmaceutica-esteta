@@ -1,9 +1,4 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #fcfcfc;
-}
+/* Específicos da tela de login/cadastro */
 
 .top-bar {
   background-image: url('../assets/LOGO.png');
@@ -21,13 +16,7 @@ body {
   bottom: 0;
   width: 100%;
   height: 3px;
-  background-color: #dfbf8c; /* linha dourada */
-}
-
-
-.logo-bar {
-  height: 100px;
-  object-fit: contain;
+  background-color: #dfbf8c;
 }
 
 .container {
@@ -58,35 +47,11 @@ body {
 }
 
 .form-box h2 {
-  color: #a2786a;
+  color: var(--cor-primaria);
   font-size: 22px;
   margin-bottom: 10px;
   border-bottom: 1px solid #d0a96b;
   padding-bottom: 8px;
-}
-
-input {
-  margin-bottom: 12px;
-  padding: 10px;
-  border: 1px solid #d4baba;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-button {
-  background-color: #c5a5a0;
-  color: white;
-  border: 1px solid #b08882;
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  font-size: 15px;
-}
-
-button:hover {
-  background-color: #a2786a;
 }
 
 .link {

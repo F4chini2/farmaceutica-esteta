@@ -1,6 +1,46 @@
+/* === VARIÁVEIS === */
+:root {
+  --cor-primaria: #a2786a;
+  --cor-secundaria: #8c5e51;
+  --cor-destaque: #BB9380;
+  --cor-texto: #4d3b2f;
+  --cor-fundo-claro: #fdf7f5;
+  --cor-fundo-medio: #f2e4de;
+  --cor-fundo-gradient: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
+}
 
-/* Global Styles */
+/* === RESET GLOBAL === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
+body, html {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--cor-fundo-gradient);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+/* === TIPOGRAFIA === */
+h1, h2 {
+  color: var(--cor-primaria);
+  text-align: center;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 48px;
+}
+
+h2 {
+  font-size: 32px;
+}
+
+/* === COMPONENTES COMUNS === */
 .barra-pesquisa {
   padding: 10px 16px;
   border: 1px solid #d4baba;
@@ -11,39 +51,145 @@
   margin: 0 auto 20px;
   display: block;
   background-color: #fffaf9;
-  color: #4d3b2f;
+  color: var(--cor-texto);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.btn-excluir-agendamento,
-.btn-novo-cliente {
-  padding: 10px 14px;
+/* === BOTÕES === */
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-voltar {
   border: none;
   border-radius: 8px;
   font-weight: bold;
-  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.btn-excluir-agendamento {
-  background-color: #BB9380;
+  padding: 10px 16px;
   color: white;
 }
 
-.btn-excluir-agendamento:hover {
-  background-color: #b84c4c;
+.btn-primary {
+  background: linear-gradient(to right, var(--cor-primaria), var(--cor-secundaria));
 }
 
-.btn-novo-cliente {
-  background: linear-gradient(to right, #a2786a, #8c5e51);
-  color: white;
-  border-radius: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.btn-novo-cliente:hover {
-  background: linear-gradient(to right, #8c5e51, #a2786a);
+.btn-primary:hover {
+  background: linear-gradient(to right, var(--cor-secundaria), var(--cor-primaria));
   transform: scale(1.05);
 }
 
+.btn-secondary {
+  background-color: var(--cor-secundaria);
+}
+
+.btn-secondary:hover {
+  background-color: var(--cor-primaria);
+}
+
+.btn-danger {
+  background-color: var(--cor-destaque);
+}
+
+.btn-danger:hover {
+  background-color: #b84c4c;
+}
+
+.btn-voltar {
+  background-color: #f3e0dc;
+  color: var(--cor-primaria);
+  border: 1px solid #d9b9b2;
+}
+
+.btn-voltar:hover {
+  background-color: #e8d0c8;
+  color: var(--cor-secundaria);
+}
+
+/* === FORMULÁRIOS === */
+input, textarea, select {
+  padding: 10px;
+  border: 1px solid #d4baba;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--cor-primaria);
+  outline: none;
+}
+
+/* === UPLOAD === */
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid var(--cor-primaria);
+  border-radius: 8px;
+  background-color: #f9e6e0;
+  color: #5e3d3d;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-file-upload:hover {
+  background-color: #f2d5cc;
+  border-color: var(--cor-secundaria);
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+/* === TABS === */
+.tab {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #e0cfc6;
+  background-color: #fffaf9;
+  color: var(--cor-primaria);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  background-color: #f2e1db;
+  border-color: #d4b3a6;
+}
+
+.tab.active {
+  background-color: var(--cor-primaria);
+  color: white;
+  border-color: var(--cor-primaria);
+}
+
+/* === CONTAINERS === */
+.container-box {
+  background: linear-gradient(to bottom, var(--cor-fundo-claro), var(--cor-fundo-medio));
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card {
+  background: linear-gradient(to bottom, var(--cor-fundo-claro), var(--cor-fundo-medio));
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
