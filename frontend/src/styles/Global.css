@@ -193,3 +193,21 @@ input:focus, textarea:focus, select:focus {
   transform: translateY(-6px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
 }
+
+.link-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #e5c5ba;
+  color: var(--cor-primaria);
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.link-pdf:hover {
+  background-color: #dfbda9;
+  color: var(--cor-secundaria);
+}

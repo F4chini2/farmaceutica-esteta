@@ -71,7 +71,7 @@ function Boletos() {
 
             {b.arquivo && (
               b.arquivo.endsWith('.pdf') ? (
-                <a href={`http://localhost:3001${b.arquivo}`} target="_blank" rel="noopener noreferrer">
+                <a href={`http://localhost:3001${b.arquivo}`} className="link-pdf" target="_blank" rel="noopener noreferrer">
                   📄 Ver PDF
                 </a>
               ) : (
