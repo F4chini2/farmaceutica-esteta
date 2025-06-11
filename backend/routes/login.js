@@ -22,6 +22,8 @@ router.post('/', async (req, res) => {
 
     const usuario = resultado.rows[0];
 
+    const usuario = resultado.rows[0];
+
     if (senha !== usuario.senha) {
       return res.status(401).json({ erro: 'Senha incorreta' });
     }
