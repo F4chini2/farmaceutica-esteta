@@ -49,7 +49,7 @@ function CadastroLogin() {
     e.preventDefault();
 
     try {
-      const resposta = await fetch(`${import.meta.env.VITE_API_URL}login`, {
+      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailLogin, senha: senhaLogin })
