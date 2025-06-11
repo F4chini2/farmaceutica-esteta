@@ -17,8 +17,10 @@ router.post('/', async (req, res) => {
       return res.status(401).json({ erro: 'Usuário não encontrado' });
     }
 
-    const usuario = resultado.rows[0];
-    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (senha !== usuario.senha) {
+  return res.status(401).json({ erro: 'Senha incorreta (sem hash)' });
+}
+
 
     if (!senhaValida) {
       return res.status(401).json({ erro: 'Senha incorreta' });
