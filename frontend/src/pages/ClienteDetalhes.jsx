@@ -75,7 +75,7 @@ function ClienteDetalhes() {
           onClick={async () => {
             try {
               const token = localStorage.getItem('token');
-              const resposta = await fetch(`${import.meta.env.VITE_API_URL}/clientes/${id}`, {
+              const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
