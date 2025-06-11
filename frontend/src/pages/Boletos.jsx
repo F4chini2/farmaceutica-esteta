@@ -12,7 +12,7 @@ function Boletos() {
   useEffect(() => {
     const fetchBoletos = async () => {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/boletos`, {
+      const res = await fetch('http://localhost:3001/boletos', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -23,7 +23,7 @@ function Boletos() {
 
   const marcarComoPago = async (id) => {
     const token = localStorage.getItem('token');
-    await fetch(`${import.meta.env.VITE_API_URL}/boletos/${id}/pagar`, {
+    await fetch(`http://localhost:3001/boletos/${id}/pagar`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -33,7 +33,7 @@ function Boletos() {
   const excluirBoleto = async (id) => {
     if (!window.confirm('Deseja excluir este boleto?')) return;
     const token = localStorage.getItem('token');
-    await fetch(`${import.meta.env.VITE_API_URL}/boletos/${id}`, {
+    await fetch(`http://localhost:3001/boletos/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -71,15 +71,15 @@ function Boletos() {
 
             {b.arquivo && (
               b.arquivo.endsWith('.pdf') ? (
-                <a href={`${import.meta.env.VITE_API_URL}${b.arquivo}`} className="link-pdf" target="_blank" rel="noopener noreferrer">
+                <a href={`http://localhost:3001${b.arquivo}`} className="link-pdf" target="_blank" rel="noopener noreferrer">
                   📄 Ver PDF
                 </a>
               ) : (
                 <img
-                  src={`${import.meta.env.VITE_API_URL}${b.arquivo}`}
+                  src={`http://localhost:3001${b.arquivo}`}
                   alt="arquivo"
                   className="foto-procedimento"
-                  onClick={() => setImagemSelecionada(`${import.meta.env.VITE_API_URL}${b.arquivo}`)}
+                  onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
                 />
               )
             )}

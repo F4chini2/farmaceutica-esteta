@@ -11,7 +11,7 @@ function Agendamentos() {
     const fetchAgendamentos = async () => {
       try {
         const token = localStorage.getItem('token');
-        const resposta = await fetch(`${import.meta.env.VITE_API_URL}/agendamentos`, {
+        const resposta = await fetch('http://localhost:3001/agendamentos', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const dados = await resposta.json();
@@ -34,7 +34,7 @@ function Agendamentos() {
     try {
       const token = localStorage.getItem('token');
 
-      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/agendamentos/${agendamento.id}/historico`, {
+      const resposta = await fetch(`http://localhost:3001/agendamentos/${agendamento.id}/historico`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -54,7 +54,7 @@ function Agendamentos() {
 
     try {
       const token = localStorage.getItem('token');
-      const resp = await fetch(`${import.meta.env.VITE_API_URL}/agendamentos/${agendamento.id}`, {
+      const resp = await fetch(`http://localhost:3001/agendamentos/${agendamento.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

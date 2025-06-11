@@ -19,7 +19,7 @@ function Fornecedores() {
 
   const carregarFornecedores = async () => {
     const token = localStorage.getItem('token');
-    const resposta = await fetch(`${import.meta.env.VITE_API_URL}/fornecedores`, {
+    const resposta = await fetch('http://localhost:3001/fornecedores', {
       headers: { Authorization: `Bearer ${token}` }
     });
     const dados = await resposta.json();
@@ -29,7 +29,7 @@ function Fornecedores() {
   const cadastrarFornecedor = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    const resp = await fetch(`${import.meta.env.VITE_API_URL}/fornecedores`, {
+    const resp = await fetch('http://localhost:3001/fornecedores', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ function Fornecedores() {
   const excluirFornecedor = async (id) => {
     if (!window.confirm('Tem certeza que deseja excluir este fornecedor?')) return;
     const token = localStorage.getItem('token');
-    const resp = await fetch(`${import.meta.env.VITE_API_URL}/fornecedores/${id}`, {
+    const resp = await fetch(`http://localhost:3001/fornecedores/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });

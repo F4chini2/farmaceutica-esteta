@@ -24,7 +24,7 @@ function CadastrarBoleto() {
     if (arquivo) formData.append("arquivo", arquivo);
 
     try {
-      const resp = await fetch(`${import.meta.env.VITE_API_URL}/boletos`, {
+      const resp = await fetch("http://localhost:3001/boletos", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
