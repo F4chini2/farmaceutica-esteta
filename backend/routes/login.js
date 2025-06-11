@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const SECRET = 'chave-super-secreta';
@@ -15,22 +16,11 @@ router.post('/', async (req, res) => {
     if (resultado.rows.length === 0) {
       return res.status(401).json({ erro: 'Usuário não encontrado' });
     }
- 
-    const usuario = resultado.rows[0];
 
     const usuario = resultado.rows[0];
-
-    const usuario = resultado.rows[0];
-
-    const usuario = resultado.rows[0];
-
-    const usuario = resultado.rows[0];
-
-    const usuario = resultado.rows[0];
-
-    const usuario = resultado.rows[0];
-
-    if (senha !== usuario.senha) {
+    
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) {
       return res.status(401).json({ erro: 'Senha incorreta' });
     }
 
