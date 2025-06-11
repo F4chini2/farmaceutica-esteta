@@ -26,6 +26,7 @@ const rotasEstoque = require('./routes/estoque');
 const rotasFornecedores = require('./routes/fornecedores');
 const historicoRoutes = require('./routes/historico');
 const boletosRouter = require('./routes/boletos');
+const clientesRouter = require('./routes/clientes');
 
 // Define rotas com prefixos
 app.use('/login', rotasLogin);
@@ -35,6 +36,7 @@ app.use('/estoque', rotasEstoque);
 app.use('/fornecedores', rotasFornecedores);
 app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
+app.use('/clientes', clientesRouter);
 
 // Rota de teste
 app.get('/', (req, res) => {
