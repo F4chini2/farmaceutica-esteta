@@ -1,19 +1,15 @@
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ✅ CORS ajustado para permitir acesso do front publicado na Vercel
-app.use(cors({
-  origin: 'https://farmaceutica-esteta.vercel.app', // ou '*' para liberar tudo (menos seguro)
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
-// Middlewares para tratar JSON e form-data
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Middleware
+app.use(cors());
+app.use(express.json()); // ✅ necessário para JSON (ex: cadastrar fornecedor)
+app.use(express.urlencoded({ extended: true })); // ✅ necessário para form-data (ex: upload de boletos)
 
 // Servir arquivos da pasta /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -28,7 +24,7 @@ const historicoRoutes = require('./routes/historico');
 const boletosRouter = require('./routes/boletos');
 const clientesRouter = require('./routes/clientes');
 
-// Define rotas com prefixos
+// Define as rotas
 app.use('/login', rotasLogin);
 app.use('/clientesfull', rotasClientesFull);
 app.use('/agendamentos', rotasAgendamentos);
@@ -38,7 +34,7 @@ app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
 app.use('/clientes', clientesRouter);
 
-// Rota de teste
+// Teste de API
 app.get('/', (req, res) => {
   res.send('API da Farmacêutica Esteta funcionando!');
 });
