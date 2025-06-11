@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
   SECRET,
   { expiresIn: '2h' }
 );
-
+ 
     res.status(200).json({
       mensagem: 'Login realizado com sucesso!',
       token
