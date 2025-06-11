@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
     if (resultado.rows.length === 0) {
       return res.status(401).json({ erro: 'Usuário não encontrado' });
     }
-
+ 
     const usuario = resultado.rows[0];
 
     if (senha !== usuario.senha) {
