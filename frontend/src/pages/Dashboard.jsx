@@ -13,7 +13,7 @@ function Dashboard() {
     const fetchClientes = async () => {
       try {
         const token = localStorage.getItem('token');
-        const resposta = await fetch('http://localhost:3001/clientes', {
+        const resposta = await fetch('http://localhost:3001/clientesfull', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -40,7 +40,7 @@ function Dashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
+      const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`

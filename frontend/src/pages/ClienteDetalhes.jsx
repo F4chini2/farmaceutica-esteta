@@ -13,7 +13,7 @@ function ClienteDetalhes() {
     const fetchCliente = async () => {
       try {
         const token = localStorage.getItem('token');
-        const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
+        const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const dados = await resposta.json();
@@ -75,7 +75,7 @@ function ClienteDetalhes() {
           onClick={async () => {
             try {
               const token = localStorage.getItem('token');
-              const resposta = await fetch(`http://localhost:3001/clientes/${id}`, {
+              const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
