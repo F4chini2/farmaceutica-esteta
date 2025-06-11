@@ -26,7 +26,7 @@ function CadastroLogin() {
     }
 
     try {
-      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/clientes`, {
+      const resposta = await fetch(`http://localhost:3001/clientes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cadastro)
@@ -49,7 +49,7 @@ function CadastroLogin() {
     e.preventDefault();
 
     try {
-      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+      const resposta = await fetch(`http://localhost:3001/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailLogin, senha: senhaLogin })
