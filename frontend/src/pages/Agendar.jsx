@@ -28,7 +28,7 @@ function Agendar() {
     }
 
     try {
-      const resposta = await fetch('http://localhost:3001/agendamentos', {
+      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/agendamentos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

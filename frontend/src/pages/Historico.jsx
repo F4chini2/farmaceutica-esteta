@@ -13,14 +13,14 @@ function Historico() {
   useEffect(() => {
     const carregarHistorico = async () => {
       const token = localStorage.getItem('token');
-      const resp = await fetch('http://localhost:3001/historico/todos', {
+      const resp = await fetch(`${import.meta.env.VITE_API_URL}/historico/todos`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const dados = await resp.json();
       setProcedimentos(dados);
 
       for (let p of dados) {
-        const fotosResp = await fetch(`http://localhost:3001/historico/historico/${p.id}/fotos`);
+        const fotosResp = await fetch(`${import.meta.env.VITE_API_URL}/historico/historico/${p.id}/fotos`);
         const fotosData = await fotosResp.json();
         setFotos(prev => ({ ...prev, [p.id]: fotosData }));
       }
@@ -35,7 +35,7 @@ function Historico() {
       formData.append('fotos', file);
     }
     const token = localStorage.getItem('token');
-    const resp = await fetch(`http://localhost:3001/historico/historico/${historicoId}/fotos`, {
+    const resp = await fetch(`${import.meta.env.VITE_API_URL}/historico/historico/${historicoId}/fotos`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: formData
@@ -55,7 +55,7 @@ function Historico() {
 
     try {
       const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/historico/${id}`, {
+      const resp = await fetch(`${import.meta.env.VITE_API_URL}/historico/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -80,7 +80,7 @@ function Historico() {
 
     try {
       const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/historico/foto/${fotoId}`, {
+      const resp = await fetch(`${import.meta.env.VITE_API_URL}/historico/foto/${fotoId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -142,10 +142,10 @@ function Historico() {
                     <div className="foto-container" key={f.id}>
                       <button className="btn-excluir-foto" onClick={() => deletarFoto(f.id, proc.id)}>🗑️</button>
                       <img
-                        src={`http://localhost:3001${f.url}`}
+                        src={`${import.meta.env.VITE_API_URL}${f.url}`}
                         alt="procedimento"
                         className="foto-procedimento"
-                        onClick={() => setImagemSelecionada(`http://localhost:3001${f.url}`)}
+                        onClick={() => setImagemSelecionada(`${import.meta.env.VITE_API_URL}${f.url}`)}
                         style={{ cursor: 'pointer' }}
                       />
                     </div>

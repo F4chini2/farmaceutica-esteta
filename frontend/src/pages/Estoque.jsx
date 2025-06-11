@@ -15,7 +15,7 @@ function Estoque() {
   const carregarItens = async () => {
     const token = localStorage.getItem('token');
     try {
-      const resposta = await fetch('http://localhost:3001/estoque', {
+      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/estoque`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const dados = await resposta.json();
@@ -30,7 +30,7 @@ function Estoque() {
     const token = localStorage.getItem('token');
 
     try {
-      const resposta = await fetch('http://localhost:3001/estoque', {
+      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/estoque`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ function Estoque() {
 
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:3001/estoque/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/estoque/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -78,7 +78,7 @@ function Estoque() {
     const novaQuantidade = Math.max(0, Number(item.quantidade) + delta);
 
     try {
-      const resposta = await fetch(`http://localhost:3001/estoque/${id}`, {
+      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/estoque/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
