@@ -211,3 +211,12 @@ input:focus, textarea:focus, select:focus {
   background-color: #dfbda9;
   color: var(--cor-secundaria);
 }
+
+/* espaçamento no card */
+.card>*+*{margin-top:8px}
+.card p,.card li{margin:2px 0}
+.card p+p,.card li+li{margin-top:6px}
+.card .btn-primary,.card .btn-secondary,.card .btn-danger,.card .btn-voltar{margin-right:8px;margin-top:6px}
+.card .btn-primary:last-child,.card .btn-secondary:last-child,.card .btn-danger:last-child,.card .btn-voltar:last-child{margin-right:0}
+.card .acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+
