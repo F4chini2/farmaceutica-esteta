@@ -1,4 +1,3 @@
-
 import './Boletos.css';
 import './Historico.css'; // Para zoom e overlay
 import { useEffect, useState } from 'react';
@@ -75,7 +74,10 @@ function BoletosPagos() {
               )
             )}
 
-            <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
+            {/* AÇÕES NO RODAPÉ */}
+            <div className="acoes">
+              <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
+            </div>
           </div>
         ))}
       </div>

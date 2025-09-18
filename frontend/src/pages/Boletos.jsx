@@ -1,4 +1,3 @@
-
 import './Boletos.css';
 import './Historico.css'; // Importa o estilo do Histórico
 import { useEffect, useState } from 'react';
@@ -84,8 +83,11 @@ function Boletos() {
               )
             )}
 
-            <button className="btn-secondary" onClick={() => marcarComoPago(b.id)}>✅ Marcar como Pago</button>
-            <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
+            {/* AÇÕES NO RODAPÉ */}
+            <div className="acoes">
+              <button className="btn-secondary" onClick={() => marcarComoPago(b.id)}>✅ Marcar como Pago</button>
+              <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
+            </div>
           </div>
         ))}
       </div>
