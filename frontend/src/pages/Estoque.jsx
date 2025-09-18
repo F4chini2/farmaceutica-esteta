@@ -1,4 +1,3 @@
-
 import './Estoque.css';
 import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
@@ -8,9 +7,7 @@ function Estoque() {
   const [form, setForm] = useState({ nome: '', quantidade: '', unidade: '', validade: '' });
   const [busca, setBusca] = useState('');
 
-  useEffect(() => {
-    carregarItens();
-  }, []);
+  useEffect(() => { carregarItens(); }, []);
 
   const carregarItens = async () => {
     const token = localStorage.getItem('token');
@@ -48,7 +45,7 @@ function Estoque() {
       } else {
         alert(dados.erro || 'Erro ao cadastrar');
       }
-    } catch (err) {
+    } catch {
       alert('Erro ao conectar');
     }
   };
@@ -94,9 +91,7 @@ function Estoque() {
 
       if (resposta.ok) {
         setItens(prev =>
-          prev.map(i =>
-            i.id === id ? { ...i, quantidade: novaQuantidade } : i
-          )
+          prev.map(i => (i.id === id ? { ...i, quantidade: novaQuantidade } : i))
         );
       } else {
         alert('Erro ao atualizar quantidade');
@@ -112,7 +107,7 @@ function Estoque() {
       <div className="topo-dashboard">
         <h2>📦 Controle de Estoque</h2>
       </div>
-    
+
       <form className="estoque-form" onSubmit={cadastrarItem}>
         <input
           placeholder="Nome do item"
@@ -148,7 +143,7 @@ function Estoque() {
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
-      
+
       <div className="estoque-lista">
         {itens
           .filter(item => item.nome.toLowerCase().includes(busca.toLowerCase()))
@@ -157,13 +152,34 @@ function Estoque() {
               <strong>{item.nome}</strong>
               <p>🧾 {item.quantidade} {item.unidade}</p>
               <p>⏳ Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                <button onClick={() => atualizarQuantidade(item.id, +1)}>➕</button>
-                <button onClick={() => atualizarQuantidade(item.id, -1)}>➖</button>
-                <button className="btn-danger" onClick={() => excluirItem(item.id)}>🗑️</button>
+
+              <div className="qtd-group">
+                <button
+                  type="button"
+                  className="qtd-btn"
+                  aria-label="Adicionar 1"
+                  onClick={() => atualizarQuantidade(item.id, +1)}
+                >＋</button>
+
+                <span className="qtd-value">{item.quantidade}</span>
+
+                <button
+                  type="button"
+                  className="qtd-btn"
+                  aria-label="Remover 1"
+                  onClick={() => atualizarQuantidade(item.id, -1)}
+                  disabled={Number(item.quantidade) <= 0}
+                >－</button>
+
+                <button
+                  type="button"
+                  className="btn-danger"
+                  onClick={() => excluirItem(item.id)}
+                  style={{ marginLeft: '6px' }}
+                >🗑️</button>
               </div>
             </div>
-        ))}
+          ))}
       </div>
     </div>
   );

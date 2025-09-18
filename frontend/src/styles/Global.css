@@ -219,3 +219,4 @@ input:focus, textarea:focus, select:focus {
 .card .btn-primary,.card .btn-secondary,.card .btn-danger,.card .btn-voltar{margin-right:8px;margin-top:6px}
 .card .btn-primary:last-child,.card .btn-secondary:last-child,.card .btn-danger:last-child,.card .btn-voltar:last-child{margin-right:0}
 .card .acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+

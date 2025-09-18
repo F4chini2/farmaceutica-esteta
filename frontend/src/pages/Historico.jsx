@@ -126,17 +126,23 @@ function Historico() {
               <p><strong>💆 Serviço:</strong> {proc.servico}</p>
               <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
-              <button className="btn-danger" onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
-
-              <div className="upload-wrapper">
+              
+              <div className="uploader">
                 <span>📸 Enviar fotos:</span>
-                <label className="custom-file-upload">
-                  <input type="file" multiple onChange={(e) => handleFotoUpload(e, proc.id)} />
-                  Escolher arquivos
+                <input
+                id={`fotos-${proc.id}`}
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => handleFotoUpload(e, proc.id)}
+                />
+                <label className="upload-label" htmlFor={`fotos-${proc.id}`}>
+                ⬆️ Escolher arquivos
                 </label>
               </div>
 
-              {fotos[proc.id] && fotos[proc.id].length > 0 && (
+
+                {fotos[proc.id] && fotos[proc.id].length > 0 && (
                 <div className="fotos-wrapper">
                   {fotos[proc.id].map(f => (
                     <div className="foto-container" key={f.id}>
@@ -152,6 +158,9 @@ function Historico() {
                   ))}
                 </div>
               )}
+              
+              <button className="btn-danger" onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
+
             </div>
           ))}
       </div>

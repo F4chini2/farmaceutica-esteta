@@ -57,3 +57,14 @@
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(255,255,255,0.2);
 }
+
+/* uploader bonito e no tema */
+.uploader{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.uploader input[type="file"]{display:none}
+.upload-label{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid #d9b9b2;border-radius:10px;background:#f9e6e0;color:var(--cor-primaria);font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.06);transition:.2s}
+.upload-label:hover{background:#f2d5cc;border-color:var(--cor-secundaria);transform:translateY(-1px)}
+
+/* seus thumbs já existentes, só dei um tapa leve */
+.fotos-wrapper{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.foto-procedimento{width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #e0cfc6;box-shadow:0 3px 10px rgba(0,0,0,.08);background:#fff}
+.btn-excluir-foto{background:linear-gradient(to bottom,#c95555,#b84c4c);box-shadow:0 2px 6px rgba(0,0,0,.15)}

@@ -93,3 +93,18 @@
 .estoque-item button:hover {
   background-color: #b84c4c;
 }
+
+/* === Controle de Quantidade === */
+.qtd-group{display:flex;align-items:center;gap:10px;margin-top:12px}
+.qtd-btn{
+  width:36px;height:36px;border:1px solid #d9b9b2;border-radius:8px;background:#fff;
+  color:var(--cor-primaria);font-size:20px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.2s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,.08)
+}
+.qtd-btn:hover{background:var(--cor-primaria);color:#fff;transform:scale(1.05)}
+.qtd-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.qtd-value{
+  min-width:44px;text-align:center;padding:6px 10px;border-radius:8px;
+  background:#fffaf9;border:1px solid #e0cfc6;color:var(--cor-texto);font-weight:700;font-size:15px
+}
