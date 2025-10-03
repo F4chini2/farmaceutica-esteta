@@ -1,10 +1,9 @@
-
+// index.js (igual ao seu, mas com a rota /pre-cadastro registrada)
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
-
 
 // Middleware
 app.use(cors());
@@ -23,6 +22,9 @@ const rotasFornecedores = require('./routes/fornecedores');
 const historicoRoutes = require('./routes/historico');
 const boletosRouter = require('./routes/boletos');
 
+// ✅ NOVO: rota pública de pré-cadastro (usa o arquivo já enviado: routes/precadastro.js)
+const preCadastroRouter = require('./routes/precadastro');
+
 // Define as rotas
 app.use('/login', rotasLogin);
 app.use('/clientesfull', rotasClientesFull);
@@ -31,6 +33,9 @@ app.use('/estoque', rotasEstoque);
 app.use('/fornecedores', rotasFornecedores);
 app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
+
+// ✅ NOVO: registra o endpoint público
+app.use('/pre-cadastro', preCadastroRouter);
 
 // Teste de API
 app.get('/', (req, res) => {

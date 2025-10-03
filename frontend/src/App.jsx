@@ -12,13 +12,22 @@ import Boletos from './pages/Boletos';
 import BoletosPagos from './pages/BoletosPagos';
 import CadastrarBoleto from './pages/CadastrarBoletos';
 
+// 🔹 importa o pré-cadastro (ajuste o nome do arquivo se estiver diferente)
+import PreCadastro from './pages/PreCadastro';
+
 function App() {
   const token = localStorage.getItem('token');
 
   return (
     <BrowserRouter>
       <Routes>
+        {/* rota de login */}
         <Route path="/" element={<CadastroLogin />} />
+
+        {/* rota pública do pré-cadastro */}
+        <Route path="/pre-cadastro" element={<PreCadastro />} />
+
+        {/* rotas protegidas */}
         <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/" />} />
         <Route path="/clientes/:id" element={token ? <ClienteDetalhes /> : <Navigate to="/" />} />
         <Route path="/clientes/:id/historico" element={token ? <Historico /> : <Navigate to="/" />} />
