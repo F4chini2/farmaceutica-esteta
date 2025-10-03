@@ -51,7 +51,7 @@ function Agendar() {
   };
 
   return (
-    <div className="container-box">
+    <div className="agendar-container">
       <button className="btn-voltar" onClick={() => navigate(-1)}>
         ⬅ Voltar
       </button>
