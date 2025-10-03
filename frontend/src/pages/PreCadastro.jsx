@@ -1,8 +1,9 @@
-// src/pages/PreCadastro.jsx
 import { useState } from 'react';
-import './ClientesFull.css'; // reaproveita o grid e campos
+import { useNavigate } from 'react-router-dom';
+import './PreCadastro.css'; // aqui você cola o CSS baseado no boletos
 
 export default function PreCadastro() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: '',
     endereco: '',
@@ -12,12 +13,12 @@ export default function PreCadastro() {
   });
   const [status, setStatus] = useState(null);
 
-  const handleChange = (campo, valor) => setForm(prev => ({ ...prev, [campo]: valor }));
+  const handleChange = (campo, valor) =>
+    setForm(prev => ({ ...prev, [campo]: valor }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus(null);
-    if (!form.nome) return setStatus({ tipo: 'erro', msg: 'Informe o nome.' });
 
     try {
       const resp = await fetch('http://localhost:3001/pre-cadastro', {
@@ -25,12 +26,13 @@ export default function PreCadastro() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          autoriza_fotos: form.autoriza_fotos === 'true'
-        })
+          autoriza_fotos: form.autoriza_fotos === 'true',
+        }),
       });
+
       const data = await resp.json();
       if (resp.ok) {
-        setStatus({ tipo: 'ok', msg: 'Pré-cadastro enviado! Entraremos em contato.' });
+        setStatus({ tipo: 'ok', msg: 'Pré-cadastro enviado com sucesso!' });
         setForm({ nome: '', endereco: '', telefone: '', procedimentos: '', autoriza_fotos: 'false' });
       } else {
         setStatus({ tipo: 'erro', msg: data.erro || 'Erro ao enviar.' });
@@ -41,40 +43,39 @@ export default function PreCadastro() {
   };
 
   return (
-    <div className="container-box">
-      <h2>Pré-cadastro</h2>
-      <form onSubmit={handleSubmit} className="form-agendamento">
-        <label className="campo-formulario">
-          Nome
-          <input value={form.nome} onChange={e => handleChange('nome', e.target.value)} type="text" required />
+    <div className="precadastro-container">
+      <h2>📝 Pré-cadastro</h2>
+
+      <form onSubmit={handleSubmit} className="form-precadastro">
+        <label>
+          Nome:
+          <input type="text" value={form.nome} onChange={e => handleChange('nome', e.target.value)} required />
         </label>
 
-        <label className="campo-formulario">
-          Endereço
-          <input value={form.endereco} onChange={e => handleChange('endereco', e.target.value)} type="text" />
+        <label>
+          Endereço:
+          <input type="text" value={form.endereco} onChange={e => handleChange('endereco', e.target.value)} />
         </label>
 
-        <label className="campo-formulario">
-          Telefone
-          <input value={form.telefone} onChange={e => handleChange('telefone', e.target.value)} type="tel" placeholder="(00) 00000-0000" />
+        <label>
+          Telefone:
+          <input type="tel" value={form.telefone} onChange={e => handleChange('telefone', e.target.value)} placeholder="(00) 00000-0000" />
         </label>
 
-        <label className="campo-formulario">
-          Procedimentos
-          <input value={form.procedimentos} onChange={e => handleChange('procedimentos', e.target.value)} type="text" placeholder="Ex.: limpeza de pele, peeling..." />
+        <label>
+          Procedimentos:
+          <input type="text" value={form.procedimentos} onChange={e => handleChange('procedimentos', e.target.value)} placeholder="Ex.: limpeza de pele, peeling..." />
         </label>
 
-        <label className="campo-formulario">
-          Autoriza Fotos
+        <label>
+          Autoriza Fotos:
           <select value={form.autoriza_fotos} onChange={e => handleChange('autoriza_fotos', e.target.value)}>
             <option value="false">Não</option>
             <option value="true">Sim</option>
           </select>
         </label>
 
-        <button type="submit" className="btn-primary" style={{ gridColumn: 'span 2' }}>
-          Enviar
-        </button>
+        <button type="submit" className="btn-primary">📝 Enviar</button>
       </form>
 
       {status && (
