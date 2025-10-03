@@ -10,11 +10,11 @@ async function clienteTemAgendamentos(id) {
   return parseInt(resultado.rows[0].count) > 0;
 }
 
-// Cadastrar um novo cliente
+// Cadastrar um novo cliente (agora com procedimentos e autoriza_fotos)
 router.post('/', autenticarToken, async (req, res) => {
   try {
-    const cliente = req.body;
-    if (!cliente.nome || !cliente.cpf) {
+    const c = req.body;
+    if (!c.nome || !c.cpf) {
       return res.status(400).json({ erro: 'Nome e CPF são obrigatórios.' });
     }
 
@@ -24,21 +24,28 @@ router.post('/', autenticarToken, async (req, res) => {
         tratamento_anterior, alergia_medicamento, uso_medicamento,
         usa_filtro_solar, usa_acido_peeling, problema_pele, gravida,
         cor_pele, biotipo_pele, hidratacao, acne,
-        textura_pele, envelhecimento, rugas, cpf
+        textura_pele, envelhecimento, rugas, cpf,
+        procedimentos, autoriza_fotos
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8,
         $9, $10, $11, $12, $13, $14, $15,
-        $16, $17, $18, $19, $20, $21, $22, $23
+        $16, $17, $18, $19, $20, $21, $22, $23,
+        $24, $25
       )
       RETURNING *`,
       [
-        cliente.nome, cliente.telefone, cliente.alergias, cliente.descricao,
-        cliente.idade === '' ? null : parseInt(cliente.idade),
-        cliente.endereco, cliente.instagram, cliente.motivo_avaliacao,
-        cliente.tratamento_anterior, cliente.alergia_medicamento, cliente.uso_medicamento,
-        cliente.usa_filtro_solar === 'true', cliente.usa_acido_peeling === 'true', cliente.problema_pele, cliente.gravida === 'true',
-        cliente.cor_pele, cliente.biotipo_pele, cliente.hidratacao, cliente.acne,
-        cliente.textura_pele, cliente.envelhecimento, cliente.rugas, cliente.cpf
+        c.nome, c.telefone, c.alergias, c.descricao,
+        c.idade === '' ? null : parseInt(c.idade),
+        c.endereco, c.instagram, c.motivo_avaliacao,
+        c.tratamento_anterior, c.alergia_medicamento, c.uso_medicamento,
+        c.usa_filtro_solar === 'true' || c.usa_filtro_solar === true,
+        c.usa_acido_peeling === 'true' || c.usa_acido_peeling === true,
+        c.problema_pele,
+        c.gravida === 'true' || c.gravida === true,
+        c.cor_pele, c.biotipo_pele, c.hidratacao, c.acne,
+        c.textura_pele, c.envelhecimento, c.rugas, c.cpf,
+        c.procedimentos || null,
+        c.autoriza_fotos === 'true' || c.autoriza_fotos === true
       ]
     );
     res.status(201).json({ mensagem: 'Cliente cadastrado com sucesso!', cliente: resultado.rows[0] });
@@ -48,10 +55,10 @@ router.post('/', autenticarToken, async (req, res) => {
   }
 });
 
-// Atualizar os dados de um cliente existente
+// Atualizar os dados de um cliente existente (inclui novos campos)
 router.put('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
-  const cliente = req.body;
+  const c = req.body;
 
   try {
     const resultado = await pool.query(
@@ -61,17 +68,24 @@ router.put('/:id', autenticarToken, async (req, res) => {
         tratamento_anterior = $9, alergia_medicamento = $10, uso_medicamento = $11,
         usa_filtro_solar = $12, usa_acido_peeling = $13, problema_pele = $14, gravida = $15,
         cor_pele = $16, biotipo_pele = $17, hidratacao = $18, acne = $19,
-        textura_pele = $20, envelhecimento = $21, rugas = $22, cpf = $23
-        WHERE id = $24
+        textura_pele = $20, envelhecimento = $21, rugas = $22, cpf = $23,
+        procedimentos = $24, autoriza_fotos = $25
+        WHERE id = $26
         RETURNING *`,
       [
-        cliente.nome, cliente.telefone, cliente.alergias, cliente.descricao,
-        cliente.idade === '' ? null : parseInt(cliente.idade),
-        cliente.endereco, cliente.instagram, cliente.motivo_avaliacao,
-        cliente.tratamento_anterior, cliente.alergia_medicamento, cliente.uso_medicamento,
-        cliente.usa_filtro_solar === 'true', cliente.usa_acido_peeling === 'true', cliente.problema_pele, cliente.gravida === 'true',
-        cliente.cor_pele, cliente.biotipo_pele, cliente.hidratacao, cliente.acne,
-        cliente.textura_pele, cliente.envelhecimento, cliente.rugas, cliente.cpf, id
+        c.nome, c.telefone, c.alergias, c.descricao,
+        c.idade === '' ? null : parseInt(c.idade),
+        c.endereco, c.instagram, c.motivo_avaliacao,
+        c.tratamento_anterior, c.alergia_medicamento, c.uso_medicamento,
+        c.usa_filtro_solar === 'true' || c.usa_filtro_solar === true,
+        c.usa_acido_peeling === 'true' || c.usa_acido_peeling === true,
+        c.problema_pele,
+        c.gravida === 'true' || c.gravida === true,
+        c.cor_pele, c.biotipo_pele, c.hidratacao, c.acne,
+        c.textura_pele, c.envelhecimento, c.rugas, c.cpf,
+        c.procedimentos || null,
+        c.autoriza_fotos === 'true' || c.autoriza_fotos === true,
+        id
       ]
     );
 

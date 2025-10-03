@@ -9,7 +9,8 @@ function ClientesFull() {
     motivo_avaliacao: '', tratamento_anterior: '', alergia_medicamento: '', uso_medicamento: '',
     usa_filtro_solar: 'false', usa_acido_peeling: 'false', problema_pele: '', gravida: 'false',
     cor_pele: '', biotipo_pele: '', hidratacao: '', acne: '',
-    textura_pele: '', envelhecimento: '', rugas: ''
+    textura_pele: '', envelhecimento: '', rugas: '',
+    procedimentos: '', autoriza_fotos: 'false'
   });
 
   const handleChange = (campo, valor) => {
@@ -48,6 +49,8 @@ function ClientesFull() {
     }
   };
 
+  const booleanFields = new Set(['gravida','autoriza_fotos','usa_filtro_solar','usa_acido_peeling']);
+
   return (
     <div className="container-box">
       <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
@@ -57,8 +60,8 @@ function ClientesFull() {
       <form onSubmit={handleSubmit} className="form-agendamento">
         {Object.entries(form).map(([campo, valor]) => (
           <label key={campo} className="campo-formulario">
-            {campo.replaceAll('_', ' ').replace(/\w/g, l => l.toUpperCase())}
-            {campo.startsWith('usa_') || campo === 'gravida' ? (
+            {campo.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            {booleanFields.has(campo) ? (
               <select value={valor} onChange={e => handleChange(campo, e.target.value)}>
                 <option value="false">Não</option>
                 <option value="true">Sim</option>

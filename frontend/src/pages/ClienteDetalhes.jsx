@@ -1,13 +1,14 @@
-
 import './ClienteDetalhes.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const booleanFields = new Set(['gravida','autoriza_fotos','usa_filtro_solar','usa_acido_peeling']);
+
 function ClienteDetalhes() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [cliente, setCliente] = useState(null);
+  const [form, setForm] = useState(null);
 
   useEffect(() => {
     const fetchCliente = async () => {
@@ -17,8 +18,16 @@ function ClienteDetalhes() {
           headers: { Authorization: `Bearer ${token}` }
         });
         const dados = await resposta.json();
-        if (resposta.ok) setCliente(dados);
-        else alert(dados.erro || 'Erro ao carregar cliente');
+        if (resposta.ok) {
+          // Converte booleans para 'true'/'false' para os selects
+          const norm = { ...dados };
+          booleanFields.forEach((k) => {
+            if (k in norm) norm[k] = String(Boolean(norm[k]));
+          });
+          setForm(norm);
+        } else {
+          alert(dados.erro || 'Erro ao carregar cliente');
+        }
       } catch (err) {
         alert('Erro ao conectar com o servidor');
       }
@@ -27,7 +36,37 @@ function ClienteDetalhes() {
     fetchCliente();
   }, [id]);
 
-  if (!cliente) return <p>Carregando cliente...</p>;
+  const handleChange = (campo, valor) => {
+    setForm(prev => ({ ...prev, [campo]: valor }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const body = { ...form };
+      // Converte 'true'/'false' em boolean para API
+      booleanFields.forEach((k) => {
+        if (k in body) body[k] = body[k] === 'true';
+      });
+      if (body.idade === '') body.idade = null;
+
+      const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      const dados = await resposta.json();
+      if (resposta.ok) alert('Dados do cliente atualizados!');
+      else alert(dados.erro || 'Erro ao atualizar');
+    } catch (err) {
+      alert('Erro de conexão');
+    }
+  };
+
+  if (!form) return <p>Carregando cliente...</p>;
 
   return (
     <div className="container-box">
@@ -35,65 +74,31 @@ function ClienteDetalhes() {
         ⬅ Voltar para Clientes
       </button>
 
-      <h2>Detalhes de {cliente.nome}</h2>
+      <h2>Editar Cliente: {form.nome}</h2>
 
-      <div className="descricao-cliente">
-        <p><strong>Telefone:</strong> {cliente.telefone}</p>
-        <p><strong>Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
-        <p><strong>Idade:</strong> {cliente.idade || 'Não informado'}</p>
-        <p><strong>Endereço:</strong> {cliente.endereco || 'Não informado'}</p>
-        <p><strong>Instagram:</strong> {cliente.instagram || 'Não informado'}</p>
-        <p><strong>Motivo da Avaliação:</strong> {cliente.motivo_avaliacao || 'Não informado'}</p>
-        <p><strong>Tratamento Anterior:</strong> {cliente.tratamento_anterior || 'Nenhum'}</p>
-        <p><strong>Alergia a Medicamento:</strong> {cliente.alergia_medicamento || 'Não'}</p>
-        <p><strong>Uso de Medicamento:</strong> {cliente.uso_medicamento || 'Não'}</p>
-        <p><strong>Usa Filtro Solar:</strong> {cliente.usa_filtro_solar ? 'Sim' : 'Não'}</p>
-        <p><strong>Usa Ácido/Peeling:</strong> {cliente.usa_acido_peeling ? 'Sim' : 'Não'}</p>
-        <p><strong>Problemas de Pele:</strong> {cliente.problema_pele || 'Não informado'}</p>
-        <p><strong>Grávida:</strong> {cliente.gravida ? 'Sim' : 'Não'}</p>
-        <p><strong>Cor da Pele:</strong> {cliente.cor_pele || 'Não informado'}</p>
-        <p><strong>Biotipo de Pele:</strong> {cliente.biotipo_pele || 'Não informado'}</p>
-        <p><strong>Hidratação:</strong> {cliente.hidratacao || 'Não informado'}</p>
-        <p><strong>Acne:</strong> {cliente.acne || 'Não informado'}</p>
-        <p><strong>Textura da Pele:</strong> {cliente.textura_pele || 'Não informado'}</p>
-        <p><strong>Envelhecimento:</strong> {cliente.envelhecimento || 'Não informado'}</p>
-        <p><strong>Rugas:</strong> {cliente.rugas || 'Não informado'}</p>
-        <p><strong>CPF:</strong> {cliente.cpf || 'Não informado'}</p>
-        <p><strong>Descrição:</strong> {cliente.descricao || 'Nenhuma'}</p>
+      <div className="descricao-cliente editar-descricao">
+        {Object.entries(form).filter(([k]) => k !== 'id').map(([campo, valor]) => (
+          <label key={campo} className="campo-formulario">
+            <strong>{campo.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</strong>
+            {booleanFields.has(campo) ? (
+              <select value={valor} onChange={e => handleChange(campo, e.target.value)}>
+                <option value="false">Não</option>
+                <option value="true">Sim</option>
+              </select>
+            ) : (
+              <input
+                value={valor ?? ''}
+                onChange={e => handleChange(campo, e.target.value)}
+                type={campo === 'idade' ? 'number' : 'text'}
+              />
+            )}
+          </label>
+        ))}
       </div>
 
-      <div className="editar-descricao">
-        <textarea
-          placeholder="Atualizar descrição do cliente"
-          value={cliente.descricao}
-          onChange={(e) =>
-            setCliente({ ...cliente, descricao: e.target.value })
-          }
-        />
-        <button
-          className="btn-primary"
-          onClick={async () => {
-            try {
-              const token = localStorage.getItem('token');
-              const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ ...cliente, descricao: cliente.descricao }),
-              });
-              const dados = await resposta.json();
-              if (resposta.ok) alert('Descrição atualizada!');
-              else alert(dados.erro || 'Erro ao atualizar');
-            } catch (err) {
-              alert('Erro de conexão');
-            }
-          }}
-        >
-          💾 Salvar Descrição
-        </button>
-      </div>
+      <button className="btn-primary" onClick={handleSave}>
+        💾 Salvar Alterações
+      </button>
     </div>
   );
 }
