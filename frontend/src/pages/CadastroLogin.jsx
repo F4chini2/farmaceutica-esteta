@@ -1,4 +1,3 @@
-
 import './CadastroLogin.css';
 import logo from '../assets/LOGO.png';
 import { useState } from 'react';
@@ -26,7 +25,7 @@ function CadastroLogin() {
     }
 
     try {
-      const resposta = await fetch(`http://localhost:3001/clientes`, {
+      const resposta = await fetch(`http://localhost:3001/usuarios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cadastro)
@@ -35,7 +34,12 @@ function CadastroLogin() {
       const dados = await resposta.json();
 
       if (resposta.ok) {
-        alert('Cadastro realizado com sucesso!');
+        if (dados?.token) {
+          localStorage.setItem('token', dados.token);
+          navigate('/dashboard');
+        } else {
+          alert('Cadastro realizado! Faça login para continuar.');
+        }
       } else {
         alert(dados.erro || 'Erro no cadastro');
       }
@@ -87,7 +91,7 @@ function CadastroLogin() {
 
           <form onSubmit={handleLogin} className="form-box">
             <h2>Logar</h2>
-            <input placeholder="Nome ou Email" type="email" value={emailLogin} onChange={e => setEmailLogin(e.target.value)} />
+            <input placeholder="Email" type="email" value={emailLogin} onChange={e => setEmailLogin(e.target.value)} />
             <input placeholder="Senha" type="password" value={senhaLogin} onChange={e => setSenhaLogin(e.target.value)} />
             <div className="link">Esqueceu sua senha?</div>
             <button type="submit" className="btn-primary">Entrar</button>
