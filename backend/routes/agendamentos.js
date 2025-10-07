@@ -27,10 +27,6 @@ router.post('/', autenticarToken, async (req, res) => {
 
 // Listar todos os agendamentos
 router.get('/', autenticarToken, async (req, res) => {
-  if (req.usuario.tipo !== 'admin') {
-    return res.status(403).json({ erro: 'Acesso restrito a administradores' });
-  }
-
   const { data } = req.query;
 
   try {

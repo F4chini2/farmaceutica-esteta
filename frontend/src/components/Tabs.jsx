@@ -1,34 +1,47 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import './Tabs.css';
+import { NavLink } from 'react-router-dom';
 
-function Tabs() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
+function isAdminFromToken() {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    const payload = JSON.parse(atob(token.split('.')[1] || ''));
+    return payload?.perfil === 'admin' || payload?.tipo === 'admin' ||
+           payload?.role === 'admin' || payload?.is_admin === true;
+  } catch {
+    return false;
+  }
+}
 
-  const tabs = [
-    { label: 'Clientes', path: '/dashboard' },
-    { label: 'Agendamentos', path: '/agendamentos' },
-    { label: 'Histórico', path: '/historico' },
-    { label: 'Estoque', path: '/estoque' },
-    { label: 'Fornecedores', path: '/fornecedores' },
-    { label: 'Boletos', path: '/boletos' },
-    { label: 'Boletos Pagos', path: '/boletos-pagos' },
-    { label: 'Usuários', path: '/usuarios' } // ✅ nova aba
+export default function Tabs(){
+  const isAdmin = isAdminFromToken();
+
+  const itensBase = [
+    { label: 'Clientes', to: '/dashboard' },
+    { label: 'Agendamentos', to: '/agendamentos' },
+    { label: 'Históricos', to: '/historico' },
+    { label: 'Fornecedores', to: '/fornecedores' },
+    { label: 'Estoque', to: '/estoque' },
   ];
 
+  const itensAdmin = [
+    { label: 'Boletos', to: '/boletos' },
+    { label: 'Boletos Pagos', to: '/boletos-pagos' },
+    { label: 'Usuários', to: '/usuarios' },
+  ];
+
+  const itens = isAdmin ? [...itensBase, ...itensAdmin] : itensBase;
+
   return (
-    <div className="tabs-container">
-      {tabs.map((tab) => (
-        <div
-          key={tab.path}
-          className={`tab ${pathname === tab.path ? 'active' : ''}`}
-          onClick={() => navigate(tab.path)}
+    <div style={{display:'flex',gap:16,justifyContent:'center',margin:'16px 0',flexWrap:'wrap'}}>
+      {itens.map((it) => (
+        <NavLink
+          key={it.to}
+          to={it.to}
+          className={({ isActive }) => 'tab' + (isActive ? ' active' : '')}
         >
-          {tab.label}
-        </div>
+          {it.label}
+        </NavLink>
       ))}
     </div>
   );
 }
-
-export default Tabs;

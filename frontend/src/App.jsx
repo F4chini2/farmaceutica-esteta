@@ -1,5 +1,6 @@
+import UsuariosFull from './pages/UsuariosFull';
+import Login from './pages/Login';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import CadastroLogin from './pages/CadastroLogin';
 import Dashboard from './pages/Dashboard';
 import ClienteDetalhes from './pages/ClienteDetalhes';
 import Agendamentos from './pages/Agendamentos';
@@ -21,7 +22,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* rota de login */}
-        <Route path="/" element={<CadastroLogin />} />
+        <Route path="/" element={<Login />} />
 
         {/* rota pública do pré-cadastro */}
         <Route path="/pre-cadastro" element={<PreCadastro />} />
@@ -42,7 +43,7 @@ function App() {
         {/* ✅ nova rota protegida de usuários */}
         <Route path="/usuarios" element={token ? <Usuarios /> : <Navigate to="/" />} />
         {/* ✅ acesso ao cadastro/login via botão "Novo Usuário" */}
-        <Route path="/usuarios/novo" element={token ? <CadastroLogin /> : <Navigate to="/" />} />
+        <Route path="/usuarios/novo" element={token ? <UsuariosFull /> : <Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );

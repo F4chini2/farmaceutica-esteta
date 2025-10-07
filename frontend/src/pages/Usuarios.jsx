@@ -50,7 +50,7 @@ function Usuarios() {
       <div className="topo-dashboard">
         <h1>👥 Usuários</h1>
         {/* Ajuste a rota do botão abaixo se você tiver uma tela de criação */}
-        <button className="btn-primary" onClick={() => alert('Tela de criação de usuário será adicionada em breve.')}>
+        <button className="btn-primary" onClick={() => navigate('/usuarios/novo')}>
           ➕ Novo Usuário
         </button>
       </div>
@@ -75,9 +75,6 @@ function Usuarios() {
 
             <div className="acoes-card">
               {/* Ajuste a navegação se existir rota de detalhes/edição */}
-              <button className="btn-secondary" onClick={() => alert('Tela de detalhes/edição será adicionada em breve.')}>
-                🔍 Detalhes
-              </button>
               <button className="btn-danger" onClick={() => deletar(u.id)}>
                 🗑️ Excluir
               </button>
