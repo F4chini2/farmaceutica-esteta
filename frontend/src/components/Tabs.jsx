@@ -6,14 +6,15 @@ function Tabs() {
   const { pathname } = useLocation();
 
   const tabs = [
-  { label: 'Clientes', path: '/dashboard' },
-  { label: 'Agendamentos', path: '/agendamentos' },
-  { label: 'Histórico', path: '/historico' },
-  { label: 'Estoque', path: '/estoque' },
-  { label: 'Fornecedores', path: '/fornecedores' },
-  { label: 'Boletos', path: '/boletos' },
-  { label: 'Boletos Pagos', path: '/boletos-pagos' },
-];
+    { label: 'Clientes', path: '/dashboard' },
+    { label: 'Agendamentos', path: '/agendamentos' },
+    { label: 'Histórico', path: '/historico' },
+    { label: 'Estoque', path: '/estoque' },
+    { label: 'Fornecedores', path: '/fornecedores' },
+    { label: 'Boletos', path: '/boletos' },
+    { label: 'Boletos Pagos', path: '/boletos-pagos' },
+    { label: 'Usuários', path: '/usuarios' } // ✅ nova aba
+  ];
 
   return (
     <div className="tabs-container">

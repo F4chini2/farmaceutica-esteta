@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
     }
 
     const emailNorm = String(email).trim().toLowerCase();
-    const resultado = await pool.query('SELECT * FROM usuarios WHERE email = $1', [emailNorm]);
+    const resultado = await pool.query('SELECT * FROM usuarios WHERE LOWER(email) = $1', [emailNorm]);
 
     if (resultado.rows.length === 0) {
       return res.status(401).json({ erro: 'Credenciais inválidas.' });

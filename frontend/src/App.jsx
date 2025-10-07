@@ -11,9 +11,8 @@ import Agendar from './pages/Agendar';
 import Boletos from './pages/Boletos';
 import BoletosPagos from './pages/BoletosPagos';
 import CadastrarBoleto from './pages/CadastrarBoletos';
-
-// 🔹 importa o pré-cadastro (ajuste o nome do arquivo se estiver diferente)
 import PreCadastro from './pages/PreCadastro';
+import Usuarios from './pages/Usuarios'; // ✅ nova página
 
 function App() {
   const token = localStorage.getItem('token');
@@ -40,6 +39,10 @@ function App() {
         <Route path="/clientesfull" element={token ? <ClientesFull /> : <Navigate to="/" />} />
         <Route path="/boletos" element={token ? <Boletos /> : <Navigate to="/" />} />
         <Route path="/boletos-pagos" element={token ? <BoletosPagos /> : <Navigate to="/" />} />
+        {/* ✅ nova rota protegida de usuários */}
+        <Route path="/usuarios" element={token ? <Usuarios /> : <Navigate to="/" />} />
+        {/* ✅ acesso ao cadastro/login via botão "Novo Usuário" */}
+        <Route path="/usuarios/novo" element={token ? <CadastroLogin /> : <Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
