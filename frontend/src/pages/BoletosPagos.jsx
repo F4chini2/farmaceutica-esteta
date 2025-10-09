@@ -34,11 +34,8 @@ function BoletosPagos() {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) {
-        setBoletos((prev) => prev.filter((b) => b.id !== id));
-      } else {
-        alert('Erro ao excluir boleto');
-      }
+      if (res.ok) setBoletos((prev) => prev.filter((b) => b.id !== id));
+      else alert('Erro ao excluir boleto');
     } catch {
       alert('Erro ao conectar com o servidor');
     }
@@ -46,7 +43,7 @@ function BoletosPagos() {
 
   // ===== BUSCA + ORDENAÇÃO =====
   const filtrados = boletos.filter((b) => {
-    const q = busca.toLowerCase();
+    const q = (busca || '').toLowerCase();
     return (
       ((b?.nome_fornecedor) || '').toLowerCase().includes(q) ||
       ((b?.numero) || '').toLowerCase().includes(q) ||
@@ -64,7 +61,7 @@ function BoletosPagos() {
     return tb - ta || (b?.id || 0) - (a?.id || 0); // pago_em desc; fallback vencimento/id
   });
 
-  // ===== PAGINAÇÃO GLOBAL (6 por página) =====
+  // ===== PAGINAÇÃO (6 por página) =====
   const pageSize = 6;
   const [page, setPage] = useState(1);
   useEffect(() => { setPage(1); }, [busca, boletos]);
@@ -72,7 +69,7 @@ function BoletosPagos() {
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
   const startIdx = (page - 1) * pageSize;
   const visiveis = ordenados.slice(startIdx, startIdx + pageSize);
-  // ===========================================
+  // ====================================
 
   return (
     <div className="dashboard-container">
@@ -87,49 +84,52 @@ function BoletosPagos() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      {ordenados.length === 0 ? (
-        <p>Nenhum boleto pago encontrado.</p>
-      ) : (
-        <div className="clientes-lista">
-          {visiveis.map((b) => (
-            <div key={b.id} className="card">
-              <p><strong>Fornecedor:</strong> {b.nome_fornecedor}</p>
-              <p><strong>Número:</strong> {b.numero}</p>
-              <p><strong>Valor:</strong> R$ {b.valor}</p>
-              <p><strong>Vencimento:</strong> {b.vencimento ? new Date(b.vencimento).toLocaleDateString() : '-'}</p>
-              <p><strong>Pago em:</strong> {b.pago_em ? new Date(b.pago_em).toLocaleDateString() : '-'}</p>
-              <p><strong>Observações:</strong> {b.observacoes || 'Nenhuma'}</p>
+      <div className="clientes-lista">
+        {visiveis.map((b) => (
+          <div key={b.id} className="card">
+            <p><strong>Fornecedor:</strong> {b.nome_fornecedor}</p>
+            <p><strong>Número:</strong> {b.numero}</p>
+            <p><strong>Valor:</strong> R$ {b.valor}</p>
+            <p><strong>Vencimento:</strong> {b.vencimento ? new Date(b.vencimento).toLocaleDateString() : '-'}</p>
+            <p><strong>Pago em:</strong> {b.pago_em ? new Date(b.pago_em).toLocaleDateString() : '-'}</p>
+            <p><strong>Observações:</strong> {b.observacoes || 'Nenhuma'}</p>
 
-              {b.arquivo && (
-                b.arquivo.endsWith('.pdf') ? (
-                  <a
-                    href={`http://localhost:3001${b.arquivo}`}
-                    className="link-pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    📄 Ver PDF
-                  </a>
-                ) : (
-                  <img
-                    src={`http://localhost:3001${b.arquivo}`}
-                    alt="arquivo"
-                    className="foto-procedimento"
-                    onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
-                  />
-                )
-              )}
+            {b.arquivo && (
+              b.arquivo.endsWith('.pdf') ? (
+                <a
+                  href={`http://localhost:3001${b.arquivo}`}
+                  className="link-pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📄 Ver PDF
+                </a>
+              ) : (
+                <img
+                  src={`http://localhost:3001${b.arquivo}`}
+                  alt="arquivo"
+                  className="foto-procedimento"
+                  onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
+                />
+              )
+            )}
 
-              <div className="acoes">
-                <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
-              </div>
+            <div className="acoes">
+              <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
 
-      {/* Paginação */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+        {/* card vazio no mesmo estilo dos clientes */}
+        {ordenados.length === 0 && (
+          <div className="card vazio">Nenhum boleto pago encontrado.</div>
+        )}
+      </div>
+
+      {/* paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
 
       {imagemSelecionada && (
         <div className="overlay" onClick={() => setImagemSelecionada(null)}>

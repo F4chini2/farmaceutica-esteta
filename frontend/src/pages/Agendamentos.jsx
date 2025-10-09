@@ -70,8 +70,6 @@ function Agendamentos() {
   // ===== PAGINAÇÃO (6 por página) =====
   const pageSize = 6;
   const [page, setPage] = useState(1);
-
-  // volta pra pág. 1 ao mudar busca/lista
   useEffect(() => { setPage(1); }, [busca, agendamentos]);
 
   // filtro + ordenação (data desc; fallback id)
@@ -106,30 +104,34 @@ function Agendamentos() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      {ordenados.length === 0 ? (
-        <p>Nenhum agendamento encontrado.</p>
-      ) : (
-        <div className="lista-agendamentos">
-          {visiveis.map((ag) => (
-            <div key={ag.id} className="card">
-              <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
-              <p><strong>🗓 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
-              <p><strong>⏰ Horário:</strong> {(ag?.horario || '').slice(0, 5) || '-'}</p>
-              <p><strong>💼 Serviço:</strong> {ag.servico}</p>
-              <p><strong>📝 Observações:</strong> {ag.observacoes || 'Nenhuma'}</p>
+      <div className="lista-agendamentos">
+        {visiveis.map((ag) => (
+          <div key={ag.id} className="card">
+            <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
+            <p><strong>🗓 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
+            <p><strong>⏰ Horário:</strong> {(ag?.horario || '').slice(0, 5) || '-'}</p>
+            <p><strong>💼 Serviço:</strong> {ag.servico}</p>
+            <p><strong>📝 Observações:</strong> {ag.observacoes || 'Nenhuma'}</p>
 
-              <button className="btn-secondary" onClick={() => enviarParaHistorico(ag)}>
-                📁 Enviar para Histórico
-              </button>
-              <button className="btn-danger" onClick={() => excluirAgendamento(ag)}>
-                🗑️ Excluir
-              </button>
-            </div>
-          ))}
-        </div>
+            <button className="btn-secondary" onClick={() => enviarParaHistorico(ag)}>
+              📁 Enviar para Histórico
+            </button>
+            <button className="btn-danger" onClick={() => excluirAgendamento(ag)}>
+              🗑️ Excluir
+            </button>
+          </div>
+        ))}
+
+        {/* card vazio no mesmo estilo dos clientes */}
+        {ordenados.length === 0 && (
+          <div className="card vazio">Nenhum agendamento encontrado.</div>
+        )}
+      </div>
+
+      {/* paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
       )}
-
-      <Pagination page={page} total={totalPages} onPage={setPage} />
     </div>
   );
 }

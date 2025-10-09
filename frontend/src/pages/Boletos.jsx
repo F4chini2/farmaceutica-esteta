@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from 'react';
 import './Boletos.css';
 import './Historico.css'; // Importa o estilo do Histórico
-import { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
 
@@ -19,7 +19,7 @@ function Boletos() {
         const data = await res.json();
         if (res.ok) setBoletos(data);
         else alert(data.erro || 'Erro ao buscar boletos');
-      } catch (e) {
+      } catch {
         alert('Erro ao conectar com o servidor');
       }
     };
@@ -33,11 +33,8 @@ function Boletos() {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) {
-        setBoletos((prev) => prev.filter((b) => b.id !== id));
-      } else {
-        alert('Erro ao marcar como pago');
-      }
+      if (res.ok) setBoletos((prev) => prev.filter((b) => b.id !== id));
+      else alert('Erro ao marcar como pago');
     } catch {
       alert('Erro ao conectar com o servidor');
     }
@@ -51,11 +48,8 @@ function Boletos() {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) {
-        setBoletos((prev) => prev.filter((b) => b.id !== id));
-      } else {
-        alert('Erro ao excluir boleto');
-      }
+      if (res.ok) setBoletos((prev) => prev.filter((b) => b.id !== id));
+      else alert('Erro ao excluir boleto');
     } catch {
       alert('Erro ao conectar com o servidor');
     }
@@ -63,7 +57,7 @@ function Boletos() {
 
   // ===== BUSCA + ORDENAÇÃO =====
   const filtrados = boletos.filter((b) => {
-    const q = busca.toLowerCase();
+    const q = (busca || '').toLowerCase();
     return (
       ((b?.nome_fornecedor) || '').toLowerCase().includes(q) ||
       ((b?.numero) || '').toLowerCase().includes(q) ||
@@ -101,49 +95,52 @@ function Boletos() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      {ordenados.length === 0 ? (
-        <p>Nenhum boleto encontrado.</p>
-      ) : (
-        <div className="clientes-lista">
-          {visiveis.map((b) => (
-            <div key={b.id} className="card">
-              <p><strong>Fornecedor:</strong> {b.nome_fornecedor}</p>
-              <p><strong>Número:</strong> {b.numero}</p>
-              <p><strong>Valor:</strong> R$ {b.valor}</p>
-              <p><strong>Vencimento:</strong> {b.vencimento ? new Date(b.vencimento).toLocaleDateString() : '-'}</p>
-              <p><strong>Observações:</strong> {b.observacoes || 'Nenhuma'}</p>
+      <div className="clientes-lista">
+        {visiveis.map((b) => (
+          <div key={b.id} className="card">
+            <p><strong>Fornecedor:</strong> {b.nome_fornecedor}</p>
+            <p><strong>Número:</strong> {b.numero}</p>
+            <p><strong>Valor:</strong> R$ {b.valor}</p>
+            <p><strong>Vencimento:</strong> {b.vencimento ? new Date(b.vencimento).toLocaleDateString() : '-'}</p>
+            <p><strong>Observações:</strong> {b.observacoes || 'Nenhuma'}</p>
 
-              {b.arquivo && (
-                b.arquivo.endsWith('.pdf') ? (
-                  <a
-                    href={`http://localhost:3001${b.arquivo}`}
-                    className="link-pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    📄 Ver PDF
-                  </a>
-                ) : (
-                  <img
-                    src={`http://localhost:3001${b.arquivo}`}
-                    alt="arquivo"
-                    className="foto-procedimento"
-                    onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
-                  />
-                )
-              )}
+            {b.arquivo && (
+              b.arquivo.endsWith('.pdf') ? (
+                <a
+                  href={`http://localhost:3001${b.arquivo}`}
+                  className="link-pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📄 Ver PDF
+                </a>
+              ) : (
+                <img
+                  src={`http://localhost:3001${b.arquivo}`}
+                  alt="arquivo"
+                  className="foto-procedimento"
+                  onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
+                />
+              )
+            )}
 
-              <div className="acoes">
-                <button className="btn-secondary" onClick={() => marcarComoPago(b.id)}>✅ Marcar como Pago</button>
-                <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
-              </div>
+            <div className="acoes">
+              <button className="btn-secondary" onClick={() => marcarComoPago(b.id)}>✅ Marcar como Pago</button>
+              <button className="btn-danger" onClick={() => excluirBoleto(b.id)}>🗑️ Excluir</button>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
 
-      {/* Paginação */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+        {/* card vazio com o mesmo visual dos clientes */}
+        {ordenados.length === 0 && (
+          <div className="card vazio">Nenhum boleto encontrado.</div>
+        )}
+      </div>
+
+      {/* Paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
 
       {imagemSelecionada && (
         <div className="overlay" onClick={() => setImagemSelecionada(null)}>
