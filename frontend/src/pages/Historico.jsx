@@ -1,8 +1,8 @@
-
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 import './ClienteDetalhes.css';
 import './Historico.css';
+import { Pagination } from '../styles/Global';
 
 function Historico() {
   const [procedimentos, setProcedimentos] = useState([]);
@@ -12,17 +12,26 @@ function Historico() {
 
   useEffect(() => {
     const carregarHistorico = async () => {
-      const token = localStorage.getItem('token');
-      const resp = await fetch('http://localhost:3001/historico/todos', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const dados = await resp.json();
-      setProcedimentos(dados);
+      try {
+        const token = localStorage.getItem('token');
+        const resp = await fetch('http://localhost:3001/historico/todos', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const dados = await resp.json();
+        setProcedimentos(dados || []);
 
-      for (let p of dados) {
-        const fotosResp = await fetch(`http://localhost:3001/historico/historico/${p.id}/fotos`);
-        const fotosData = await fotosResp.json();
-        setFotos(prev => ({ ...prev, [p.id]: fotosData }));
+        // carrega fotos de cada registro
+        for (const p of (dados || [])) {
+          try {
+            const fotosResp = await fetch(`http://localhost:3001/historico/historico/${p.id}/fotos`);
+            const fotosData = await fotosResp.json();
+            setFotos(prev => ({ ...prev, [p.id]: fotosData || [] }));
+          } catch {
+            // ignora erro individual de fotos
+          }
+        }
+      } catch {
+        alert('Erro ao carregar histórico.');
       }
     };
 
@@ -31,27 +40,31 @@ function Historico() {
 
   const handleFotoUpload = async (e, historicoId) => {
     const formData = new FormData();
-    for (let file of e.target.files) {
-      formData.append('fotos', file);
-    }
-    const token = localStorage.getItem('token');
-    const resp = await fetch(`http://localhost:3001/historico/historico/${historicoId}/fotos`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
-    });
-    const dados = await resp.json();
-    if (resp.ok) {
-      setFotos(prev => ({
-        ...prev,
-        [historicoId]: [...(prev[historicoId] || []), ...dados.fotos]
-      }));
+    for (const file of e.target.files) formData.append('fotos', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const resp = await fetch(`http://localhost:3001/historico/historico/${historicoId}/fotos`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      const dados = await resp.json();
+      if (resp.ok) {
+        setFotos(prev => ({
+          ...prev,
+          [historicoId]: [...(prev[historicoId] || []), ...(dados?.fotos || [])]
+        }));
+      } else {
+        alert(dados?.erro || 'Erro ao enviar fotos.');
+      }
+    } catch {
+      alert('Erro de conexão ao enviar fotos.');
     }
   };
 
   const deletarHistorico = async (id) => {
-    const confirmar = window.confirm("Deseja mesmo excluir este histórico?");
-    if (!confirmar) return;
+    if (!window.confirm('Deseja mesmo excluir este histórico?')) return;
 
     try {
       const token = localStorage.getItem('token');
@@ -67,16 +80,15 @@ function Historico() {
           return novo;
         });
       } else {
-        alert("Erro ao excluir histórico.");
+        alert('Erro ao excluir histórico.');
       }
-    } catch (err) {
-      alert("Erro de conexão.");
+    } catch {
+      alert('Erro de conexão.');
     }
   };
 
   const deletarFoto = async (fotoId, historicoId) => {
-    const confirmar = window.confirm("Deseja excluir esta foto?");
-    if (!confirmar) return;
+    if (!window.confirm('Deseja excluir esta foto?')) return;
 
     try {
       const token = localStorage.getItem('token');
@@ -87,15 +99,39 @@ function Historico() {
       if (resp.ok) {
         setFotos(prev => ({
           ...prev,
-          [historicoId]: prev[historicoId].filter(f => f.id !== fotoId)
+          [historicoId]: (prev[historicoId] || []).filter(f => f.id !== fotoId)
         }));
       } else {
-        alert("Erro ao excluir a foto.");
+        alert('Erro ao excluir a foto.');
       }
-    } catch (err) {
-      alert("Erro de conexão ao excluir foto.");
+    } catch {
+      alert('Erro de conexão ao excluir foto.');
     }
   };
+
+  // ===== PAGINAÇÃO GLOBAL (6 por página) =====
+  const pageSize = 6;
+  const [page, setPage] = useState(1);
+
+  // volta pra pág. 1 quando busca/lista mudar
+  useEffect(() => { setPage(1); }, [busca, procedimentos]);
+
+  // filtro + ordenação (data desc; fallback id)
+  const filtrados = procedimentos.filter(proc =>
+    ((proc?.nome_cliente) || '').toLowerCase().includes(busca.toLowerCase()) ||
+    ((proc?.servico) || '').toLowerCase().includes(busca.toLowerCase())
+  );
+
+  const ordenados = [...filtrados].sort((a, b) => {
+    const da = a?.data ? new Date(a.data).getTime() : 0;
+    const db = b?.data ? new Date(b.data).getTime() : 0;
+    return db - da || (b?.id || 0) - (a?.id || 0);
+  });
+
+  const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
+  const startIdx = (page - 1) * pageSize;
+  const visiveis = ordenados.slice(startIdx, startIdx + pageSize);
+  // ===========================================
 
   return (
     <div className="dashboard-container">
@@ -113,57 +149,56 @@ function Historico() {
       />
 
       <div className="clientes-lista">
-        {procedimentos
-          .filter(proc =>
-            proc.nome_cliente.toLowerCase().includes(busca.toLowerCase()) ||
-            proc.servico.toLowerCase().includes(busca.toLowerCase())
-          )
-          .map(proc => (
-            <div key={proc.id} className="card">
-              <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
-              <p><strong>🗓 Data:</strong> {new Date(proc.data).toLocaleDateString()}</p>
-              <p><strong>⏰ Horário:</strong> {proc.horario?.slice(0, 5)}</p>
-              <p><strong>💆 Serviço:</strong> {proc.servico}</p>
-              <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
+        {visiveis.map(proc => (
+          <div key={proc.id} className="card">
+            <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
+            <p><strong>🗓 Data:</strong> {proc?.data ? new Date(proc.data).toLocaleDateString() : '-'}</p>
+            <p><strong>⏰ Horário:</strong> {(proc?.horario || '').slice(0, 5) || '-'}</p>
+            <p><strong>💆 Serviço:</strong> {proc.servico}</p>
+            <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
-              
-              <div className="uploader">
-                <span>📸 Enviar fotos:</span>
-                <input
+            <div className="uploader">
+              <span>📸 Enviar fotos:</span>
+              <input
                 id={`fotos-${proc.id}`}
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={(e) => handleFotoUpload(e, proc.id)}
-                />
-                <label className="upload-label" htmlFor={`fotos-${proc.id}`}>
+              />
+              <label className="upload-label" htmlFor={`fotos-${proc.id}`}>
                 ⬆️ Escolher arquivos
-                </label>
-              </div>
-
-
-                {fotos[proc.id] && fotos[proc.id].length > 0 && (
-                <div className="fotos-wrapper">
-                  {fotos[proc.id].map(f => (
-                    <div className="foto-container" key={f.id}>
-                      <button className="btn-excluir-foto" onClick={() => deletarFoto(f.id, proc.id)}>🗑️</button>
-                      <img
-                        src={`http://localhost:3001${f.url}`}
-                        alt="procedimento"
-                        className="foto-procedimento"
-                        onClick={() => setImagemSelecionada(`http://localhost:3001${f.url}`)}
-                        style={{ cursor: 'pointer' }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <button className="btn-danger" onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
-
+              </label>
             </div>
-          ))}
+
+            {fotos[proc.id] && fotos[proc.id].length > 0 && (
+              <div className="fotos-wrapper">
+                {fotos[proc.id].map(f => (
+                  <div className="foto-container" key={f.id}>
+                    <button className="btn-excluir-foto" onClick={() => deletarFoto(f.id, proc.id)}>🗑️</button>
+                    <img
+                      src={`http://localhost:3001${f.url}`}
+                      alt="procedimento"
+                      className="foto-procedimento"
+                      onClick={() => setImagemSelecionada(`http://localhost:3001${f.url}`)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button className="btn-danger" onClick={() => deletarHistorico(proc.id)}>🗑️ Excluir</button>
+          </div>
+        ))}
+
+        {ordenados.length === 0 && (
+          <div className="card vazio">Nenhum registro encontrado.</div>
+        )}
       </div>
+
+      {/* Paginação */}
+      <Pagination page={page} total={totalPages} onPage={setPage} />
 
       {imagemSelecionada && (
         <div className="overlay" onClick={() => setImagemSelecionada(null)}>

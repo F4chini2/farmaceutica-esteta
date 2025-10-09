@@ -1,6 +1,7 @@
 import './Estoque.css';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
+import { Pagination } from '../styles/Global';
 
 function Estoque() {
   const [itens, setItens] = useState([]);
@@ -101,9 +102,28 @@ function Estoque() {
     }
   };
 
+  // ===== PAGINAÇÃO GLOBAL (6 por página) =====
+  const pageSize = 6;
+  const [page, setPage] = useState(1);
+
+  // volta pra pág. 1 ao mudar a busca ou a lista
+  useEffect(() => { setPage(1); }, [busca, itens]);
+
+  // filtro + ordenação (novos → antigos; fallback id)
+  const filtrados = itens.filter((item) =>
+    ((item?.nome) || '').toLowerCase().includes(busca.toLowerCase())
+  );
+  const ordenados = [...filtrados].sort((a, b) => (b?.id || 0) - (a?.id || 0));
+
+  const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
+  const startIdx = (page - 1) * pageSize;
+  const visiveis = ordenados.slice(startIdx, startIdx + pageSize);
+  // ===========================================
+
   return (
     <div className="estoque-container">
       <Tabs />
+
       <div className="topo-dashboard">
         <h2>📦 Controle de Estoque</h2>
       </div>
@@ -145,42 +165,47 @@ function Estoque() {
       />
 
       <div className="estoque-lista">
-        {itens
-          .filter(item => item.nome.toLowerCase().includes(busca.toLowerCase()))
-          .map((item) => (
-            <div key={item.id} className="card">
-              <strong>{item.nome}</strong>
-              <p>🧾 {item.quantidade} {item.unidade}</p>
-              <p>⏳ Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
+        {visiveis.map((item) => (
+          <div key={item.id} className="card">
+            <strong>{item.nome}</strong>
+            <p>🧾 {item.quantidade} {item.unidade}</p>
+            <p>⏳ Validade: {item.validade ? new Date(item.validade).toLocaleDateString() : 'Sem validade'}</p>
 
-              <div className="qtd-group">
-                <button
-                  type="button"
-                  className="qtd-btn"
-                  aria-label="Adicionar 1"
-                  onClick={() => atualizarQuantidade(item.id, +1)}
-                >＋</button>
+            <div className="qtd-group">
+              <button
+                type="button"
+                className="qtd-btn"
+                aria-label="Adicionar 1"
+                onClick={() => atualizarQuantidade(item.id, +1)}
+              >＋</button>
 
-                <span className="qtd-value">{item.quantidade}</span>
+              <span className="qtd-value">{item.quantidade}</span>
 
-                <button
-                  type="button"
-                  className="qtd-btn"
-                  aria-label="Remover 1"
-                  onClick={() => atualizarQuantidade(item.id, -1)}
-                  disabled={Number(item.quantidade) <= 0}
-                >－</button>
+              <button
+                type="button"
+                className="qtd-btn"
+                aria-label="Remover 1"
+                onClick={() => atualizarQuantidade(item.id, -1)}
+                disabled={Number(item.quantidade) <= 0}
+              >－</button>
 
-                <button
-                  type="button"
-                  className="btn-danger"
-                  onClick={() => excluirItem(item.id)}
-                  style={{ marginLeft: '6px' }}
-                >🗑️</button>
-              </div>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={() => excluirItem(item.id)}
+                style={{ marginLeft: '6px' }}
+              >🗑️</button>
             </div>
-          ))}
+          </div>
+        ))}
+
+        {filtrados.length === 0 && (
+          <div className="card vazio">Nenhum item encontrado para a busca.</div>
+        )}
       </div>
+
+      {/* Paginação */}
+      <Pagination page={page} total={totalPages} onPage={setPage} />
     </div>
   );
 }
