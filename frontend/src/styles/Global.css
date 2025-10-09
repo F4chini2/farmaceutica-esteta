@@ -249,3 +249,9 @@ input:focus, textarea:focus, select:focus {
   align-items: center;
 }
 
+.pagination{display:flex;gap:8px;justify-content:center;align-items:center;margin:16px 0}
+.page-btn{padding:8px 12px;border:1px solid #e0cfc6;border-radius:8px;background:#fffaf9;cursor:pointer;font-weight:700}
+.page-btn.active{background:var(--cor-primaria);color:#fff;border-color:var(--cor-primaria)}
+.page-btn:disabled{opacity:.5;cursor:not-allowed}
+.page-ellipsis{padding:8px 6px;user-select:none}
+
