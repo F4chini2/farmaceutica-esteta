@@ -34,7 +34,6 @@ app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
 app.use('/pre-cadastro', preCadastroRouter);
 
-// Raiz
 app.get('/', (_req, res) => res.send('API da Farmacêutica Esteta funcionando!'));
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
