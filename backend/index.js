@@ -1,4 +1,4 @@
-// index.js (corrigido com CORS + parsers + preflight)
+// index.js
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -6,38 +6,31 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ===== CORS no topo (libera Vercel e dev local) =====
-const WHITELIST = [
-  process.env.FRONT_URL,      // ex.: https://farmaceutica-esteta.vercel.app
-  'http://localhost:5173'     // dev (Vite)
-].filter(Boolean);
+// === CORS HARDENED (primeiro middleware) ===
+const FRONT_URL = process.env.FRONT_URL;
+const DEV_URL = 'http://localhost:5173';
 
-app.use(cors({
-  origin(origin, cb) {
-    // permite chamadas sem Origin (ex.: curl/postman) e checa whitelist
-    if (!origin || WHITELIST.includes(origin)) return cb(null, true);
-    return cb(new Error('Not allowed by CORS'));
-  },
-  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
-  credentials: true, // deixe true apenas se for usar cookies; com Bearer não é necessário
-}));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (origin === FRONT_URL || origin === DEV_URL)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 
-// Preflight global
-app.options('*', cors());
-
-// ===== Parsers de body (necessário para req.body no /login) =====
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
-
-// ===== Uploads (use Volume no provedor e aponte com UPLOAD_DIR) =====
+// === Uploads: usa env para funcionar no Railway (com Volume) ===
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(UPLOAD_DIR));
 
-// ===== Healthcheck público =====
-app.get('/health', (_req, res) => res.status(200).send('ok'));
+// === Healthcheck ===
+app.get('/health', (_req, res) => res.send('ok'));
 
-// ===== Rotas =====
+// Rotas
 const rotasUsuarios = require('./routes/usuarios');
 const rotasClientesFull = require('./routes/clientesfull');
 const rotasLogin = require('./routes/login');
@@ -58,6 +51,7 @@ app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
 app.use('/pre-cadastro', preCadastroRouter);
 
+// Raiz
 app.get('/', (_req, res) => res.send('API da Farmacêutica Esteta funcionando!'));
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
