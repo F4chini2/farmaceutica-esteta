@@ -1,4 +1,6 @@
-// index.js
+// index.js (corrigido)
+// Habilita parsing de JSON e URL-encoded *antes* das rotas para evitar 400 no /login
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -23,6 +25,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ Parsers de corpo (precisam vir antes das rotas)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
 // === Uploads: usa env para funcionar no Railway (com Volume) ===
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -30,7 +36,7 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 // === Healthcheck ===
 app.get('/health', (_req, res) => res.send('ok'));
 
-// Rotas
+// === Rotas ===
 const rotasUsuarios = require('./routes/usuarios');
 const rotasClientesFull = require('./routes/clientesfull');
 const rotasLogin = require('./routes/login');
