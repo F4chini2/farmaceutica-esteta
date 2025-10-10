@@ -6,49 +6,29 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// === CORS: libera o domínio do Vercel e o dev local ===
-const allowedOrigins = [
-  process.env.FRONT_URL,
-  'http://localhost:5173'
-].filter(Boolean);
+// === CORS HARDENED (primeiro middleware) ===
+const FRONT_URL = process.env.FRONT_URL;
+const DEV_URL = 'http://localhost:5173';
 
-// CORS principal
-app.use(cors({
-  origin: function (origin, callback) {
-    // permite chamadas do fetch sem origin (ex.: healthchecks) e dos domínios liberados
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
-// Resposta automática ao preflight
-app.options('*', cors());
-
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
-
-// === CORS fallback para garantir preflight no Railway ===
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (!origin || allowedOrigins.includes(origin)) {
-    if (origin) res.header('Access-Control-Allow-Origin', origin);
-    res.header('Vary', 'Origin');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    if (req.method === 'OPTIONS') return res.sendStatus(204);
+  if (origin && (origin === FRONT_URL || origin === DEV_URL)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
 
 // === Uploads: usa env para funcionar no Railway (com Volume) ===
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(UPLOAD_DIR));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
 // === Healthcheck ===
 app.get('/health', (_req, res) => res.send('ok'));
