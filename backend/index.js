@@ -12,8 +12,10 @@ const allowedOrigins = [
   'http://localhost:5173'
 ].filter(Boolean);
 
+// CORS principal
 app.use(cors({
   origin: function (origin, callback) {
+    // permite chamadas do fetch sem origin (ex.: healthchecks) e dos domínios liberados
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
@@ -24,9 +26,25 @@ app.use(cors({
   credentials: true
 }));
 
-// resposta automática ao preflight
+// Resposta automática ao preflight
 app.options('*', cors());
 
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// === CORS fallback para garantir preflight no Railway ===
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (!origin || allowedOrigins.includes(origin)) {
+    if (origin) res.header('Access-Control-Allow-Origin', origin);
+    res.header('Vary', 'Origin');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+  }
+  next();
+});
 
 // === Uploads: usa env para funcionar no Railway (com Volume) ===
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
@@ -56,6 +74,7 @@ app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
 app.use('/pre-cadastro', preCadastroRouter);
 
+// Raiz
 app.get('/', (_req, res) => res.send('API da Farmacêutica Esteta funcionando!'));
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
