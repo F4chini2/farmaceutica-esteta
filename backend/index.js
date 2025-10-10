@@ -2,18 +2,27 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// === CORS: libera o domínio do Vercel e o dev local ===
+app.use(cors({
+  origin: [process.env.FRONT_URL, 'http://localhost:5173'].filter(Boolean),
+  credentials: true
+}));
+
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos da pasta /uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// === Uploads: usa env para funcionar no Railway (com Volume) ===
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(UPLOAD_DIR));
 
-// Importa rotas
+// === Healthcheck ===
+app.get('/health', (_req, res) => res.send('ok'));
+
+// Rotas
 const rotasUsuarios = require('./routes/usuarios');
 const rotasClientesFull = require('./routes/clientesfull');
 const rotasLogin = require('./routes/login');
@@ -24,8 +33,7 @@ const historicoRoutes = require('./routes/historico');
 const boletosRouter = require('./routes/boletos');
 const preCadastroRouter = require('./routes/precadastro');
 
-// Define as rotas
-app.use('/usuarios', rotasUsuarios);        // ✅ nova rota de cadastro
+app.use('/usuarios', rotasUsuarios);
 app.use('/login', rotasLogin);
 app.use('/clientesfull', rotasClientesFull);
 app.use('/agendamentos', rotasAgendamentos);
@@ -33,14 +41,8 @@ app.use('/estoque', rotasEstoque);
 app.use('/fornecedores', rotasFornecedores);
 app.use('/historico', historicoRoutes);
 app.use('/boletos', boletosRouter);
-app.use('/pre-cadastro', preCadastroRouter); // rota pública
+app.use('/pre-cadastro', preCadastroRouter);
 
-// Teste de API
-app.get('/', (req, res) => {
-  res.send('API da Farmacêutica Esteta funcionando!');
-});
+app.get('/', (_req, res) => res.send('API da Farmacêutica Esteta funcionando!'));
 
-// Inicia servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));

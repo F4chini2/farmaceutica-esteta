@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 function isAdminFromToken() {
   try {
@@ -12,7 +12,8 @@ function isAdminFromToken() {
   }
 }
 
-export default function Tabs(){
+export default function Tabs() {
+  const navigate = useNavigate();
   const isAdmin = isAdminFromToken();
 
   const itensBase = [
@@ -25,14 +26,27 @@ export default function Tabs(){
 
   const itensAdmin = [
     { label: 'Boletos', to: '/boletos' },
-    { label: 'Boletos Pagos', to: '/boletos-pagos' },
+    { label: 'Boletos-Pagos', to: '/boletos-pagos' },
     { label: 'Usuários', to: '/usuarios' },
   ];
 
   const itens = isAdmin ? [...itensBase, ...itensAdmin] : itensBase;
 
+  const handleLogout = () => {
+    if (window.confirm('Deseja realmente sair?')) {
+      localStorage.removeItem('token');
+      navigate('/');
+    }
+  };
+
   return (
-    <div style={{display:'flex',gap:16,justifyContent:'center',margin:'16px 0',flexWrap:'wrap'}}>
+    <div style={{
+      display: 'flex',
+      gap: 16,
+      justifyContent: 'center',
+      margin: '16px 0',
+      flexWrap: 'wrap'
+    }}>
       {itens.map((it) => (
         <NavLink
           key={it.to}
@@ -42,6 +56,15 @@ export default function Tabs(){
           {it.label}
         </NavLink>
       ))}
+
+      {/* Botão de logout à direita */}
+      <button
+        onClick={handleLogout}
+        className="tab"
+        style={{ backgroundColor: '#fce4e4', color: '#b84c4c' }}
+      >
+        🚪 Sair
+      </button>
     </div>
   );
 }
