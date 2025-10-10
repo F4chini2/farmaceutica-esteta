@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-import { API } from '../config/api';
+import { apiFetch } from '../config/api'; // 👈 troque o import
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,23 +11,17 @@ export default function Login() {
 
   const entrar = async (e) => {
     e.preventDefault();
-    if (!email || !senha) { alert('Informe e-mail e senha.'); return; }
+    if (!email || !senha) return alert('Informe e-mail e senha.');
     try {
       setCarregando(true);
-      const res = await fetch(`${API}/login`, {
+      const data = await apiFetch('/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha })
       });
-      const data = await res.json();
-      if (res.ok && data?.token) {
-        localStorage.setItem('token', data.token);
-        navigate('/usuarios');
-      } else {
-        alert(data?.erro || 'Falha no login');
-      }
-    } catch {
-      alert('Erro de conexão no login');
+      localStorage.setItem('token', data.token);
+      navigate('/usuarios');
+    } catch (err) {
+      alert(err.message || 'Falha no login');
     } finally {
       setCarregando(false);
     }

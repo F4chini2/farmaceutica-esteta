@@ -6,22 +6,33 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// === CORS HARDENED (primeiro middleware) ===
-const FRONT_URL = process.env.FRONT_URL;
-const DEV_URL = 'http://localhost:5173';
+// === CORS (logo após criar o app) ===
+const ALLOWED = [
+  process.env.FRONT_URL,            // ex.: https://farmaceutica-esteta.vercel.app
+  'http://localhost:5173'           // dev local
+].filter(Boolean);
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && (origin === FRONT_URL || origin === DEV_URL)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-  if (req.method === 'OPTIONS') return res.sendStatus(204);
-  next();
-});
+const vercelPreview = /\.vercel\.app$/;
+
+app.use(cors({
+  origin(origin, cb) {
+    // Requisições sem Origin (ex.: /health via curl) — permite
+    if (!origin) return cb(null, true);
+    try {
+      const hostname = new URL(origin).hostname;
+      const ok = ALLOWED.includes(origin) || vercelPreview.test(hostname);
+      return ok ? cb(null, true) : cb(new Error(`Origin not allowed: ${origin}`));
+    } catch {
+      // Se não conseguir parsear a URL da origin, nega
+      return cb(new Error('Invalid Origin'));
+    }
+  },
+  credentials: true, // se usar cookies; com Bearer é opcional
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  optionsSuccessStatus: 204
+}));
+app.options('*', cors());
 
 // === Uploads: usa env para funcionar no Railway (com Volume) ===
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
