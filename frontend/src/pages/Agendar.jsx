@@ -1,7 +1,7 @@
-
+import React, { useState } from 'react';
 import './Agendar.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { API, authHeaders } from '../config/api';
 
 function Agendar() {
   const { id } = useParams();
@@ -20,7 +20,6 @@ function Agendar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
 
     if (!form.data || !form.horario || !form.servico) {
       alert('Preencha a data, o horário e o serviço.');
@@ -28,11 +27,11 @@ function Agendar() {
     }
 
     try {
-      const resposta = await fetch('http://localhost:3001/agendamentos', {
+      const resposta = await fetch(`${API}/agendamentos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          ...authHeaders(),
         },
         body: JSON.stringify({ ...form, cliente_id: id })
       });

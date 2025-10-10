@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Agendamentos.css';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Agendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -10,9 +11,8 @@ function Agendamentos() {
   useEffect(() => {
     const fetchAgendamentos = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const resposta = await fetch('http://localhost:3001/agendamentos', {
-          headers: { Authorization: `Bearer ${token}` }
+        const resposta = await fetch(`${API}/agendamentos`, {
+          headers: { ...authHeaders() }
         });
         const dados = await resposta.json();
         if (resposta.ok) {
@@ -32,16 +32,16 @@ function Agendamentos() {
     if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const resposta = await fetch(`http://localhost:3001/agendamentos/${agendamento.id}/historico`, {
+      const resposta = await fetch(`${API}/agendamentos/${agendamento.id}/historico`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
 
       if (resposta.ok) {
         setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
       } else {
-        alert('Erro ao mover para histórico');
+        const dados = await resposta.json().catch(() => ({}));
+        alert(dados.erro || 'Erro ao mover para histórico');
       }
     } catch (err) {
       alert('Erro de conexão');
@@ -52,15 +52,15 @@ function Agendamentos() {
     if (!window.confirm('Tem certeza que deseja excluir este agendamento?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/agendamentos/${agendamento.id}`, {
+      const resp = await fetch(`${API}/agendamentos/${agendamento.id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (resp.ok) {
         setAgendamentos((prev) => prev.filter((item) => item.id !== agendamento.id));
       } else {
-        alert('Erro ao excluir');
+        const dados = await resp.json().catch(() => ({}));
+        alert(dados.erro || 'Erro ao excluir');
       }
     } catch {
       alert('Erro de conexão com servidor');

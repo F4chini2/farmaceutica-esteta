@@ -2,6 +2,7 @@ import './Estoque.css';
 import React, { useEffect, useState } from 'react';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Estoque() {
   const [itens, setItens] = useState([]);
@@ -11,13 +12,12 @@ function Estoque() {
   useEffect(() => { carregarItens(); }, []);
 
   const carregarItens = async () => {
-    const token = localStorage.getItem('token');
     try {
-      const resposta = await fetch('http://localhost:3001/estoque', {
-        headers: { Authorization: `Bearer ${token}` }
+      const resposta = await fetch(`${API}/estoque`, {
+        headers: { ...authHeaders() }
       });
       const dados = await resposta.json();
-      setItens(dados);
+      setItens(dados || []);
     } catch {
       alert('Erro ao buscar estoque');
     }
@@ -25,14 +25,12 @@ function Estoque() {
 
   const cadastrarItem = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-
     try {
-      const resposta = await fetch('http://localhost:3001/estoque', {
+      const resposta = await fetch(`${API}/estoque`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          ...authHeaders()
         },
         body: JSON.stringify(form)
       });
@@ -44,7 +42,7 @@ function Estoque() {
         setForm({ nome: '', quantidade: '', unidade: '', validade: '' });
         carregarItens();
       } else {
-        alert(dados.erro || 'Erro ao cadastrar');
+        alert(dados?.erro || 'Erro ao cadastrar');
       }
     } catch {
       alert('Erro ao conectar');
@@ -55,10 +53,9 @@ function Estoque() {
     if (!window.confirm('Tem certeza que deseja excluir este item?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      await fetch(`http://localhost:3001/estoque/${id}`, {
+      await fetch(`${API}/estoque/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
 
       setItens(prev => prev.filter(i => i.id !== id));
@@ -69,18 +66,17 @@ function Estoque() {
   };
 
   const atualizarQuantidade = async (id, delta) => {
-    const token = localStorage.getItem('token');
     const item = itens.find(i => i.id === id);
     if (!item) return;
 
     const novaQuantidade = Math.max(0, Number(item.quantidade) + delta);
 
     try {
-      const resposta = await fetch(`http://localhost:3001/estoque/${id}`, {
+      const resposta = await fetch(`${API}/estoque/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          ...authHeaders()
         },
         body: JSON.stringify({
           nome: item.nome,
@@ -199,13 +195,15 @@ function Estoque() {
           </div>
         ))}
 
-        {filtrados.length === 0 && (
+        {ordenados.length === 0 && (
           <div className="card vazio">Nenhum item encontrado para a busca.</div>
         )}
       </div>
 
-      {/* Paginação */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+      {/* Paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
     </div>
   );
 }

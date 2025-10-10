@@ -3,6 +3,7 @@ import './Boletos.css';
 import './Historico.css'; // Para zoom e overlay
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function BoletosPagos() {
   const [boletos, setBoletos] = useState([]);
@@ -12,9 +13,8 @@ function BoletosPagos() {
   useEffect(() => {
     const fetchBoletos = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3001/boletos/pagos', {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await fetch(`${API}/boletos/pagos`, {
+          headers: { ...authHeaders() }
         });
         const data = await res.json();
         if (res.ok) setBoletos(data);
@@ -29,10 +29,9 @@ function BoletosPagos() {
   const excluirBoleto = async (id) => {
     if (!window.confirm('Deseja excluir este boleto pago?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:3001/boletos/${id}`, {
+      const res = await fetch(`${API}/boletos/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (res.ok) setBoletos((prev) => prev.filter((b) => b.id !== id));
       else alert('Erro ao excluir boleto');
@@ -97,7 +96,7 @@ function BoletosPagos() {
             {b.arquivo && (
               b.arquivo.endsWith('.pdf') ? (
                 <a
-                  href={`http://localhost:3001${b.arquivo}`}
+                  href={`${API}${b.arquivo}`}
                   className="link-pdf"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -106,10 +105,10 @@ function BoletosPagos() {
                 </a>
               ) : (
                 <img
-                  src={`http://localhost:3001${b.arquivo}`}
+                  src={`${API}${b.arquivo}`}
                   alt="arquivo"
                   className="foto-procedimento"
-                  onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
+                  onClick={() => setImagemSelecionada(`${API}${b.arquivo}`)}
                 />
               )
             )}

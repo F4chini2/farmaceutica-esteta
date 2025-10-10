@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -12,9 +13,7 @@ function Usuarios() {
   // Carregar lista
   const carregar = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
-      const res = await fetch('http://localhost:3001/usuarios', { headers });
+      const res = await fetch(`${API}/usuarios`, { headers: { ...authHeaders() } });
       const data = await res.json();
       if (res.status === 401) {
         alert('Sessão expirada. Faça login novamente.');
@@ -34,9 +33,10 @@ function Usuarios() {
   const deletar = async (id) => {
     if (!window.confirm('Tem certeza que deseja excluir este usuário?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
-      const res = await fetch(`http://localhost:3001/usuarios/${id}`, { method: 'DELETE', headers });
+      const res = await fetch(`${API}/usuarios/${id}`, {
+        method: 'DELETE',
+        headers: { ...authHeaders() }
+      });
       const data = await res.json();
       if (res.ok) setUsuarios(prev => prev.filter(u => u.id !== id));
       else alert(data?.erro || 'Erro ao excluir usuário');
@@ -75,7 +75,6 @@ function Usuarios() {
       <Tabs />
       <div className="topo-dashboard">
         <h1>👥 Usuários</h1>
-        {/* Ajuste a rota abaixo se houver tela de criação */}
         <button className="btn-primary" onClick={() => navigate('/usuarios/novo')}>
           ➕ Novo Usuário
         </button>
@@ -100,7 +99,6 @@ function Usuarios() {
             <p><strong>📝 Descrição:</strong> {u.descricao || '-'}</p>
 
             <div className="acoes-card">
-              {/* Ajuste navegação se existir rota de edição/detalhes */}
               <button className="btn-danger" onClick={() => deletar(u.id)}>
                 🗑️ Excluir
               </button>
@@ -108,13 +106,15 @@ function Usuarios() {
           </div>
         ))}
 
-        {filtrados.length === 0 && (
+        {ordenados.length === 0 && (
           <div className="card vazio">Nenhum usuário encontrado para a busca.</div>
         )}
       </div>
 
-      {/* Paginação */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+      {/* Paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
     </div>
   );
 }

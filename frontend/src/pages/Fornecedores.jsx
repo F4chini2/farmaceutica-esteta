@@ -4,6 +4,7 @@ import Tabs from '../components/Tabs';
 import './Fornecedores.css';
 import './Historico.css';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Fornecedores() {
   const [fornecedores, setFornecedores] = useState([]);
@@ -18,14 +19,13 @@ function Fornecedores() {
   }, []);
 
   const carregarFornecedores = async () => {
-    const token = localStorage.getItem('token');
     try {
-      const resposta = await fetch('http://localhost:3001/fornecedores', {
-        headers: { Authorization: `Bearer ${token}` }
+      const resposta = await fetch(`${API}/fornecedores`, {
+        headers: { ...authHeaders() }
       });
       const dados = await resposta.json();
       if (resposta.ok) setFornecedores(dados);
-      else alert(dados.erro || 'Erro ao buscar fornecedores');
+      else alert(dados?.erro || 'Erro ao buscar fornecedores');
     } catch {
       alert('Erro ao buscar fornecedores');
     }
@@ -33,13 +33,12 @@ function Fornecedores() {
 
   const cadastrarFornecedor = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
     try {
-      const resp = await fetch('http://localhost:3001/fornecedores', {
+      const resp = await fetch(`${API}/fornecedores`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          ...authHeaders()
         },
         body: JSON.stringify(form)
       });
@@ -49,7 +48,7 @@ function Fornecedores() {
         // coloca o novo no topo para respeitar a ordenação (novos → antigos)
         setFornecedores((prev) => [novo, ...prev]);
       } else {
-        alert(novo.erro || 'Erro ao cadastrar fornecedor');
+        alert(novo?.erro || 'Erro ao cadastrar fornecedor');
       }
     } catch {
       alert('Erro ao conectar');
@@ -58,11 +57,10 @@ function Fornecedores() {
 
   const excluirFornecedor = async (id) => {
     if (!window.confirm('Tem certeza que deseja excluir este fornecedor?')) return;
-    const token = localStorage.getItem('token');
     try {
-      const resp = await fetch(`http://localhost:3001/fornecedores/${id}`, {
+      const resp = await fetch(`${API}/fornecedores/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (resp.ok) {
         setFornecedores(prev => prev.filter(f => f.id !== id));
@@ -164,8 +162,10 @@ function Fornecedores() {
         )}
       </div>
 
-      {/* Paginação */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+      {/* Paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
     </div>
   );
 }

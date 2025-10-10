@@ -1,9 +1,9 @@
+import React, { useEffect, useState } from 'react';
 import './ClienteDetalhes.css';
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { API, authHeaders } from '../config/api';
 
-const booleanFields = new Set(['gravida','autoriza_fotos','usa_filtro_solar','usa_acido_peeling']);
+const booleanFields = new Set(['gravida', 'autoriza_fotos', 'usa_filtro_solar', 'usa_acido_peeling']);
 
 function ClienteDetalhes() {
   const { id } = useParams();
@@ -13,9 +13,8 @@ function ClienteDetalhes() {
   useEffect(() => {
     const fetchCliente = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const resposta = await fetch(`${API}/clientesfull/${id}`, {
+          headers: { ...authHeaders() }
         });
         const dados = await resposta.json();
         if (resposta.ok) {
@@ -26,9 +25,9 @@ function ClienteDetalhes() {
           });
           setForm(norm);
         } else {
-          alert(dados.erro || 'Erro ao carregar cliente');
+          alert(dados?.erro || 'Erro ao carregar cliente');
         }
-      } catch (err) {
+      } catch {
         alert('Erro ao conectar com o servidor');
       }
     };
@@ -37,12 +36,11 @@ function ClienteDetalhes() {
   }, [id]);
 
   const handleChange = (campo, valor) => {
-    setForm(prev => ({ ...prev, [campo]: valor }));
+    setForm((prev) => ({ ...prev, [campo]: valor }));
   };
 
   const handleSave = async () => {
     try {
-      const token = localStorage.getItem('token');
       const body = { ...form };
       // Converte 'true'/'false' em boolean para API
       booleanFields.forEach((k) => {
@@ -50,18 +48,21 @@ function ClienteDetalhes() {
       });
       if (body.idade === '') body.idade = null;
 
-      const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
+      const resposta = await fetch(`${API}/clientesfull/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          ...authHeaders(),
         },
         body: JSON.stringify(body),
       });
       const dados = await resposta.json();
-      if (resposta.ok) alert('Dados do cliente atualizados!');
-      else alert(dados.erro || 'Erro ao atualizar');
-    } catch (err) {
+      if (resposta.ok) {
+        alert('Dados do cliente atualizados!');
+      } else {
+        alert(dados?.erro || 'Erro ao atualizar');
+      }
+    } catch {
       alert('Erro de conexão');
     }
   };
@@ -69,28 +70,27 @@ function ClienteDetalhes() {
   if (!form) return <p>Carregando cliente...</p>;
 
   // Campos fixos no topo
-  const fixedOrder = ['nome','endereco','telefone','procedimentos','autoriza_fotos'];
+  const fixedOrder = ['nome', 'endereco', 'telefone', 'procedimentos', 'autoriza_fotos'];
 
   const renderCampo = (campo, valor) => (
     <label key={campo} className="campo-formulario">
-      <strong>{campo.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</strong>
+      <strong>{campo.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}</strong>
       {booleanFields.has(campo) ? (
-        <select value={valor} onChange={e => handleChange(campo, e.target.value)}>
+        <select value={valor} onChange={(e) => handleChange(campo, e.target.value)}>
           <option value="false">Não</option>
           <option value="true">Sim</option>
         </select>
       ) : (
         <input
           value={valor ?? ''}
-          onChange={e => handleChange(campo, e.target.value)}
+          onChange={(e) => handleChange(campo, e.target.value)}
           type={campo === 'idade' ? 'number' : 'text'}
         />
       )}
     </label>
   );
 
-  const remainingEntries = Object.entries(form)
-    .filter(([k]) => !['id', ...fixedOrder].includes(k));
+  const remainingEntries = Object.entries(form).filter(([k]) => !['id', ...fixedOrder].includes(k));
 
   return (
     <div className="container-box">

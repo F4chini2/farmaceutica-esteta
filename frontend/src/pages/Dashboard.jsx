@@ -1,9 +1,9 @@
-
+import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Dashboard() {
   const [clientes, setClientes] = useState([]);
@@ -13,44 +13,35 @@ function Dashboard() {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const resposta = await fetch('http://localhost:3001/clientesfull', {
-          headers: { Authorization: `Bearer ${token}` }
+        const resposta = await fetch(`${API}/clientesfull`, {
+          headers: { ...authHeaders() }
         });
-
         const dados = await resposta.json();
-        if (resposta.ok) {
-          setClientes(dados);
-        } else {
-          alert(dados.erro || 'Erro ao buscar clientes');
-        }
+        if (resposta.ok) setClientes(dados);
+        else alert(dados?.erro || 'Erro ao buscar clientes');
       } catch (err) {
         console.error('Erro:', err);
         alert('Erro ao conectar com o servidor');
       }
     };
-
     fetchClientes();
   }, []);
 
   const excluirCliente = async (id) => {
     if (!window.confirm('Tem certeza que deseja excluir este cliente?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const resposta = await fetch(`http://localhost:3001/clientesfull/${id}`, {
+      const resposta = await fetch(`${API}/clientesfull/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
-
       const dados = await resposta.json();
-
       if (resposta.ok) {
         alert('Cliente excluído com sucesso!');
         setClientes((lista) => lista.filter((c) => c.id !== id));
       } else {
-        alert(dados.erro || 'Erro ao excluir cliente');
+        alert(dados?.erro || 'Erro ao excluir cliente');
       }
-    } catch (err) {
+    } catch {
       alert('Erro ao conectar com o servidor');
     }
   };
@@ -58,8 +49,6 @@ function Dashboard() {
   // ===== PAGINAÇÃO (6 por página) =====
   const pageSize = 6;
   const [page, setPage] = useState(1);
-
-  // Sempre volta pra pág. 1 ao mudar busca/lista
   useEffect(() => { setPage(1); }, [busca, clientes]);
 
   // Filtro + ordenação (novos → antigos; fallback id)
@@ -71,11 +60,6 @@ function Dashboard() {
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
   const startIdx = (page - 1) * pageSize;
   const visiveis = ordenados.slice(startIdx, startIdx + pageSize);
-
-  function goTo(p) {
-    if (p < 1 || p > totalPages || p === page) return;
-    setPage(p);
-  }
   // ====================================
 
   return (
@@ -127,13 +111,15 @@ function Dashboard() {
           </div>
         ))}
 
-        {filtrados.length === 0 && (
+        {ordenados.length === 0 && (
           <div className="card vazio">Nenhum cliente encontrado para a busca.</div>
         )}
       </div>
 
-      {/* Paginação global (com reticências) */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+      {/* Paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './PreCadastro.css'; // aqui você cola o CSS baseado no boletos
+import './PreCadastro.css'; // seu CSS baseado no Boletos
+import { API } from '../config/api';
 
 export default function PreCadastro() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function PreCadastro() {
     setStatus(null);
 
     try {
-      const resp = await fetch('http://localhost:3001/pre-cadastro', {
+      const resp = await fetch(`${API}/pre-cadastro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -34,8 +35,10 @@ export default function PreCadastro() {
       if (resp.ok) {
         setStatus({ tipo: 'ok', msg: 'Pré-cadastro enviado com sucesso!' });
         setForm({ nome: '', endereco: '', telefone: '', procedimentos: '', autoriza_fotos: 'false' });
+        // se quiser redirecionar após sucesso:
+        // navigate('/alguma-rota');
       } else {
-        setStatus({ tipo: 'erro', msg: data.erro || 'Erro ao enviar.' });
+        setStatus({ tipo: 'erro', msg: data?.erro || 'Erro ao enviar.' });
       }
     } catch {
       setStatus({ tipo: 'erro', msg: 'Falha de conexão.' });

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { API } from '../config/api';
 
-export default function Login(){
+export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
@@ -10,37 +11,37 @@ export default function Login(){
 
   const entrar = async (e) => {
     e.preventDefault();
-    if(!email || !senha){ alert('Informe e-mail e senha.'); return; }
-    try{
+    if (!email || !senha) { alert('Informe e-mail e senha.'); return; }
+    try {
       setCarregando(true);
-      const res = await fetch('http://localhost:3001/login', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
+      const res = await fetch(`${API}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha })
       });
       const data = await res.json();
-      if(res.ok && data?.token){
+      if (res.ok && data?.token) {
         localStorage.setItem('token', data.token);
         navigate('/usuarios');
-      }else{
+      } else {
         alert(data?.erro || 'Falha no login');
       }
-    }catch(err){
+    } catch {
       alert('Erro de conexão no login');
-    }finally{
+    } finally {
       setCarregando(false);
     }
   };
 
   return (
-    <div style={{maxWidth:420, margin:'60px auto'}} className="container-box">
+    <div style={{ maxWidth: 420, margin: '60px auto' }} className="container-box">
       <h2>Acessar conta</h2>
-      <form onSubmit={entrar} style={{display:'grid', gap:12}}>
+      <form onSubmit={entrar} style={{ display: 'grid', gap: 12 }}>
         <label>E-mail
-          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
         </label>
         <label>Senha
-          <input type="password" value={senha} onChange={e=>setSenha(e.target.value)} />
+          <input type="password" value={senha} onChange={e => setSenha(e.target.value)} />
         </label>
         <button className="btn-primary" type="submit" disabled={carregando}>
           {carregando ? 'Entrando...' : 'Entrar'}

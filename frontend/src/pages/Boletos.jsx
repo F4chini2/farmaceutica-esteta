@@ -3,6 +3,7 @@ import './Boletos.css';
 import './Historico.css'; // Importa o estilo do Histórico
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Boletos() {
   const [boletos, setBoletos] = useState([]);
@@ -12,10 +13,7 @@ function Boletos() {
   useEffect(() => {
     const fetchBoletos = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3001/boletos', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await fetch(`${API}/boletos`, { headers: { ...authHeaders() } });
         const data = await res.json();
         if (res.ok) setBoletos(data);
         else alert(data.erro || 'Erro ao buscar boletos');
@@ -28,10 +26,9 @@ function Boletos() {
 
   const marcarComoPago = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:3001/boletos/${id}/pagar`, {
+      const res = await fetch(`${API}/boletos/${id}/pagar`, {
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (res.ok) setBoletos((prev) => prev.filter((b) => b.id !== id));
       else alert('Erro ao marcar como pago');
@@ -43,10 +40,9 @@ function Boletos() {
   const excluirBoleto = async (id) => {
     if (!window.confirm('Deseja excluir este boleto?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:3001/boletos/${id}`, {
+      const res = await fetch(`${API}/boletos/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (res.ok) setBoletos((prev) => prev.filter((b) => b.id !== id));
       else alert('Erro ao excluir boleto');
@@ -107,7 +103,7 @@ function Boletos() {
             {b.arquivo && (
               b.arquivo.endsWith('.pdf') ? (
                 <a
-                  href={`http://localhost:3001${b.arquivo}`}
+                  href={`${API}${b.arquivo}`}
                   className="link-pdf"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -116,10 +112,10 @@ function Boletos() {
                 </a>
               ) : (
                 <img
-                  src={`http://localhost:3001${b.arquivo}`}
+                  src={`${API}${b.arquivo}`}
                   alt="arquivo"
                   className="foto-procedimento"
-                  onClick={() => setImagemSelecionada(`http://localhost:3001${b.arquivo}`)}
+                  onClick={() => setImagemSelecionada(`${API}${b.arquivo}`)}
                 />
               )
             )}

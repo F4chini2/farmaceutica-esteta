@@ -3,6 +3,7 @@ import Tabs from '../components/Tabs';
 import './ClienteDetalhes.css';
 import './Historico.css';
 import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
 function Historico() {
   const [procedimentos, setProcedimentos] = useState([]);
@@ -13,23 +14,23 @@ function Historico() {
   useEffect(() => {
     const carregarHistorico = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const resp = await fetch('http://localhost:3001/historico/todos', {
-          headers: { Authorization: `Bearer ${token}` }
+        const resp = await fetch(`${API}/historico/todos`, {
+          headers: { ...authHeaders() }
         });
         const dados = await resp.json();
         setProcedimentos(dados || []);
 
-        // carrega fotos de cada registro
-        for (const p of (dados || [])) {
+        // carrega fotos de cada registro (paralelo)
+        const promises = (dados || []).map(async (p) => {
           try {
-            const fotosResp = await fetch(`http://localhost:3001/historico/historico/${p.id}/fotos`);
+            const fotosResp = await fetch(`${API}/historico/historico/${p.id}/fotos`);
             const fotosData = await fotosResp.json();
-            setFotos(prev => ({ ...prev, [p.id]: fotosData || [] }));
+            setFotos((prev) => ({ ...prev, [p.id]: fotosData || [] }));
           } catch {
             // ignora erro individual de fotos
           }
-        }
+        });
+        await Promise.allSettled(promises);
       } catch {
         alert('Erro ao carregar histórico.');
       }
@@ -43,15 +44,14 @@ function Historico() {
     for (const file of e.target.files) formData.append('fotos', file);
 
     try {
-      const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/historico/historico/${historicoId}/fotos`, {
+      const resp = await fetch(`${API}/historico/historico/${historicoId}/fotos`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { ...authHeaders() }, // não setar Content-Type com FormData
         body: formData
       });
       const dados = await resp.json();
       if (resp.ok) {
-        setFotos(prev => ({
+        setFotos((prev) => ({
           ...prev,
           [historicoId]: [...(prev[historicoId] || []), ...(dados?.fotos || [])]
         }));
@@ -67,14 +67,13 @@ function Historico() {
     if (!window.confirm('Deseja mesmo excluir este histórico?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/historico/${id}`, {
+      const resp = await fetch(`${API}/historico/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (resp.ok) {
-        setProcedimentos(prev => prev.filter(p => p.id !== id));
-        setFotos(prev => {
+        setProcedimentos((prev) => prev.filter((p) => p.id !== id));
+        setFotos((prev) => {
           const novo = { ...prev };
           delete novo[id];
           return novo;
@@ -91,15 +90,14 @@ function Historico() {
     if (!window.confirm('Deseja excluir esta foto?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const resp = await fetch(`http://localhost:3001/historico/foto/${fotoId}`, {
+      const resp = await fetch(`${API}/historico/foto/${fotoId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { ...authHeaders() }
       });
       if (resp.ok) {
-        setFotos(prev => ({
+        setFotos((prev) => ({
           ...prev,
-          [historicoId]: (prev[historicoId] || []).filter(f => f.id !== fotoId)
+          [historicoId]: (prev[historicoId] || []).filter((f) => f.id !== fotoId)
         }));
       } else {
         alert('Erro ao excluir a foto.');
@@ -117,7 +115,7 @@ function Historico() {
   useEffect(() => { setPage(1); }, [busca, procedimentos]);
 
   // filtro + ordenação (data desc; fallback id)
-  const filtrados = procedimentos.filter(proc =>
+  const filtrados = procedimentos.filter((proc) =>
     ((proc?.nome_cliente) || '').toLowerCase().includes(busca.toLowerCase()) ||
     ((proc?.servico) || '').toLowerCase().includes(busca.toLowerCase())
   );
@@ -149,7 +147,7 @@ function Historico() {
       />
 
       <div className="clientes-lista">
-        {visiveis.map(proc => (
+        {visiveis.map((proc) => (
           <div key={proc.id} className="card">
             <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
             <p><strong>🗓 Data:</strong> {proc?.data ? new Date(proc.data).toLocaleDateString() : '-'}</p>
@@ -173,14 +171,14 @@ function Historico() {
 
             {fotos[proc.id] && fotos[proc.id].length > 0 && (
               <div className="fotos-wrapper">
-                {fotos[proc.id].map(f => (
+                {fotos[proc.id].map((f) => (
                   <div className="foto-container" key={f.id}>
                     <button className="btn-excluir-foto" onClick={() => deletarFoto(f.id, proc.id)}>🗑️</button>
                     <img
-                      src={`http://localhost:3001${f.url}`}
+                      src={`${API}${f.url}`}
                       alt="procedimento"
                       className="foto-procedimento"
-                      onClick={() => setImagemSelecionada(`http://localhost:3001${f.url}`)}
+                      onClick={() => setImagemSelecionada(`${API}${f.url}`)}
                       style={{ cursor: 'pointer' }}
                     />
                   </div>
@@ -197,8 +195,10 @@ function Historico() {
         )}
       </div>
 
-      {/* Paginação */}
-      <Pagination page={page} total={totalPages} onPage={setPage} />
+      {/* Paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
 
       {imagemSelecionada && (
         <div className="overlay" onClick={() => setImagemSelecionada(null)}>
