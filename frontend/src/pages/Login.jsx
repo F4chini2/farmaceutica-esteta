@@ -32,7 +32,7 @@ export default function Login() {
       setLastError('');
       const data = await apiFetch('/login', {
         method: 'POST',
-        body: JSON.stringify({ email, senha })
+        body: JSON.stringify({ email, senha }),
       });
       if (data?.token) {
         localStorage.setItem('token', data.token);
