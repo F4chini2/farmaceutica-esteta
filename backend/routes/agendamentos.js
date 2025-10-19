@@ -1,146 +1,154 @@
-const adminOnly = require('../middleware/adminOnly');
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const autenticarToken = require('../middleware/auth');
+const adminOnly = require('../middleware/adminOnly');
 
-// Cadastrar novo agendamento para um cliente
+function buildDateTime({ data_hora, data, horario }) {
+  if (data_hora) return data_hora;
+  if (data && horario) return `${data} ${horario}`;
+  return null;
+}
+
+// POST /agendamentos
 router.post('/', autenticarToken, async (req, res) => {
-  const { cliente_id, data, horario, servico, observacoes } = req.body;
-
   try {
-    const resultado = await pool.query(`
-      INSERT INTO agendamentos (cliente_id, data, horario, servico, observacoes)
-      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [cliente_id, data, horario, servico, observacoes]
-    );
+    const dataHora = buildDateTime(req.body);
+    const procedimento = req.body.procedimento ?? req.body.servico;
+    const status = req.body.status ?? 'ativo';
+    const admin_only = req.body.admin_only ?? false;
 
-    res.status(201).json({
-      mensagem: 'Agendamento criado com sucesso!',
-      agendamento: resultado.rows[0]
-    });
+    if (!req.body.cliente_id || !dataHora || !procedimento) {
+      return res.status(400).json({ erro: 'Campos obrigatórios: cliente_id, data_hora (ou data+horario), procedimento/servico.' });
+    }
+
+    const { rows } = await pool.query(`
+      INSERT INTO agendamentos (cliente_id, data_hora, procedimento, status, admin_only)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `, [req.body.cliente_id, dataHora, procedimento, status, admin_only]);
+
+    res.status(201).json({ mensagem: 'Agendamento criado com sucesso!', agendamento: rows[0] });
   } catch (err) {
     console.error('Erro ao criar agendamento:', err);
     res.status(500).json({ erro: 'Erro ao criar agendamento.' });
   }
 });
 
-// Listar todos os agendamentos
+// GET /agendamentos?data=YYYY-MM-DD
 router.get('/', autenticarToken, async (req, res) => {
   const { data } = req.query;
-
+  const isAdmin = !!req.user?.is_admin;
   try {
-    let query = `
-      SELECT a.*, c.nome AS nome_cliente 
-      FROM agendamentos a 
-      JOIN clientes c ON a.cliente_id = c.id`;
-    let valores = [];
+    let q = `
+      SELECT a.*, c.nome AS nome_cliente
+      FROM agendamentos a
+      JOIN clientes c ON a.cliente_id = c.id
+    `;
+    const where = [], vals = [];
 
-    if (data) {
-      query += ' WHERE a.data = $1';
-      valores.push(data);
-    }
+    if (data) { where.push(`DATE(a.data_hora) = $${vals.length + 1}`); vals.push(data); }
+    if (!isAdmin) where.push(`COALESCE(a.admin_only, false) = false`);
 
-    query += ' ORDER BY a.data, a.horario';
+    if (where.length) q += ' WHERE ' + where.join(' AND ');
+    q += ' ORDER BY a.data_hora';
 
-    const resultado = await pool.query(query, valores);
-    res.status(200).json(resultado.rows);
+    const { rows } = await pool.query(q, vals);
+    res.json(rows);
   } catch (err) {
     console.error('Erro ao buscar agendamentos:', err);
     res.status(500).json({ erro: 'Erro ao buscar agendamentos.' });
   }
 });
 
-// Buscar detalhes de um agendamento específico pelo ID
+// GET /agendamentos/:id
 router.get('/:id', autenticarToken, async (req, res) => {
-  const { id } = req.params;
-
+  const isAdmin = !!req.user?.is_admin;
   try {
-    const resultado = await pool.query(`
-      SELECT a.*, c.nome AS nome_cliente 
-      FROM agendamentos a 
-      JOIN clientes c ON a.cliente_id = c.id 
-      WHERE a.id = $1`, [id]);
+    const { rows } = await pool.query(`
+      SELECT a.*, c.nome AS nome_cliente
+      FROM agendamentos a
+      JOIN clientes c ON a.cliente_id = c.id
+      WHERE a.id = $1;
+    `, [req.params.id]);
 
-    if (resultado.rows.length === 0) {
-      return res.status(404).json({ erro: 'Agendamento não encontrado' });
-    }
-
-    res.status(200).json(resultado.rows[0]);
+    if (!rows.length) return res.status(404).json({ erro: 'Agendamento não encontrado' });
+    const ag = rows[0];
+    if (ag.admin_only && !isAdmin) return res.status(403).json({ erro: 'Acesso restrito ao admin.' });
+    res.json(ag);
   } catch (err) {
     console.error('Erro ao buscar agendamento:', err);
     res.status(500).json({ erro: 'Erro ao buscar agendamento.' });
   }
 });
 
-// Atualizar as informações de um agendamento existente
+// PUT /agendamentos/:id
 router.put('/:id', autenticarToken, async (req, res) => {
-  const { id } = req.params;
-  const { cliente_id, data, horario, servico, observacoes } = req.body;
-
+  const isAdmin = !!req.user?.is_admin;
   try {
-    const resultado = await pool.query(`
-      UPDATE agendamentos 
-      SET cliente_id = $1, data = $2, horario = $3, servico = $4, observacoes = $5 
-      WHERE id = $6 
-      RETURNING *`,
-      [cliente_id, data, horario, servico, observacoes, id]
-    );
+    const chk = await pool.query('SELECT admin_only FROM agendamentos WHERE id = $1', [req.params.id]);
+    if (!chk.rows.length) return res.status(404).json({ erro: 'Agendamento não encontrado' });
+    if (chk.rows[0].admin_only && !isAdmin) return res.status(403).json({ erro: 'Apenas admin pode editar este agendamento.' });
 
-    if (resultado.rows.length === 0) {
-      return res.status(404).json({ erro: 'Agendamento não encontrado' });
-    }
+    const dataHora = buildDateTime(req.body);
+    const procedimento = req.body.procedimento ?? req.body.servico;
+    const status = req.body.status;
+    const admin_only = req.body.admin_only;
 
-    res.status(200).json({
-      mensagem: 'Agendamento atualizado com sucesso!',
-      agendamento: resultado.rows[0]
-    });
+    const { rows } = await pool.query(`
+      UPDATE agendamentos
+      SET cliente_id  = COALESCE($1, cliente_id),
+          data_hora   = COALESCE($2, data_hora),
+          procedimento= COALESCE($3, procedimento),
+          status      = COALESCE($4, status),
+          admin_only  = COALESCE($5, admin_only)
+      WHERE id = $6
+      RETURNING *;
+    `, [
+      req.body.cliente_id ?? null,
+      dataHora ?? null,
+      procedimento ?? null,
+      status ?? null,
+      admin_only ?? null,
+      req.params.id
+    ]);
+
+    res.json({ mensagem: 'Agendamento atualizado com sucesso!', agendamento: rows[0] });
   } catch (err) {
     console.error('Erro ao atualizar agendamento:', err);
     res.status(500).json({ erro: 'Erro ao atualizar agendamento.' });
   }
 });
 
-// Excluir um agendamento específico
+// DELETE /agendamentos/:id (admin)
 router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const resultado = await pool.query('DELETE FROM agendamentos WHERE id = $1 RETURNING *', [id]);
-
-    if (resultado.rows.length === 0) {
-      return res.status(404).json({ erro: 'Agendamento não encontrado' });
-    }
-
-    res.status(200).json({ mensagem: 'Agendamento cancelado com sucesso!' });
+    const { rows } = await pool.query('DELETE FROM agendamentos WHERE id = $1 RETURNING *;', [req.params.id]);
+    if (!rows.length) return res.status(404).json({ erro: 'Agendamento não encontrado' });
+    res.json({ mensagem: 'Agendamento cancelado com sucesso!' });
   } catch (err) {
     console.error('Erro ao deletar agendamento:', err);
     res.status(500).json({ erro: 'Erro ao deletar agendamento.' });
   }
 });
 
-// Mover um agendamento específico para o histórico de procedimentos
+// POST /agendamentos/:id/historico
 router.post('/:id/historico', autenticarToken, async (req, res) => {
-  const { id } = req.params;
-
+  const isAdmin = !!req.user?.is_admin;
   try {
-    const agendamento = await pool.query('SELECT * FROM agendamentos WHERE id = $1', [id]);
+    const r = await pool.query('SELECT * FROM agendamentos WHERE id = $1', [req.params.id]);
+    if (!r.rows.length) return res.status(404).json({ erro: 'Agendamento não encontrado' });
+    const ag = r.rows[0];
+    if (ag.admin_only && !isAdmin) return res.status(403).json({ erro: 'Apenas admin pode mover este agendamento.' });
 
-    if (agendamento.rows.length === 0) {
-      return res.status(404).json({ erro: 'Agendamento não encontrado' });
-    }
-
-    const { cliente_id, data, horario, servico, observacoes } = agendamento.rows[0];
-
+    // ajuste os campos conforme o schema real da tabela "historico"
     await pool.query(`
-      INSERT INTO historico (cliente_id, data, horario, servico, observacoes)
-      VALUES ($1, $2, $3, $4, $5)`,
-      [cliente_id, data, horario, servico, observacoes]
-    );
+      INSERT INTO historico (cliente_id, data_hora, procedimento, status)
+      VALUES ($1, $2, $3, $4);
+    `, [ag.cliente_id, ag.data_hora, ag.procedimento, ag.status]);
 
-    await pool.query('DELETE FROM agendamentos WHERE id = $1', [id]);
-
-    res.status(200).json({ mensagem: 'Agendamento movido para histórico com sucesso!' });
+    await pool.query('DELETE FROM agendamentos WHERE id = $1', [req.params.id]);
+    res.json({ mensagem: 'Agendamento movido para histórico com sucesso!' });
   } catch (err) {
     console.error('Erro ao mover para histórico:', err);
     res.status(500).json({ erro: 'Erro ao mover para histórico.' });
