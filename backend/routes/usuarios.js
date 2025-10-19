@@ -1,15 +1,15 @@
-// routes/usuarios.js (modelo REST corrigido)
-// Evita 'usuarios/usuarios' duplicado e fornece endpoints CRUD completos
-
+// routes/usuarios.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 
-// === LISTAR TODOS OS USUÁRIOS ===
+// LISTAR
 router.get('/', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT id, nome, email, perfil FROM usuarios ORDER BY id ASC');
+    const result = await pool.query(
+      'SELECT id, nome, email, tipo FROM usuarios ORDER BY id ASC'
+    );
     res.json(result.rows);
   } catch (err) {
     console.error('Erro ao listar usuários:', err);
@@ -17,11 +17,16 @@ router.get('/', async (_req, res) => {
   }
 });
 
-// === BUSCAR POR ID ===
+// BUSCAR POR ID
 router.get('/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, nome, email, perfil FROM usuarios WHERE id = $1', [req.params.id]);
-    if (result.rows.length === 0) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    const result = await pool.query(
+      'SELECT id, nome, email, tipo FROM usuarios WHERE id = $1',
+      [req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Erro ao buscar usuário:', err);
@@ -29,16 +34,17 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// === CRIAR NOVO USUÁRIO ===
+// CRIAR
 router.post('/', async (req, res) => {
-  const { nome, email, senha, perfil } = req.body || {};
-  if (!nome || !email || !senha) return res.status(400).json({ erro: 'Nome, e-mail e senha são obrigatórios.' });
-
+  const { nome, email, senha, tipo } = req.body || {};
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ erro: 'Nome, e-mail e senha são obrigatórios.' });
+  }
   try {
     const senhaHash = await bcrypt.hash(senha, 10);
     const result = await pool.query(
-      'INSERT INTO usuarios (nome, email, senha, perfil) VALUES ($1,$2,$3,$4) RETURNING id, nome, email, perfil',
-      [nome, email.toLowerCase(), senhaHash, perfil || 'usuario']
+      'INSERT INTO usuarios (nome, email, senha, tipo) VALUES ($1,$2,$3,$4) RETURNING id, nome, email, tipo',
+      [nome, String(email).toLowerCase(), senhaHash, tipo || 'comum']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -47,21 +53,25 @@ router.post('/', async (req, res) => {
   }
 });
 
-// === ATUALIZAR USUÁRIO ===
+// ATUALIZAR
 router.put('/:id', async (req, res) => {
-  const { nome, email, senha, perfil } = req.body || {};
+  const { nome, email, senha, tipo } = req.body || {};
   try {
-    let query = 'UPDATE usuarios SET nome=$1, email=$2, perfil=$3 WHERE id=$4 RETURNING id, nome, email, perfil';
-    let params = [nome, email, perfil, req.params.id];
+    let query =
+      'UPDATE usuarios SET nome=$1, email=$2, tipo=$3 WHERE id=$4 RETURNING id, nome, email, tipo';
+    let params = [nome, email, tipo, req.params.id];
 
     if (senha) {
       const senhaHash = await bcrypt.hash(senha, 10);
-      query = 'UPDATE usuarios SET nome=$1, email=$2, senha=$3, perfil=$4 WHERE id=$5 RETURNING id, nome, email, perfil';
-      params = [nome, email, senhaHash, perfil, req.params.id];
+      query =
+        'UPDATE usuarios SET nome=$1, email=$2, senha=$3, tipo=$4 WHERE id=$5 RETURNING id, nome, email, tipo';
+      params = [nome, email, senhaHash, tipo, req.params.id];
     }
 
     const result = await pool.query(query, params);
-    if (result.rows.length === 0) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Erro ao atualizar usuário:', err);
@@ -69,11 +79,15 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// === EXCLUIR USUÁRIO ===
+// EXCLUIR
 router.delete('/:id', async (req, res) => {
   try {
-    const result = await pool.query('DELETE FROM usuarios WHERE id=$1 RETURNING id', [req.params.id]);
-    if (result.rowCount === 0) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    const result = await pool.query('DELETE FROM usuarios WHERE id=$1 RETURNING id', [
+      req.params.id,
+    ]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    }
     res.json({ mensagem: 'Usuário excluído com sucesso.' });
   } catch (err) {
     console.error('Erro ao excluir usuário:', err);
