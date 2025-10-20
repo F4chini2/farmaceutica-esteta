@@ -27,7 +27,7 @@ app.use('/pre-cadastro', require('./routes/precadastro'));  // pública
 app.use('/usuarios', require('./routes/usuarios'));
 app.use('/clientesfull', require('./routes/clientesfull'));
 app.use('/fornecedores', require('./routes/fornecedores'));
-app.use('/api/agendamentos', require('./routes/agendamentos'));
+app.use('/agendamentos', require('./routes/agendamentos'));
 app.use('/boletos', require('./routes/boletos'));
 app.use('/historico', require('./routes/historico'));
 app.use('/estoque', require('./routes/estoque'));
