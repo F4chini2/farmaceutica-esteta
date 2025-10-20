@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { API } from '../config/api';
 import { obrigatorio, validarTelefone, normalizarTelefone } from '../utils/validations';
+import "./PreCadastro.css"; 
 
 export default function PreCadastro() {
   const [form, setForm] = useState({
