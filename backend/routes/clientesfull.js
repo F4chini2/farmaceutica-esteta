@@ -35,7 +35,7 @@ function normalizeBody(raw = {}) {
     }
   }
 
-  // idade: inteiro ou null (sem NaN)
+  // idade: inteiro >=0 ou null (sem NaN)
   if (out.idade !== null && String(out.idade).trim() !== '') {
     const n = Number(out.idade);
     if (!Number.isFinite(n)) throw new Error('__IDADE_INVALIDA__');
@@ -85,7 +85,9 @@ router.post('/', autenticarToken, async (req, res) => {
         cor_pele, biotipo_pele, hidratacao, acne, textura_pele,
         envelhecimento, rugas, procedimentos, autoriza_fotos
       ) VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25
+        $1,$2,$3,$4,
+        CASE WHEN $5::text ~ '^[0-9]+$' THEN $5::int ELSE NULL END,  -- blindagem extra
+        $6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25
       )
       RETURNING *`,
       vals
