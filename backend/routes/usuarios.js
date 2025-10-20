@@ -1,136 +1,139 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const router = express.Router();
 const pool = require('../db');
 const autenticarToken = require('../middleware/auth');
 const adminOnly = require('../middleware/adminOnly');
+const bcrypt = require('bcryptjs');
 
-const router = express.Router();
-
-// Normaliza entrada de "tipo"/"perfil"
-function normalizeTipo(reqBody, fallback = 'comum') {
-  const raw = (reqBody?.tipo ?? reqBody?.perfil ?? fallback)?.toString().toLowerCase().trim();
-  return raw === 'admin' ? 'admin' : 'comum';
+/**
+ * Normaliza senha:
+ * - Se já vier hash bcrypt ($2...), mantém.
+ * - Se vier em texto puro, gera hash com salt 10.
+ */
+async function normalizePassword(s) {
+  if (!s) return null;
+  if (typeof s === 'string' && s.startsWith('$2')) return s; // já é bcrypt
+  return await bcrypt.hash(s, 10);
 }
 
-// Remove campo "senha" do objeto retornado
-function stripSenha(u) {
-  if (!u) return u;
-  const { senha, ...rest } = u;
-  return rest;
-}
-
-// -------- LISTAR (somente autenticado) --------
-router.get('/', autenticarToken, async (_req, res) => {
+// Listar todos os usuários (apenas admin)
+router.get('/', autenticarToken, adminOnly, async (_req, res) => {
   try {
-    const { rows } = await pool.query(
-      'SELECT id, email, nome, telefone, descricao, tipo FROM usuarios ORDER BY id DESC'
-    );
-    res.json(rows);
-  } catch (e) {
-    console.error('Erro ao listar usuários:', e);
-    res.status(500).json({ erro: 'erro interno ao listar usuários' });
+    const sql = `
+      SELECT id, nome, email, telefone, descricao, tipo
+      FROM usuarios
+      ORDER BY id ASC
+    `;
+    const result = await pool.query(sql);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    res.status(500).json({ erro: 'Erro ao buscar usuários' });
   }
 });
 
-// -------- CRIAR (apenas ADMIN) --------
+// Buscar um usuário específico
+router.get('/:id', autenticarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = `
+      SELECT id, nome, email, telefone, descricao, tipo
+      FROM usuarios
+      WHERE id = $1
+    `;
+    const result = await pool.query(sql, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+    res.status(500).json({ erro: 'Erro ao buscar usuário' });
+  }
+});
+
+// Criar novo usuário (apenas admin)
 router.post('/', autenticarToken, adminOnly, async (req, res) => {
   try {
-    const { nome, email, senha, telefone, descricao } = req.body;
+    const { nome, email, senha, tipo, telefone, descricao } = req.body;
 
-    if (!email || !senha) {
-      return res.status(400).json({ erro: 'email e senha são obrigatórios' });
+    if (!nome || !email || !senha) {
+      return res.status(400).json({ erro: 'Nome, email e senha são obrigatórios.' });
     }
 
     // e-mail único
-    const exists = await pool.query('SELECT 1 FROM usuarios WHERE email=$1', [email]);
-    if (exists.rowCount > 0) {
-      return res.status(409).json({ erro: 'email já cadastrado' });
+    const existe = await pool.query('SELECT 1 FROM usuarios WHERE LOWER(email)=LOWER($1)', [email]);
+    if (existe.rows.length > 0) {
+      return res.status(400).json({ erro: 'E-mail já cadastrado.' });
     }
 
-    const tipo = normalizeTipo(req.body, 'comum'); // 'admin' | 'comum'
-    const hash = await bcrypt.hash(senha, 10);
+    const senhaHash = await normalizePassword(senha);
 
-    const { rows } = await pool.query(
-      `INSERT INTO usuarios (email, senha, tipo, nome, telefone, descricao)
-       VALUES ($1,$2,$3,$4,$5,$6)
-       RETURNING id, email, nome, telefone, descricao, tipo`,
-      [email, hash, tipo, nome || null, telefone || null, descricao || null]
-    );
+    const sql = `
+      INSERT INTO usuarios (nome, email, senha, tipo, telefone, descricao)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id, nome, email, telefone, descricao, tipo
+    `;
+    const params = [nome, email, senhaHash, tipo || 'comum', telefone || null, descricao || null];
+    const result = await pool.query(sql, params);
 
-    res.status(201).json(rows[0]);
-  } catch (e) {
-    console.error('Erro ao criar usuário:', e);
-    res.status(500).json({ erro: 'erro interno ao criar usuário' });
+    res.status(201).json({ mensagem: 'Usuário criado com sucesso!', usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao criar usuário:', error);
+    res.status(500).json({ erro: 'Erro ao criar usuário.' });
   }
 });
 
-// -------- ATUALIZAR (apenas ADMIN modifica tipo/senha; usuário comum pode editar seus dados não sensíveis se desejar adaptar) --------
+// Atualizar usuário
 router.put('/:id', autenticarToken, async (req, res) => {
   try {
     const { id } = req.params;
+    let { nome, email, senha, tipo, telefone, descricao } = req.body;
 
-    // Se NÃO é admin, bloqueia mudança de "tipo" e "senha".
-    const isAdmin = req.user?.is_admin || req.user?.tipo === 'admin';
-    let tipo = undefined;
-    let senhaHash = undefined;
-
-    if (isAdmin) {
-      if (req.body?.tipo !== undefined || req.body?.perfil !== undefined) {
-        tipo = normalizeTipo(req.body);
-      }
-      if (req.body?.senha) {
-        senhaHash = await bcrypt.hash(req.body.senha, 10);
-      }
+    // se senha vier, normaliza (hash se necessário)
+    if (senha) {
+      senha = await normalizePassword(senha);
     }
 
-    const nome = req.body?.nome ?? undefined;
-    const telefone = req.body?.telefone ?? undefined;
-    const descricao = req.body?.descricao ?? undefined;
-    const email = req.body?.email ?? undefined;
+    const sql = `
+      UPDATE usuarios
+      SET nome      = COALESCE($1, nome),
+          email     = COALESCE($2, email),
+          senha     = COALESCE($3, senha),
+          tipo      = COALESCE($4, tipo),
+          telefone  = COALESCE($5, telefone),
+          descricao = COALESCE($6, descricao)
+      WHERE id = $7
+      RETURNING id, nome, email, telefone, descricao, tipo
+    `;
+    const params = [nome || null, email || null, senha || null, tipo || null, telefone || null, descricao || null, id];
 
-    // Monta UPDATE dinâmico
-    const sets = [];
-    const vals = [];
-    let i = 1;
+    const result = await pool.query(sql, params);
 
-    const push = (field, val) => { sets.push(`${field} = $${i++}`); vals.push(val); };
-
-    if (email !== undefined) push('email', email);
-    if (nome !== undefined) push('nome', nome);
-    if (telefone !== undefined) push('telefone', telefone);
-    if (descricao !== undefined) push('descricao', descricao);
-    if (isAdmin && tipo !== undefined) push('tipo', tipo);
-    if (isAdmin && senhaHash !== undefined) push('senha', senhaHash);
-
-    if (sets.length === 0) {
-      return res.status(400).json({ erro: 'nada para atualizar' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
     }
 
-    vals.push(id);
-    const { rows, rowCount } = await pool.query(
-      `UPDATE usuarios SET ${sets.join(', ')} WHERE id = $${i} 
-       RETURNING id, email, nome, telefone, descricao, tipo`,
-      vals
-    );
-
-    if (rowCount === 0) return res.status(404).json({ erro: 'usuário não encontrado' });
-    res.json(rows[0]);
-  } catch (e) {
-    console.error('Erro ao atualizar usuário:', e);
-    res.status(500).json({ erro: 'erro interno ao atualizar usuário' });
+    res.json({ mensagem: 'Usuário atualizado com sucesso!', usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
+    res.status(500).json({ erro: 'Erro ao atualizar usuário.' });
   }
 });
 
-// -------- REMOVER (apenas ADMIN) --------
+// Excluir usuário (apenas admin)
 router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
-    const { rowCount } = await pool.query('DELETE FROM usuarios WHERE id=$1', [id]);
-    if (rowCount === 0) return res.status(404).json({ erro: 'usuário não encontrado' });
-    res.status(204).end();
-  } catch (e) {
-    console.error('Erro ao remover usuário:', e);
-    res.status(500).json({ erro: 'erro interno ao remover usuário' });
+    const result = await pool.query('DELETE FROM usuarios WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    }
+    res.json({ mensagem: 'Usuário excluído com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao excluir usuário:', error);
+    res.status(500).json({ erro: 'Erro ao excluir usuário.' });
   }
 });
 
