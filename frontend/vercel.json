@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "http://72.60.13.105:3001/$1" }
+    {
+      "source": "/api/(.*)",
+      "destination": "https://SEU_BACKEND:3001/$1"
+    }
   ]
 }
