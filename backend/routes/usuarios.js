@@ -1,97 +1,108 @@
-// routes/usuarios.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const bcrypt = require('bcrypt');
+const autenticarToken = require('../middleware/auth');
+const adminOnly = require('../middleware/adminOnly');
 
-// LISTAR
-router.get('/', async (_req, res) => {
+// Listar todos os usuários (apenas admin)
+router.get('/', autenticarToken, adminOnly, async (req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT id, nome, email, tipo FROM usuarios ORDER BY id ASC'
-    );
+    const result = await pool.query('SELECT id, nome, email, role, tipo, perfil FROM usuarios ORDER BY id ASC');
     res.json(result.rows);
-  } catch (err) {
-    console.error('Erro ao listar usuários:', err);
-    res.status(500).json({ erro: 'Erro interno ao listar usuários.' });
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    res.status(500).json({ erro: 'Erro ao buscar usuários' });
   }
 });
 
-// BUSCAR POR ID
-router.get('/:id', async (req, res) => {
+// Buscar um usuário específico
+router.get('/:id', autenticarToken, async (req, res) => {
   try {
+    const { id } = req.params;
     const result = await pool.query(
-      'SELECT id, nome, email, tipo FROM usuarios WHERE id = $1',
-      [req.params.id]
+      'SELECT id, nome, email, role, tipo, perfil FROM usuarios WHERE id = $1',
+      [id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
     }
     res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Erro ao buscar usuário:', err);
-    res.status(500).json({ erro: 'Erro interno ao buscar usuário.' });
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+    res.status(500).json({ erro: 'Erro ao buscar usuário' });
   }
 });
 
-// CRIAR
-router.post('/', async (req, res) => {
-  const { nome, email, senha, tipo } = req.body || {};
+// Criar novo usuário (apenas admin)
+router.post('/', autenticarToken, adminOnly, async (req, res) => {
+  const { nome, email, senha, role, tipo, perfil } = req.body;
+
   if (!nome || !email || !senha) {
-    return res.status(400).json({ erro: 'Nome, e-mail e senha são obrigatórios.' });
+    return res.status(400).json({ erro: 'Nome, email e senha são obrigatórios.' });
   }
+
   try {
-    const senhaHash = await bcrypt.hash(senha, 10);
+    const existente = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+    if (existente.rows.length > 0) {
+      return res.status(400).json({ erro: 'E-mail já cadastrado.' });
+    }
+
     const result = await pool.query(
-      'INSERT INTO usuarios (nome, email, senha, tipo) VALUES ($1,$2,$3,$4) RETURNING id, nome, email, tipo',
-      [nome, String(email).toLowerCase(), senhaHash, tipo || 'comum']
+      'INSERT INTO usuarios (nome, email, senha, role, tipo, perfil) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, nome, email, role, tipo, perfil',
+      [nome, email, senha, role || 'usuario', tipo || 'usuario', perfil || 'usuario']
     );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error('Erro ao criar usuário:', err);
-    res.status(500).json({ erro: 'Erro interno ao criar usuário.' });
+
+    res.status(201).json({ mensagem: 'Usuário criado com sucesso!', usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao criar usuário:', error);
+    res.status(500).json({ erro: 'Erro ao criar usuário.' });
   }
 });
 
-// ATUALIZAR
-router.put('/:id', async (req, res) => {
-  const { nome, email, senha, tipo } = req.body || {};
+// Atualizar usuário
+router.put('/:id', autenticarToken, async (req, res) => {
+  const { id } = req.params;
+  const { nome, email, senha, role, tipo, perfil } = req.body;
+
   try {
-    let query =
-      'UPDATE usuarios SET nome=$1, email=$2, tipo=$3 WHERE id=$4 RETURNING id, nome, email, tipo';
-    let params = [nome, email, tipo, req.params.id];
+    const result = await pool.query(
+      `UPDATE usuarios
+       SET nome = COALESCE($1, nome),
+           email = COALESCE($2, email),
+           senha = COALESCE($3, senha),
+           role = COALESCE($4, role),
+           tipo = COALESCE($5, tipo),
+           perfil = COALESCE($6, perfil)
+       WHERE id = $7
+       RETURNING id, nome, email, role, tipo, perfil`,
+      [nome, email, senha, role, tipo, perfil, id]
+    );
 
-    if (senha) {
-      const senhaHash = await bcrypt.hash(senha, 10);
-      query =
-        'UPDATE usuarios SET nome=$1, email=$2, senha=$3, tipo=$4 WHERE id=$5 RETURNING id, nome, email, tipo';
-      params = [nome, email, senhaHash, tipo, req.params.id];
-    }
-
-    const result = await pool.query(query, params);
     if (result.rows.length === 0) {
       return res.status(404).json({ erro: 'Usuário não encontrado.' });
     }
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Erro ao atualizar usuário:', err);
-    res.status(500).json({ erro: 'Erro interno ao atualizar usuário.' });
+
+    res.json({ mensagem: 'Usuário atualizado com sucesso!', usuario: result.rows[0] });
+  } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
+    res.status(500).json({ erro: 'Erro ao atualizar usuário.' });
   }
 });
 
-// EXCLUIR
-router.delete('/:id', async (req, res) => {
+// Excluir usuário (apenas admin)
+router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const result = await pool.query('DELETE FROM usuarios WHERE id=$1 RETURNING id', [
-      req.params.id,
-    ]);
-    if (result.rowCount === 0) {
+    const result = await pool.query('DELETE FROM usuarios WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
       return res.status(404).json({ erro: 'Usuário não encontrado.' });
     }
-    res.json({ mensagem: 'Usuário excluído com sucesso.' });
-  } catch (err) {
-    console.error('Erro ao excluir usuário:', err);
-    res.status(500).json({ erro: 'Erro interno ao excluir usuário.' });
+
+    res.json({ mensagem: 'Usuário excluído com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao excluir usuário:', error);
+    res.status(500).json({ erro: 'Erro ao excluir usuário.' });
   }
 });
 
