@@ -1,10 +1,9 @@
+// src/pages/PreCadastro.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './PreCadastro.css'; // seu CSS baseado no Boletos
 import { API } from '../config/api';
+import { obrigatorio, validarTelefone, normalizarTelefone } from '../utils/validations';
 
 export default function PreCadastro() {
-  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: '',
     endereco: '',
@@ -21,22 +20,33 @@ export default function PreCadastro() {
     e.preventDefault();
     setStatus(null);
 
+    // ✅ validações
+    if (!obrigatorio(form.nome)) {
+      setStatus({ tipo: 'erro', msg: 'Nome é obrigatório.' });
+      return;
+    }
+    if (form.telefone && !validarTelefone(form.telefone)) {
+      setStatus({ tipo: 'erro', msg: 'Telefone inválido. Use DDD + número.' });
+      return;
+    }
+
     try {
+      const payload = {
+        ...form,
+        telefone: form.telefone ? normalizarTelefone(form.telefone) : null,
+        autoriza_fotos: form.autoriza_fotos === 'true',
+      };
+
       const resp = await fetch(`${API}/pre-cadastro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          autoriza_fotos: form.autoriza_fotos === 'true',
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await resp.json();
       if (resp.ok) {
         setStatus({ tipo: 'ok', msg: 'Pré-cadastro enviado com sucesso!' });
         setForm({ nome: '', endereco: '', telefone: '', procedimentos: '', autoriza_fotos: 'false' });
-        // se quiser redirecionar após sucesso:
-        // navigate('/alguma-rota');
       } else {
         setStatus({ tipo: 'erro', msg: data?.erro || 'Erro ao enviar.' });
       }
@@ -50,28 +60,23 @@ export default function PreCadastro() {
       <h2>📝 Pré-cadastro</h2>
 
       <form onSubmit={handleSubmit} className="form-precadastro">
-        <label>
-          Nome:
+        <label>Nome:
           <input type="text" value={form.nome} onChange={e => handleChange('nome', e.target.value)} required />
         </label>
 
-        <label>
-          Endereço:
+        <label>Endereço:
           <input type="text" value={form.endereco} onChange={e => handleChange('endereco', e.target.value)} />
         </label>
 
-        <label>
-          Telefone:
+        <label>Telefone:
           <input type="tel" value={form.telefone} onChange={e => handleChange('telefone', e.target.value)} placeholder="(00) 00000-0000" />
         </label>
 
-        <label>
-          Procedimentos:
+        <label>Procedimentos:
           <input type="text" value={form.procedimentos} onChange={e => handleChange('procedimentos', e.target.value)} placeholder="Ex.: limpeza de pele, peeling..." />
         </label>
 
-        <label>
-          Autoriza Fotos:
+        <label>Autoriza Fotos:
           <select value={form.autoriza_fotos} onChange={e => handleChange('autoriza_fotos', e.target.value)}>
             <option value="false">Não</option>
             <option value="true">Sim</option>
