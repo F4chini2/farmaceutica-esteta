@@ -24,13 +24,18 @@ function normalizeBody(raw = {}) {
   for (const k of BOOL_FIELDS) {
     if (out[k] === null) continue;
     const v = out[k];
-    if (typeof v === 'boolean') { /* ok */ }
-    else if (typeof v === 'string') out[k] = v.toLowerCase() === 'true';
-    else if (typeof v === 'number') out[k] = v === 1;
-    else out[k] = false;
+    if (typeof v === 'boolean') {
+      // ok
+    } else if (typeof v === 'string') {
+      out[k] = v.toLowerCase() === 'true';
+    } else if (typeof v === 'number') {
+      out[k] = v === 1;
+    } else {
+      out[k] = false;
+    }
   }
 
-  // idade: inteiro ou null
+  // idade: inteiro ou null (sem NaN)
   if (out.idade !== null && String(out.idade).trim() !== '') {
     const n = Number(out.idade);
     if (!Number.isFinite(n)) throw new Error('__IDADE_INVALIDA__');
