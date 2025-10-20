@@ -22,7 +22,7 @@ export default function Login() {
       const data = await res.json();
       if (res.ok && data?.token) {
         localStorage.setItem('token', data.token);
-        navigate('/usuarios');
+        navigate('/Dashboard');
       } else {
         alert(data?.erro || 'Falha no login');
       }
