@@ -29,24 +29,36 @@ function Agendamentos() {
   }, []);
 
   const enviarParaHistorico = async (agendamento) => {
-    if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
+  if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
 
-    try {
-      const resposta = await fetch(`${API}/agendamentos/${agendamento.id}/historico`, {
+  try {
+    const resposta = await fetch(
+      `${API}/historico/clientes/${agendamento.cliente_id}/historico`,
+      {
         method: 'POST',
-        headers: { ...authHeaders() }
-      });
-
-      if (resposta.ok) {
-        setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
-      } else {
-        const dados = await resposta.json().catch(() => ({}));
-        alert(dados.erro || 'Erro ao mover para histórico');
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders(),
+        },
+        body: JSON.stringify({
+          data: agendamento.data,
+          horario: agendamento.horario,
+          servico: agendamento.servico,
+          observacoes: agendamento.observacoes || null,
+        }),
       }
-    } catch (err) {
-      alert('Erro de conexão');
+    );
+
+    const dados = await resposta.json().catch(() => ({}));
+    if (resposta.ok) {
+      setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
+    } else {
+      alert(dados.erro || 'Erro ao mover para histórico');
     }
-  };
+  } catch (err) {
+    alert('Erro de conexão');
+  }
+};
 
   const excluirAgendamento = async (agendamento) => {
     if (!window.confirm('Tem certeza que deseja excluir este agendamento?')) return;
