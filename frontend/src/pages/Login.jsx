@@ -14,7 +14,7 @@ export default function Login() {
     if (!email || !senha) { alert('Informe e-mail e senha.'); return; }
     try {
       setCarregando(true);
-      const res = await fetch(`${API}/login`, {
+      const res = await fetch(`/api/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha })
