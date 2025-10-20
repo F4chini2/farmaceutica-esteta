@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const autenticarToken = require('../middleware/auth');
-const adminOnly = require('../middleware/adminOnly');
 
 function buildDateTime({ data_hora, data, horario }) {
   if (data_hora) return data_hora;
