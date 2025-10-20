@@ -74,7 +74,7 @@ export default function PreCadastro() {
         </label>
 
         <label>Procedimentos:
-          <input type="text" value={form.procedimentos} onChange={e => handleChange('procedimento de interesse', e.target.value)} placeholder="Ex.: limpeza de pele, peeling..." />
+          <input type="text" value={form.procedimentos} onChange={e => handleChange('procedimentos', e.target.value)} placeholder="Ex.: limpeza de pele, peeling..." />
         </label>
 
         <label>Autoriza Fotos:
