@@ -46,7 +46,7 @@ router.get('/', autenticarToken, async (req, res) => {
       SELECT
         a.id,
         a.cliente_id,
-        c.nome AS nome_cliente,
+        c.nome AS cliente_nome,
         a.data,
         a.horario,
         a.servico,
@@ -74,7 +74,7 @@ router.get('/:id', autenticarToken, async (req, res) => {
       SELECT
         a.id,
         a.cliente_id,
-        c.nome AS nome_cliente,
+        c.nome AS cliente_nome,
         a.data,
         a.horario,
         a.servico,
@@ -164,42 +164,6 @@ router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   } catch (err) {
     console.error('Erro ao excluir agendamento:', err);
     res.status(500).json({ erro: 'Erro ao excluir agendamento' });
-  }
-});
-
-// MOVER PARA HISTÓRICO (transação)
-// Caminho usado no front: POST /api/agendamentos/:id/historico
-router.post('/:id/historico', autenticarToken, async (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) return res.status(400).json({ erro: 'ID inválido' });
-
-  try {
-    await pool.query('BEGIN');
-
-    // 1) Busca o agendamento
-    const sel = await pool.query('SELECT * FROM agendamentos WHERE id = $1', [id]);
-    if (!sel.rows.length) {
-      await pool.query('ROLLBACK');
-      return res.status(404).json({ erro: 'Agendamento não encontrado' });
-    }
-    const a = sel.rows[0];
-
-    // 2) Insere no histórico (ajuste os nomes de coluna se seu schema diferir)
-    await pool.query(
-      `INSERT INTO historico (cliente_id, data, horario, servico, observacoes)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [a.cliente_id, a.data || null, a.horario || null, a.servico || null, a.observacoes || null]
-    );
-
-    // 3) Remove dos agendamentos (ou troque por UPDATE de status se preferir)
-    await pool.query('DELETE FROM agendamentos WHERE id = $1', [id]);
-
-    await pool.query('COMMIT');
-    res.json({ mensagem: 'Movido para o histórico com sucesso' });
-  } catch (err) {
-    console.error('Erro ao mover para histórico:', err);
-    try { await pool.query('ROLLBACK'); } catch {}
-    res.status(500).json({ erro: 'Erro interno ao mover para o histórico' });
   }
 });
 
