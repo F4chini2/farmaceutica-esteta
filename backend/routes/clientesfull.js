@@ -35,15 +35,10 @@ function normalizeBody(raw = {}) {
     }
   }
 
-  // idade: inteiro >=0 ou null (sem NaN)
-  if (out.idade !== null && String(out.idade).trim() !== '') {
-    const n = Number(out.idade);
-    if (!Number.isFinite(n)) throw new Error('__IDADE_INVALIDA__');
-    const t = Math.trunc(n);
-    if (t < 0) throw new Error('__IDADE_INVALIDA__');
-    out.idade = t;
-  } else {
-    out.idade = null;
+  // idade: TEXT (trim) ou null
+  if (out.idade !== null) {
+    const rawIdade = String(out.idade).trim();
+    out.idade = rawIdade === '' ? null : rawIdade; // mantém como texto
   }
 
   // trims básicos
@@ -85,9 +80,7 @@ router.post('/', autenticarToken, async (req, res) => {
         cor_pele, biotipo_pele, hidratacao, acne, textura_pele,
         envelhecimento, rugas, procedimentos, autoriza_fotos
       ) VALUES (
-        $1,$2,$3,$4,
-        CASE WHEN $5::text ~ '^[0-9]+$' THEN $5::int ELSE NULL END,  -- blindagem extra
-        $6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25
       )
       RETURNING *`,
       vals
@@ -95,9 +88,6 @@ router.post('/', autenticarToken, async (req, res) => {
 
     return res.status(201).json(rows[0]);
   } catch (e) {
-    if (e && e.message === '__IDADE_INVALIDA__') {
-      return res.status(400).json({ erro: 'idade inválida' });
-    }
     console.error('Erro ao cadastrar cliente:', e);
     return res.status(500).json({ erro: 'Erro ao cadastrar cliente.' });
   }
@@ -108,14 +98,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
   const { id } = req.params;
   try {
     // normaliza, mas preserva null vs não enviado
-    let incoming = {};
-    try { incoming = normalizeBody(req.body); } 
-    catch (e) {
-      if (e.message === '__IDADE_INVALIDA__') {
-        return res.status(400).json({ erro: 'idade inválida' });
-      }
-      throw e;
-    }
+    let incoming = normalizeBody(req.body);
 
     // monta update dinâmico somente com campos presentes no body original
     const setParts = [];
