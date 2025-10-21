@@ -94,7 +94,7 @@ function Usuarios() {
             <p><strong>🆔 ID:</strong> {u.id}</p>
             <p><strong>👤 Nome:</strong> {u.nome || '-'}</p>
             <p><strong>✉ E-mail:</strong> {u.email || '-'}</p>
-            <p><strong>🔒 Tipo:</strong> {u.tipo || 'comum'}</p>
+            <p><strong>🔒 Tipo:</strong> {u.tipo || '-'}</p>
             <p><strong>📞 Telefone:</strong> {u.telefone || '-'}</p>
             <p><strong>📝 Descrição:</strong> {u.descricao || '-'}</p>
 
