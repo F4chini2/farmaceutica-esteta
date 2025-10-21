@@ -6,7 +6,7 @@ import { API, authHeaders } from '../config/api';
 function ClientesFull() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    nome: '', telefone: '', cpf: '', descricao: '', idade: '', alergias: '', endereco: '', instagram: '',
+    nome: '', telefone: '', cpf: '', descricao: '', idade: '', endereco: '', alergias: '', instagram: '',
     motivo_avaliacao: '', tratamento_anterior: '', alergia_medicamento: '', uso_medicamento: '',
     usa_filtro_solar: 'false', usa_acido_peeling: 'false', problema_pele: '', gravida: 'false',
     cor_pele: '', biotipo_pele: '', hidratacao: '', acne: '',
