@@ -1,47 +1,44 @@
-// src/pages/UsuariosFull.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UsuariosFull.css';
-import { API, authHeaders, apiUrl } from '../config/api'; // <— importante
 
 export default function UsuariosFull(){
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [perfil, setPerfil] = useState('usuario'); // 'usuario' | 'admin'
+  const [perfil, setPerfil] = useState('usuario');
   const [salvando, setSalvando] = useState(false);
   const navigate = useNavigate();
 
   const salvar = async (e) => {
     e.preventDefault();
-    if (!nome || !email || !senha) { alert('Preencha nome, e-mail e senha.'); return; }
-
-    try {
+    if(!nome || !email || !senha){ alert('Preencha nome, e-mail e senha.'); return; }
+    try{
       setSalvando(true);
-      // mapeia para o que o banco realmente armazena
-      const tipo = perfil === 'admin' ? 'admin' : 'comum';
-
-      const res = await fetch(apiUrl('/usuarios'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        // envia os dois campos para cobrir backend antigo e novo
-        body: JSON.stringify({ nome, email, senha, perfil, tipo })
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API}/usuarios`, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ nome, email, senha, perfil })
       });
-
       const data = await res.json();
-
-      if (res.status === 401) { alert('Sessão expirada. Faça login.'); navigate('/'); return; }
-      if (res.status === 403) { alert('Ação permitida apenas para administradores.'); return; }
-
-      if (res.ok) {
-        alert(`Usuário cadastrado! Perfil salvo: ${data?.tipo ?? tipo}`);
+      if(res.status === 401){
+        alert('Sessão expirada. Faça login novamente.');
+        navigate('/');
+        return;
+      }
+      if(res.ok){
+        alert('Usuário cadastrado com sucesso!');
         navigate('/usuarios');
-      } else {
+      }else{
         alert(data?.erro || 'Erro ao salvar usuário');
       }
-    } catch {
+    }catch(err){
       alert('Erro de conexão ao salvar usuário');
-    } finally {
+    }finally{
       setSalvando(false);
     }
   };
