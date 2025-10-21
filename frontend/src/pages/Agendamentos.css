@@ -1,11 +1,3 @@
-.agendamentos-container {
-  padding: 40px;
-  font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  background: var(--cor-fundo-gradient);
-  box-sizing: border-box;
-}
-
 .topo-agendamentos {
   display: flex;
   justify-content: center;

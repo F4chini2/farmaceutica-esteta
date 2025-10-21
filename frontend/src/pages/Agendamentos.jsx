@@ -102,7 +102,7 @@ function Agendamentos() {
   // ====================================
 
   return (
-    <div className="agendamentos-container">
+    <div className="dashboard-container">
       <Tabs />
       <div className="topo-agendamentos">
         <h1>🗓️ Agendamentos</h1>
