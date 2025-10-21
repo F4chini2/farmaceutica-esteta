@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { API, authHeaders } from '../config/api';
-import './UsuariosFull.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { API, authHeaders } from "../config/api";
+import "./UsuariosFull.css"; // usa somente o CSS desta tela
 
 export default function UsuariosFull() {
+  const navigate = useNavigate();
+
   const [lista, setLista] = useState([]);
   const [carregando, setCarregando] = useState(false);
 
-  // Formulário
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [tipo, setTipo] = useState('comum'); // 'comum' | 'admin'
+  // Form
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [nome, setNome] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [tipo, setTipo] = useState("comum"); // 'comum' | 'admin'
 
   async function carregar() {
     setCarregando(true);
     try {
       const res = await fetch(`${API}/usuarios`, { headers: { ...authHeaders() } });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.erro || 'Falha ao carregar');
+      if (!res.ok) throw new Error(data?.erro || "Falha ao carregar");
       setLista(data);
     } catch (e) {
       alert(e.message);
@@ -30,140 +33,145 @@ export default function UsuariosFull() {
 
   useEffect(() => { carregar(); }, []);
 
-  async function criarUsuario(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !senha) { alert('Informe e-mail e senha.'); return; }
+    if (!email || !senha) { alert("Informe e-mail e senha."); return; }
     try {
-      const res = await fetch(`${API}/usuarios`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      const resp = await fetch(`${API}/usuarios`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ email, senha, nome, telefone, descricao, tipo })
-        // OBS: backend também aceita "perfil" como alias, mas aqui enviamos "tipo".
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.erro || 'Erro ao criar usuário');
-      // limpa form
-      setEmail(''); setSenha(''); setNome(''); setTelefone(''); setDescricao(''); setTipo('comum');
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data?.erro || "Erro ao criar usuário");
+      setEmail(""); setSenha(""); setNome(""); setTelefone(""); setDescricao(""); setTipo("comum");
       await carregar();
     } catch (e) {
       alert(e.message);
     }
-  }
+  };
 
   async function tornarAdmin(id, flag) {
     try {
       const res = await fetch(`${API}/usuarios/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ tipo: flag ? 'admin' : 'comum' })
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({ tipo: flag ? "admin" : "comum" })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.erro || 'Erro ao atualizar perfil');
+      if (!res.ok) throw new Error(data?.erro || "Erro ao atualizar perfil");
       await carregar();
-    } catch (e) {
-      alert(e.message);
-    }
+    } catch (e) { alert(e.message); }
   }
 
   async function remover(id) {
-    if (!confirm('Remover este usuário?')) return;
+    if (!confirm("Remover este usuário?")) return;
     try {
       const res = await fetch(`${API}/usuarios/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: { ...authHeaders() }
       });
       if (!res.ok && res.status !== 204) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.erro || 'Erro ao remover');
+        throw new Error(data?.erro || "Erro ao remover");
       }
       await carregar();
-    } catch (e) {
-      alert(e.message);
-    }
+    } catch (e) { alert(e.message); }
   }
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Usuários</h1>
+    <div className="usuariosfull">
+      <button onClick={() => navigate(-1)} style={{ marginBottom: 12 }}>
+        ⬅ Voltar
+      </button>
 
-      <form onSubmit={criarUsuario} className="grid gap-3 md:grid-cols-2 bg-[#f7f7fb] p-4 rounded-lg border">
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">E-mail*</label>
-          <input className="border rounded p-2" value={email} onChange={e => setEmail(e.target.value)} />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Senha*</label>
-          <input type="password" className="border rounded p-2" value={senha} onChange={e => setSenha(e.target.value)} />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Nome</label>
-          <input className="border rounded p-2" value={nome} onChange={e => setNome(e.target.value)} />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Telefone</label>
-          <input className="border rounded p-2" value={telefone} onChange={e => setTelefone(e.target.value)} />
-        </div>
-        <div className="flex flex-col md:col-span-2">
-          <label className="text-sm mb-1">Descrição</label>
-          <textarea className="border rounded p-2" rows={2} value={descricao} onChange={e => setDescricao(e.target.value)} />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Perfil</label>
-          <select className="border rounded p-2" value={tipo} onChange={e => setTipo(e.target.value)}>
+      <h2>👥 Usuários</h2>
+
+      {/* FORM — estrutura igual ao CadastrarBoletos (labels envolvendo inputs) */}
+      <form onSubmit={handleSubmit}>
+        <label>
+          E-mail*
+          <input value={email} onChange={(e) => setEmail(e.target.value)} />
+        </label>
+
+        <label>
+          Senha*
+          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+        </label>
+
+        <label>
+          Nome
+          <input value={nome} onChange={(e) => setNome(e.target.value)} />
+        </label>
+
+        <label>
+          Telefone
+          <input value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+        </label>
+
+        <label style={{ gridColumn: "1 / -1" }}>
+          Descrição
+          <textarea rows={2} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        </label>
+
+        <label>
+          Perfil
+          <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
             <option value="comum">Usuário</option>
             <option value="admin">Admin</option>
           </select>
-        </div>
-        <div className="flex items-end">
-          <button className="px-4 py-2 rounded bg-black text-white hover:opacity-90" type="submit">
-            Criar usuário
-          </button>
-        </div>
+        </label>
+
+        <div />
+        <button type="submit">💾 Criar usuário</button>
       </form>
 
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">Lista</h2>
-        {carregando ? (
-          <p>Carregando…</p>
-        ) : (
-          <div className="overflow-auto">
-            <table className="min-w-full border text-sm">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="p-2 border">ID</th>
-                  <th className="p-2 border">E-mail</th>
-                  <th className="p-2 border">Nome</th>
-                  <th className="p-2 border">Telefone</th>
-                  <th className="p-2 border">Perfil</th>
-                  <th className="p-2 border">Ações</th>
+      {/* LISTA — mantida simples abaixo, dentro do mesmo “card” visual */}
+      <h2 style={{ marginTop: 24 }}>📋 Lista</h2>
+      {carregando ? (
+        <p>Carregando…</p>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ border: "1px solid #ddd", padding: 8 }}>ID</th>
+                <th style={{ border: "1px solid #ddd", padding: 8 }}>E-mail</th>
+                <th style={{ border: "1px solid #ddd", padding: 8 }}>Nome</th>
+                <th style={{ border: "1px solid #ddd", padding: 8 }}>Telefone</th>
+                <th style={{ border: "1px solid #ddd", padding: 8 }}>Perfil</th>
+                <th style={{ border: "1px solid #ddd", padding: 8 }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lista.map((u) => (
+                <tr key={u.id}>
+                  <td style={{ border: "1px solid #ddd", padding: 8 }}>{u.id}</td>
+                  <td style={{ border: "1px solid #ddd", padding: 8 }}>{u.email}</td>
+                  <td style={{ border: "1px solid #ddd", padding: 8 }}>{u.nome || "-"}</td>
+                  <td style={{ border: "1px solid #ddd", padding: 8 }}>{u.telefone || "-"}</td>
+                  <td style={{ border: "1px solid #ddd", padding: 8 }}>{u.tipo}</td>
+                  <td style={{ border: "1px solid #ddd", padding: 8, display: "flex", gap: 8, justifyContent: "center" }}>
+                    {u.tipo === "admin" ? (
+                      <button onClick={() => tornarAdmin(u.id, false)}>Tornar comum</button>
+                    ) : (
+                      <button onClick={() => tornarAdmin(u.id, true)}>Tornar admin</button>
+                    )}
+                    <button onClick={() => remover(u.id)}>Remover</button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {lista.map(u => (
-                  <tr key={u.id}>
-                    <td className="p-2 border">{u.id}</td>
-                    <td className="p-2 border">{u.email}</td>
-                    <td className="p-2 border">{u.nome || '-'}</td>
-                    <td className="p-2 border">{u.telefone || '-'}</td>
-                    <td className="p-2 border">{u.tipo}</td>
-                    <td className="p-2 border space-x-2">
-                      {u.tipo === 'admin' ? (
-                        <button className="px-2 py-1 border rounded" onClick={() => tornarAdmin(u.id, false)}>Tornar comum</button>
-                      ) : (
-                        <button className="px-2 py-1 border rounded" onClick={() => tornarAdmin(u.id, true)}>Tornar admin</button>
-                      )}
-                      <button className="px-2 py-1 border rounded" onClick={() => remover(u.id)}>Remover</button>
-                    </td>
-                  </tr>
-                ))}
-                {lista.length === 0 && (
-                  <tr><td className="p-2 border text-center" colSpan={6}>Sem registros</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              ))}
+              {lista.length === 0 && (
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: 8, textAlign: "center" }} colSpan={6}>
+                    Sem registros
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
