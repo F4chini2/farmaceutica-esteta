@@ -1,44 +1,54 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UsuariosFull.css';
+import { apiUrl, authHeaders } from '../config/api'; // IMPORTANTE
 
 export default function UsuariosFull(){
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [perfil, setPerfil] = useState('usuario');
+  const [perfil, setPerfil] = useState('usuario'); // 'usuario' | 'admin'
   const [salvando, setSalvando] = useState(false);
   const navigate = useNavigate();
 
   const salvar = async (e) => {
     e.preventDefault();
-    if(!nome || !email || !senha){ alert('Preencha nome, e-mail e senha.'); return; }
-    try{
+    if (!nome || !email || !senha) { alert('Preencha nome, e-mail e senha.'); return; }
+
+    try {
       setSalvando(true);
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API}/usuarios`, {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ nome, email, senha, perfil })
+
+      // Mapeia para o que existe no banco: 'admin' ou 'comum'
+      const tipo = perfil === 'admin' ? 'admin' : 'comum';
+
+      const res = await fetch(apiUrl('/usuarios'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        // Envia ambos para cobrir qualquer versão do backend
+        body: JSON.stringify({ nome, email, senha, perfil, tipo })
       });
+
       const data = await res.json();
-      if(res.status === 401){
+
+      if (res.status === 401) {
         alert('Sessão expirada. Faça login novamente.');
         navigate('/');
         return;
       }
-      if(res.ok){
-        alert('Usuário cadastrado com sucesso!');
+      if (res.status === 403) {
+        alert('Ação permitida apenas para administradores.');
+        return;
+      }
+
+      if (res.ok) {
+        alert(`Usuário cadastrado! Perfil salvo: ${data?.tipo ?? tipo}`);
         navigate('/usuarios');
-      }else{
+      } else {
         alert(data?.erro || 'Erro ao salvar usuário');
       }
-    }catch(err){
+    } catch (err) {
       alert('Erro de conexão ao salvar usuário');
-    }finally{
+    } finally {
       setSalvando(false);
     }
   };
