@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API, authHeaders } from '../config/api';
+import './UsuariosFull.css';
 
 export default function UsuariosFull() {
   const [lista, setLista] = useState([]);
