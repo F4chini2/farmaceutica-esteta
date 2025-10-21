@@ -59,8 +59,8 @@ router.post('/', autenticarToken, async (req, res) => {
   try {
     const data = normalizeBody(req.body);
 
-    if (!data.nome || !data.cpf) {
-      return res.status(400).json({ erro: 'nome e cpf são obrigatórios' });
+    if (!data.nome) {
+      return res.status(400).json({ erro: 'nome são obrigatórios' });
     }
 
     const vals = [
