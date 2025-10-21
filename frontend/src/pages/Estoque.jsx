@@ -117,11 +117,11 @@ function Estoque() {
   // ===========================================
 
   return (
-    <div className="estoque-container">
+    <div className="dashboard-container">
       <Tabs />
 
       <div className="topo-dashboard">
-        <h2>📦 Controle de Estoque</h2>
+        <h1>📦 Controle de Estoque</h1>
       </div>
 
       <form className="estoque-form" onSubmit={cadastrarItem}>
