@@ -1,11 +1,3 @@
-
-.dashboard-container {
-  padding: 40px;
-  font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #f7efea, #e3cfc4, #b88f7c);
-}
-
 .topo-dashboard {
   display: flex;
   justify-content: center;

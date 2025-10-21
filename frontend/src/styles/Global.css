@@ -255,3 +255,16 @@ input:focus, textarea:focus, select:focus {
 .page-btn:disabled{opacity:.5;cursor:not-allowed}
 .page-ellipsis{padding:8px 6px;user-select:none}
 
+/* Contêiner base para TODAS as páginas */
+.dashboard-container{
+  min-height:100vh;
+  padding:40px 20px;
+  background: var(--cor-fundo-gradient);
+  font-family:'Segoe UI',sans-serif;
+}
+
+@media (max-width:768px){
+  .dashboard-container{padding:24px 16px}
+  h1{font-size:36px}
+  .card{width:100%;max-width:560px}
+}
