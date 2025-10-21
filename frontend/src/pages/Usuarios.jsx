@@ -1,4 +1,4 @@
-import './Usuarios.css';
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tabs from '../components/Tabs';
