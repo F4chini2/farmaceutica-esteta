@@ -37,6 +37,7 @@ export default function UsuariosFull() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ email, senha, nome, telefone, descricao, tipo })
+        // OBS: backend também aceita "perfil" como alias, mas aqui enviamos "tipo".
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.erro || 'Erro ao criar usuário');
@@ -81,7 +82,7 @@ export default function UsuariosFull() {
   }
 
   return (
-    <div className="usuariosfull p-4 mx-auto">
+    <div className="p-4 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Usuários</h1>
 
       <form onSubmit={criarUsuario} className="grid gap-3 md:grid-cols-2 bg-[#f7f7fb] p-4 rounded-lg border">
@@ -144,7 +145,7 @@ export default function UsuariosFull() {
                     <td className="p-2 border">{u.nome || '-'}</td>
                     <td className="p-2 border">{u.telefone || '-'}</td>
                     <td className="p-2 border">{u.tipo}</td>
-                    <td className="p-2 border acoes">
+                    <td className="p-2 border space-x-2">
                       {u.tipo === 'admin' ? (
                         <button className="px-2 py-1 border rounded" onClick={() => tornarAdmin(u.id, false)}>Tornar comum</button>
                       ) : (
