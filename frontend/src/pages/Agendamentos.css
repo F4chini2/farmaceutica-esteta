@@ -1,21 +1,8 @@
-.agendamentos-container {
-  padding: 40px;
-  font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  background: var(--cor-fundo-gradient);
-  box-sizing: border-box;
-}
-
-.topo-agendamentos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.lista-agendamentos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
-}
+.usuariosfull{max-width:1100px;margin:24px auto;padding:0 12px}
+.usuariosfull h1{text-align:center;margin-bottom:16px}
+.usuariosfull table{width:100%;border-collapse:collapse}
+.usuariosfull th,.usuariosfull td{border:1px solid #ddd;padding:10px;text-align:left}
+.usuariosfull thead th{background:#f7f7fb;font-weight:600}
+.usuariosfull tbody tr:nth-child(even){background:#fafafa}
+.usuariosfull tbody tr:hover{background:#f0f0f0}
+.usuariosfull .acoes{display:flex;gap:8px;justify-content:center}
