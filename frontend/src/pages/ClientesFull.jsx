@@ -23,8 +23,8 @@ function ClientesFull() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.nome || !form.cpf) {
-      alert('Nome e CPF são obrigatórios.');
+    if (!form.nome) {
+      alert('O Nome é obrigatório.');
       return;
     }
 
