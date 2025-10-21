@@ -75,7 +75,7 @@ function Usuarios() {
       <Tabs />
       <div className="topo-dashboard">
         <h1>👥 Usuários</h1>
-        <button className="btn-primary" onClick={() => navigate('/usuarios/novo')}>
+        <button className="btn-primary" onClick={() => navigate('/usuariosfull')}>
           ➕ Novo Usuário
         </button>
       </div>
