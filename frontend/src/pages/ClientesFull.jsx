@@ -1,86 +1,74 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './ClientesFull.css';
+// backend/routes/clientesfull.js
+const express = require('express');
+const router = express.Router();
+const pool = require('../db');
+const autenticarToken = require('../middleware/auth');
 
-function ClientesFull() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    nome: '', telefone: '', alergias: '', descricao: '', idade: '', cpf: '', endereco: '', instagram: '',
-    motivo_avaliacao: '', tratamento_anterior: '', alergia_medicamento: '', uso_medicamento: '',
-    usa_filtro_solar: 'false', usa_acido_peeling: 'false', problema_pele: '', gravida: 'false',
-    cor_pele: '', biotipo_pele: '', hidratacao: '', acne: '',
-    textura_pele: '', envelhecimento: '', rugas: '',
-    procedimentos: '', autoriza_fotos: 'false'
-  });
+// Normaliza os campos do body
+function normalizeBody(body) {
+  const out = {};
+  const FIELDS = [
+    'nome', 'telefone', 'alergias', 'descricao', 'idade', 'cpf', 'endereco',
+    'instagram', 'motivo_avaliacao', 'tratamento_anterior', 'alergia_medicamento',
+    'uso_medicamento', 'usa_filtro_solar', 'usa_acido_peeling', 'problema_pele',
+    'gravida', 'cor_pele', 'biotipo_pele', 'hidratacao', 'acne', 'textura_pele',
+    'envelhecimento', 'rugas', 'procedimentos', 'autoriza_fotos'
+  ];
 
-  const handleChange = (campo, valor) => {
-    setForm(prev => ({ ...prev, [campo]: valor }));
-  };
+  for (const key of FIELDS) {
+    out[key] = key in body ? body[key] : null;
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
+  // garante booleanos corretos
+  const bools = ['usa_filtro_solar', 'usa_acido_peeling', 'gravida', 'autoriza_fotos'];
+  for (const k of bools) {
+    if (out[k] !== null) out[k] = out[k] === true || out[k] === 'true';
+  }
 
-    if (!form.nome || !form.cpf) {
-      alert('Nome e CPF são obrigatórios.');
-      return;
-    }
+  // garante número válido ou null
+  if (out.idade !== null) {
+    const onlyDigits = String(out.idade).replace(/\D+/g, '');
+    out.idade = onlyDigits === '' ? null : parseInt(onlyDigits, 10);
+  }
 
-    try {
-      const resposta = await fetch('http://localhost:3001/clientesfull', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
-      });
-
-      const dados = await resposta.json();
-
-      if (resposta.ok) {
-        alert('Cliente cadastrado com sucesso!');
-        navigate('/dashboard');
-      } else {
-        alert(dados.erro || 'Erro ao cadastrar cliente');
-      }
-    } catch (err) {
-      alert('Erro de conexão com o servidor');
-    }
-  };
-
-  const booleanFields = new Set(['gravida','autoriza_fotos','usa_filtro_solar','usa_acido_peeling']);
-
-  return (
-    <div className="container-box">
-      <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
-        ⬅ Voltar
-      </button>
-      <h2>🧍 Cadastro Completo do Cliente</h2>
-      <form onSubmit={handleSubmit} className="form-agendamento">
-        {Object.entries(form).map(([campo, valor]) => (
-          <label key={campo} className="campo-formulario">
-            {campo.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            {booleanFields.has(campo) ? (
-              <select value={valor} onChange={e => handleChange(campo, e.target.value)}>
-                <option value="false">Não</option>
-                <option value="true">Sim</option>
-              </select>
-            ) : (
-              <input
-                value={valor}
-                onChange={e => handleChange(campo, e.target.value)}
-                type={campo === 'idade' ? 'number' : 'text'}
-              />
-            )}
-          </label>
-        ))}
-        <button type="submit" className="btn-primary" style={{ gridColumn: 'span 2' }}>
-          Cadastrar Cliente
-        </button>
-      </form>
-    </div>
-  );
+  return out;
 }
 
-export default ClientesFull;
+// Cadastrar cliente
+router.post('/', autenticarToken, async (req, res) => {
+  try {
+    const data = normalizeBody(req.body);
+
+    if (!data.nome || String(data.nome).trim() === '') {
+      return res.status(400).json({ erro: 'O nome é obrigatório.' });
+    }
+
+    const campos = Object.keys(data);
+    const valores = Object.values(data);
+    const placeholders = campos.map((_, i) => `$${i + 1}`).join(',');
+
+    const sql = `INSERT INTO clientes (${campos.join(',')})
+                 VALUES (${placeholders})
+                 RETURNING *`;
+
+    const result = await pool.query(sql, valores);
+    res.status(201).json(result.rows[0]);
+
+  } catch (err) {
+    console.error('Erro ao cadastrar cliente:', err);
+    res.status(500).json({ erro: 'Erro interno ao cadastrar cliente.' });
+  }
+});
+
+// Listar todos
+router.get('/', autenticarToken, async (_req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM clientes ORDER BY id DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar clientes:', err);
+    res.status(500).json({ erro: 'Erro interno ao buscar clientes.' });
+  }
+});
+
+module.exports = router;
