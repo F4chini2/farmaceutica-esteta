@@ -27,7 +27,7 @@ function ClientesFull() {
     }
 
     try {
-      const resposta = await fetch('http://localhost:3001/clientesfull', {
+      const resposta = await fetch('https://api.farmaceutica-esteta.com.br', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
