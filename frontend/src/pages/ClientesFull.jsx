@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ClientesFull.css';
+import { API, authHeaders } from '../config/api';
 
 function ClientesFull() {
   const navigate = useNavigate();
@@ -19,32 +20,31 @@ function ClientesFull() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-
-    if (!form.nome) {
+    if (!form.nome || !form.nome.trim()) {
       alert('O Nome é obrigatório.');
       return;
     }
 
+    // Ajustes mínimos para payload
+    const body = { ...form };
+    if (body.idade === '') body.idade = null;
+
     try {
-      const resposta = await fetch('https://api.farmaceutica-esteta.com.br', {
+      const resposta = await fetch(`${API}/clientesfull`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify(body)
       });
 
-      const dados = await resposta.json();
+      const dados = await resposta.json().catch(() => ({}));
 
       if (resposta.ok) {
         alert('Cliente cadastrado com sucesso!');
         navigate('/dashboard');
       } else {
-        alert(dados.erro || 'Erro ao cadastrar cliente');
+        alert(dados?.erro || 'Erro ao cadastrar cliente');
       }
-    } catch (err) {
+    } catch {
       alert('Erro de conexão com o servidor');
     }
   };
