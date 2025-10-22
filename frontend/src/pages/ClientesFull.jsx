@@ -21,8 +21,8 @@ function ClientesFull() {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
-    if (!form.nome || !form.cpf) {
-      alert('Nome e CPF são obrigatórios.');
+    if (!form.nome) {
+      alert('O Nome é obrigatório.');
       return;
     }
 
@@ -53,7 +53,10 @@ function ClientesFull() {
 
   return (
     <div className="container-box">
-      <h2>🧍 Cadastro Completo do Cliente</h2>
+      <button className="btn-voltar" onClick={() => navigate('/dashboard')}>
+        ⬅ Voltar
+      </button>
+      <h2> Cadastro Completo do Cliente</h2>
       <form onSubmit={handleSubmit} className="form-agendamento">
         {Object.entries(form).map(([campo, valor]) => (
           <label key={campo} className="campo-formulario">
