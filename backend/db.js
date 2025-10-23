@@ -1,10 +1,19 @@
 // db.js
 const { Pool } = require('pg');
 
-const pool = new Pool(
-  process.env.DATABASE_URL
-    ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
-    : { user:'tccuser', host:'localhost', database:'tccdb', password:'tccpass', port:5432 }
-);
-
-module.exports = pool;
+// Primeiro tenta usar DATABASE_URL (Cloud SQL)
+if (process.env.DATABASE_URL) {
+  module.exports = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false } // necessário para Google Cloud
+  });
+} else {
+  // fallback para ambiente local/dev (caso esteja rodando na sua máquina)
+  module.exports = new Pool({
+    user: 'tcc_user',
+    host: '127.0.0.1',
+    database: 'tcc_db',
+    password: 'Tcc@12345678',
+    port: 5432
+  });
+}
