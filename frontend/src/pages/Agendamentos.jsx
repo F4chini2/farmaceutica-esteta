@@ -88,7 +88,7 @@ function Agendamentos() {
   const filtrados = agendamentos.filter((ag) => {
     const termo = (busca || '').toLowerCase();
     return (
-      ((ag?.nome_cliente) || '').toLowerCase().includes(termo) ||
+      ((ag?.cliente_nome) || '').toLowerCase().includes(termo) ||
       ((ag?.servico) || '').toLowerCase().includes(termo) ||
       ((ag?.data) || '').toString().toLowerCase().includes(termo) ||
       ((ag?.horario) || '').toString().toLowerCase().includes(termo)
