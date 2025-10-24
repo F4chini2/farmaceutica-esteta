@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './ClientesFull.css';            // <- usa o mesmo visual do ClientesFull
-import './ClienteDetalhes.css';         // <- só para pequenos ajustes locais
+import './ClientesFull.css';
+import './ClienteDetalhes.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API, authHeaders } from '../config/api';
 
@@ -66,14 +66,16 @@ function ClienteDetalhes() {
 
   if (!form) return <p>Carregando cliente...</p>;
 
-  // Mesma ideia do ClientesFull: campos em grid 2 colunas + textareas ocupam 2 colunas
-  // Você pode ajustar a ordem priorizando os principais no topo:
-  const ordemPrimeiros = ['nome', 'telefone', 'cpf', 'endereco', 'instagram', 'idade', 'procedimentos', 'descricao', 'autoriza_fotos'];
-  const todosCampos = Object.keys(form).filter(k => k !== 'id');
+  // remove o criado_em
+  const todosCampos = Object.keys(form).filter(
+    (k) => k !== 'id' && k !== 'criado_em'
+  );
 
+  // envia procedimentos e descricao para o fim
   const camposOrdenados = [
-    ...ordemPrimeiros,
-    ...todosCampos.filter(k => !ordemPrimeiros.includes(k)),
+    ...todosCampos.filter((k) => !['procedimentos', 'descricao'].includes(k)),
+    'procedimentos',
+    'descricao',
   ];
 
   const renderCampo = (campo) => {
@@ -109,7 +111,6 @@ function ClienteDetalhes() {
 
       <form className="form-agendamento">
         {camposOrdenados.map(renderCampo)}
-
         <button
           type="button"
           className="btn-primary"
