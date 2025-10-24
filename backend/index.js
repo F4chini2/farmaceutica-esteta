@@ -28,7 +28,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 // responde TODOS os preflights
-app.options('*', cors(corsOptions));
+app.options('/*', cors(corsOptions));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
