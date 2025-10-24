@@ -150,7 +150,7 @@ function Historico() {
         {visiveis.map((proc) => (
           <div key={proc.id} className="card">
             <p><strong>👤 Cliente:</strong> {proc.nome_cliente}</p>
-            <p><strong>🗓 Data:</strong> {proc?.data ? new Date(proc.data).toLocaleDateString() : '-'}</p>
+            <p><strong>📆 Data:</strong> {proc?.data ? new Date(proc.data).toLocaleDateString() : '-'}</p>
             <p><strong>⏰ Horário:</strong> {(proc?.horario || '').slice(0, 5) || '-'}</p>
             <p><strong>💆 Serviço:</strong> {proc.servico}</p>
             <p><strong>📝 Nota:</strong> {proc.observacoes || 'Nenhuma'}</p>
