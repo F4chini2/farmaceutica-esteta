@@ -1,18 +1,13 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres_tcc
-    restart: always
-    environment:
-      POSTGRES_USER: tccuser
-      POSTGRES_PASSWORD: tccpass
-      POSTGRES_DB: tccdb
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: farm-api:local
+    container_name: api
     ports:
-      - "5432:5432"
+      - "3001:3001"
+    env_file: ./backend/.env
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
+      - /opt/app/uploads:/app/uploads
+    restart: always

@@ -1,29 +1,3 @@
-// utils/validations.js
-const onlyDigits = (v='') => (v || '').toString().replace(/\D+/g, '');
-
-function isValidCPF(cpf='') {
-  cpf = onlyDigits(cpf);
-  if (cpf.length !== 11) return false;
-  if (/^(\d)\1{10}$/.test(cpf)) return false;
-  const calc = (base, factor) => {
-    let s=0; for (let i=0;i<base.length;i++) s += parseInt(base[i],10)*(factor-i);
-    const r=(s*10)%11; return r===10?0:r;
-  };
-  const d1 = calc(cpf.slice(0,9),10), d2 = calc(cpf.slice(0,10),11);
-  return d1 === +cpf[9] && d2 === +cpf[10];
-}
-function isValidPhone(p='') { const d=onlyDigits(p); return d.length===10 || d.length===11; }
-function isValidEmail(e='') { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e||'')); }
-function isNonEmptyString(s){ return typeof s==='string' && s.trim().length>0; }
-
-const validarCPF=isValidCPF, validaCpf=isValidCPF;
-const validarTelefone=isValidPhone, validaTelefone=isValidPhone;
-const validarEmail=isValidEmail;
-
-module.exports = {
-  onlyDigits,
-  isValidCPF, validarCPF, validaCpf,
-  isValidPhone, validarTelefone, validaTelefone,
-  isValidEmail, validarEmail,
-  isNonEmptyString
-};
+function isCPF(cpf=""){cpf=(cpf||"").replace(/\D/g,"");if(!cpf||cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;let s=0,r;for(let i=1;i<=9;i++)s+=parseInt(cpf.substring(i-1,i))*(11-i);r=(s*10)%11;if(r===10||r===11)r=0;if(r!==parseInt(cpf.substring(9,10)))return false;s=0;for(let i=1;i<=10;i++)s+=parseInt(cpf.substring(i-1,i))*(12-i);r=(s*10)%11;if(r===10||r===11)r=0;return r===parseInt(cpf.substring(10,11));}
+function isPhone(f=""){const d=(f||"").replace(/\D/g,"");return d.length===10||d.length===11;}
+module.exports={isCPF,isPhone};
