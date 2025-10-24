@@ -109,12 +109,12 @@ function Agendamentos() {
       </div>
 
       <input
-        type="text"
-        placeholder="🔍 Buscar por cliente, serviço, data ou horário..."
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
         className="barra-pesquisa"
-        />
+        type="text"
+        placeholder="🔍 Buscar por cliente, serviço, data ou horario..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
 
       <div className="lista-agendamentos">
         {visiveis.map((ag) => (
