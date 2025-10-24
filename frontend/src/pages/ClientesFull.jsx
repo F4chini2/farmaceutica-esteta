@@ -7,7 +7,7 @@ import { API, authHeaders } from '../config/api';
 function validaCPF(cpfStr) {
   const cpf = (cpfStr || '').replace(/\D/g, '');
   if (cpf.length !== 11) return false;
-  if (/^(\d)\1{10}$/.test(cpf)) return false; // todos iguais
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
   let soma = 0, resto;
   for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
   resto = (soma * 10) % 11;
@@ -19,6 +19,16 @@ function validaCPF(cpfStr) {
   if (resto === 10 || resto === 11) resto = 0;
   if (resto !== parseInt(cpf.substring(10, 11))) return false;
   return true;
+}
+
+// Máscara de CPF (bloqueia letras; só números; formata 000.000.000-00)
+function formatCPF(input) {
+  const nums = String(input || '').replace(/\D/g, '').slice(0, 11);
+  let out = nums;
+  if (nums.length > 9) out = `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6,9)}-${nums.slice(9,11)}`;
+  else if (nums.length > 6) out = `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6)}`;
+  else if (nums.length > 3) out = `${nums.slice(0,3)}.${nums.slice(3)}`;
+  return out;
 }
 
 function ClientesFull() {
@@ -35,10 +45,13 @@ function ClientesFull() {
   const textAreas = new Set(['descricao', 'procedimentos']);
 
   const handleChange = (campo, valor) => {
-    // idade: apenas dígitos e no máximo 2 caracteres (0–99)
     if (campo === 'idade') {
-      const soDigitos = String(valor).replace(/\D/g, '').slice(0, 2);
+      const soDigitos = String(valor).replace(/\D/g, '').slice(0, 2); // 0–99
       setForm(prev => ({ ...prev, idade: soDigitos }));
+      return;
+    }
+    if (campo === 'cpf') {
+      setForm(prev => ({ ...prev, cpf: formatCPF(valor) }));
       return;
     }
     setForm(prev => ({ ...prev, [campo]: valor }));
@@ -47,43 +60,36 @@ function ClientesFull() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // validações mínimas
+    // Nome obrigatório; CPF opcional
     if (!form.nome || !form.nome.trim()) return alert('O Nome é obrigatório.');
 
-    // CPF opcional, mas se preenchido precisa ser válido
+    // CPF: se preenchido, validar
     const cpfTrim = (form.cpf || '').trim();
     const cpfNumeros = cpfTrim.replace(/\D/g, '');
     if (cpfNumeros.length > 0 && !validaCPF(cpfTrim)) {
       return alert('CPF inválido. Verifique e tente novamente.');
     }
 
-    // monta objeto de envio
     const body = { ...form };
 
-    // normaliza idade (número ou null)
+    // idade: número ou null
     if (body.idade === '' || body.idade === null || body.idade === undefined) {
       body.idade = null;
     } else {
       const n = Number(body.idade);
-      if (Number.isNaN(n)) {
-        return alert('Idade inválida.');
-      }
+      if (Number.isNaN(n)) return alert('Idade inválida.');
       body.idade = n;
     }
 
-    // CPF: se vazio manda null; se preenchido, manda como informado (com ou sem máscara)
-    if (!cpfTrim) {
-      body.cpf = null;
-    } else {
-      body.cpf = cpfTrim;
-    }
+    // CPF: null se vazio; senão, envia com máscara (ou troque por cpfNumeros se preferir só dígitos)
+    body.cpf = cpfNumeros.length ? cpfTrim : null;
 
-    // normaliza booleanos (enviar como true/false reais)
+    // booleanos reais
     for (const k of booleanFields) {
       body[k] = String(form[k]) === 'true';
     }
 
-    // trim em todos os textos
+    // trim nos textos
     for (const k of Object.keys(body)) {
       if (typeof body[k] === 'string') body[k] = body[k].trim();
     }
@@ -94,9 +100,7 @@ function ClientesFull() {
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify(body)
       });
-
       const dados = await resposta.json().catch(() => ({}));
-
       if (resposta.ok) {
         alert('Cliente cadastrado com sucesso!');
         navigate('/dashboard');
@@ -108,7 +112,6 @@ function ClientesFull() {
     }
   };
 
-  // Mantém DESCRIÇÃO por último; PROCEDIMENTOS vem antes dela
   const camposOrdem = Object.keys(form).filter(c => c !== 'descricao').concat(['descricao']);
 
   const labelBonita = (campo) =>
@@ -149,10 +152,11 @@ function ClientesFull() {
               />
             ) : (
               <input
-                // Para limitar 2 dígitos em idade, usamos texto + filtro no onChange
-                type={campo === 'idade' ? 'text' : 'text'}
+                type="text"
                 {...(campo === 'idade'
-                  ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '' }
+                  ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '0–99' }
+                  : campo === 'cpf'
+                  ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 14, placeholder: '000.000.000-00' }
                   : {})}
                 value={form[campo]}
                 onChange={e => handleChange(campo, e.target.value)}
@@ -160,7 +164,6 @@ function ClientesFull() {
             )}
           </label>
         ))}
-
         <button type="submit" className="btn-primary" style={{ gridColumn: 'span 2' }}>
           Cadastrar Cliente
         </button>
