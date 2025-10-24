@@ -1,188 +1,153 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import './Agendamentos.css';
+import Tabs from '../components/Tabs';
+import { Pagination } from '../styles/Global';
+import { API, authHeaders } from '../config/api';
 
-export default function Agendamentos() {
+function Agendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
-  const [busca, setBusca] = useState("");
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState("");
-
-  const API_URL =
-    import.meta?.env?.VITE_API_URL ||
-    process.env.VITE_API_URL ||
-    "https://api.farmaceutica-esteta.com.br";
-
-  const token =
-    localStorage.getItem("token") ||
-    sessionStorage.getItem("token") ||
-    "";
-
-  // -------- helpers --------
-  const norm = (v) => (v ?? "").toString().toLowerCase();
-  const fmtData = (d) =>
-    d ? new Date(d).toLocaleDateString("pt-BR") : "-";
-  const fmtHora = (h) =>
-    h ? String(h).slice(0, 5) : "-";
-
-  // -------- carregar lista --------
-  const carregar = async () => {
-    try {
-      setCarregando(true);
-      setErro("");
-
-      const r = await fetch(`${API_URL}/agendamentos`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        credentials: "include",
-      });
-
-      if (!r.ok) {
-        const txt = await r.text();
-        throw new Error(`Erro ${r.status}: ${txt || r.statusText}`);
-      }
-
-      const data = await r.json();
-      setAgendamentos(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error(e);
-      setErro(e.message || "Falha ao carregar agendamentos.");
-    } finally {
-      setCarregando(false);
-    }
-  };
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
-    carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchAgendamentos = async () => {
+      try {
+        const resposta = await fetch(`${API}/agendamentos`, {
+          headers: { ...authHeaders() }
+        });
+        const dados = await resposta.json();
+        if (resposta.ok) {
+          setAgendamentos(dados);
+        } else {
+          alert(dados.erro || 'Erro ao buscar agendamentos');
+        }
+      } catch (err) {
+        alert('Erro ao conectar com o servidor');
+      }
+    };
+
+    fetchAgendamentos();
   }, []);
 
-  // -------- filtro (cliente, serviço, data, horário) --------
-  const filtrados = useMemo(() => {
-    const q = norm(busca);
-    if (!q) return agendamentos;
+  const enviarParaHistorico = async (agendamento) => {
+  if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
 
-    return agendamentos.filter((ag) => {
-      const nome = norm(ag.cliente_nome ?? ag.nome_cliente);
-      const serv = norm(ag.servico);
-      const dataS = ag?.data
-        ? norm(new Date(ag.data).toLocaleDateString("pt-BR"))
-        : "";
-      const horaS = ag?.horario ? norm(String(ag.horario).slice(0, 5)) : "";
-      return (
-        nome.includes(q) ||
-        serv.includes(q) ||
-        dataS.includes(q) ||
-        horaS.includes(q)
-      );
-    });
-  }, [agendamentos, busca]);
-
-  // -------- ações --------
-  const enviarParaHistorico = async (ag) => {
-    if (!confirm("Enviar este agendamento para o histórico?")) return;
-    try {
-      const r = await fetch(`${API_URL}/agendamentos/${ag.id}/historico`, {
-        method: "POST",
+  try {
+    const resposta = await fetch(
+      `${API}/historico/clientes/${agendamento.cliente_id}/historico`,
+      {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          'Content-Type': 'application/json',
+          ...authHeaders(),
         },
-        credentials: "include",
-        body: JSON.stringify({ agendamento_id: ag.id }),
-      });
-      if (!r.ok) {
-        const txt = await r.text();
-        throw new Error(`Erro ${r.status}: ${txt || r.statusText}`);
+        body: JSON.stringify({
+          data: agendamento.data,
+          horario: agendamento.horario,
+          servico: agendamento.servico,
+          observacoes: agendamento.observacoes || null,
+        }),
       }
-      // remove da lista local
-      setAgendamentos((prev) => prev.filter((x) => x.id !== ag.id));
-    } catch (e) {
-      alert(e.message || "Não foi possível enviar para o histórico.");
+    );
+
+    const dados = await resposta.json().catch(() => ({}));
+    if (resposta.ok) {
+      setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
+    } else {
+      alert(dados.erro || 'Erro ao mover para histórico');
+    }
+  } catch (err) {
+    alert('Erro de conexão');
+  }
+};
+
+  const excluirAgendamento = async (agendamento) => {
+    if (!window.confirm('Tem certeza que deseja excluir este agendamento?')) return;
+
+    try {
+      const resp = await fetch(`${API}/agendamentos/${agendamento.id}`, {
+        method: 'DELETE',
+        headers: { ...authHeaders() }
+      });
+      if (resp.ok) {
+        setAgendamentos((prev) => prev.filter((item) => item.id !== agendamento.id));
+      } else {
+        const dados = await resp.json().catch(() => ({}));
+        alert(dados.erro || 'Erro ao excluir');
+      }
+    } catch {
+      alert('Erro de conexão com servidor');
     }
   };
 
-  const excluir = async (ag) => {
-    if (!confirm("Tem certeza que deseja excluir este agendamento?")) return;
-    try {
-      const r = await fetch(`${API_URL}/agendamentos/${ag.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        credentials: "include",
-      });
-      if (!r.ok) {
-        const txt = await r.text();
-        throw new Error(`Erro ${r.status}: ${txt || r.statusText}`);
-      }
-      setAgendamentos((prev) => prev.filter((x) => x.id !== ag.id));
-    } catch (e) {
-      alert(e.message || "Não foi possível excluir.");
-    }
-  };
+  // ===== PAGINAÇÃO (6 por página) =====
+  const pageSize = 6;
+  const [page, setPage] = useState(1);
+  useEffect(() => { setPage(1); }, [busca, agendamentos]);
 
-  // -------- UI --------
+  // filtro + ordenação (data desc; fallback id)
+  const filtrados = agendamentos.filter((ag) =>
+    ((ag?.nome_cliente) || '').toLowerCase().includes(busca.toLowerCase()) ||
+    ((ag?.servico) || '').toLowerCase().includes(busca.toLowerCase())
+    ((ag?.data) || '').toLowerCase().includes(busca.toLowerCase())
+    ((ag?.horario) || '').toLowerCase().includes(busca.toLowerCase())
+  );
+
+  const ordenados = [...filtrados].sort((a, b) => {
+    const da = a?.data ? new Date(a.data).getTime() : 0;
+    const db = b?.data ? new Date(b.data).getTime() : 0;
+    return db - da || (b?.id || 0) - (a?.id || 0);
+  });
+
+  const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
+  const startIdx = (page - 1) * pageSize;
+  const visiveis = ordenados.slice(startIdx, startIdx + pageSize);
+  // ====================================
+
   return (
     <div className="dashboard-container">
+      <Tabs />
       <div className="topo-agendamentos">
-        <h1>📅 Agendamentos</h1>
+        <h1>🗓️ Agendamentos</h1>
       </div>
 
       <input
         className="barra-pesquisa"
         type="text"
-        placeholder="🔍 Buscar por cliente, serviço, data ou horário..."
+        placeholder="🔍 Buscar por cliente, serviço, data ou horario..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      {carregando && <p>Carregando...</p>}
-      {erro && <p style={{ color: "#b84c3f", fontWeight: 600 }}>{erro}</p>}
-
       <div className="lista-agendamentos">
-        {!carregando && filtrados.length === 0 && (
-          <div className="card vazio">
-            Nenhum agendamento encontrado.
-          </div>
-        )}
-
-        {filtrados.map((ag) => (
+        {visiveis.map((ag) => (
           <div key={ag.id} className="card">
-            <p>
-              <strong>👤 Cliente:</strong>{" "}
-              {ag.cliente_nome ?? ag.nome_cliente ?? "-"}
-            </p>
-            <p>
-              <strong>📅 Data:</strong> {fmtData(ag.data)}
-            </p>
-            <p>
-              <strong>⏰ Horário:</strong> {fmtHora(ag.horario)}
-            </p>
-            <p>
-              <strong>🧴 Serviço:</strong> {ag.servico || "-"}
-            </p>
-            <p className="observacoes">
-              <strong>🗒️ Obs.:</strong>{" "}
-              {ag.observacoes ? ag.observacoes : "—"}
-            </p>
+            <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
+            <p><strong>📆 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
+            <p><strong>⏰ Horário:</strong> {(ag?.horario || '').slice(0, 5) || '-'}</p>
+            <p><strong>💼 Serviço:</strong> {ag.servico}</p>
+            <p><strong>📝 Nota:</strong> {ag.observacoes || 'Nenhuma'}</p>
 
-            <button
-              className="btn-secondary"
-              onClick={() => enviarParaHistorico(ag)}
-            >
-              📦 Enviar para Histórico
+            <button className="btn-secondary" onClick={() => enviarParaHistorico(ag)}>
+              📁 Enviar para Histórico
             </button>
-            <button
-              className="btn-danger"
-              onClick={() => excluir(ag)}
-            >
+            <button className="btn-danger" onClick={() => excluirAgendamento(ag)}>
               🗑️ Excluir
             </button>
           </div>
         ))}
+
+        {/* card vazio no mesmo estilo dos clientes */}
+        {ordenados.length === 0 && (
+          <div className="card vazio">Nenhum agendamento encontrado.</div>
+        )}
       </div>
+
+      {/* paginação só quando existir item */}
+      {ordenados.length > 0 && (
+        <Pagination page={page} total={totalPages} onPage={setPage} />
+      )}
     </div>
   );
 }
+
+export default Agendamentos;
