@@ -125,7 +125,7 @@ function Agendamentos() {
       <div className="lista-agendamentos">
         {visiveis.map((ag) => (
           <div key={ag.id} className="card">
-            <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
+            <p><strong>👤 Cliente:</strong> {ag.cliente_nome}</p>
             <p><strong>📆 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
             <p><strong>⏰ Horário:</strong> {(ag?.horario || '').slice(0, 5) || '-'}</p>
             <p><strong>💼 Serviço:</strong> {ag.servico}</p>
