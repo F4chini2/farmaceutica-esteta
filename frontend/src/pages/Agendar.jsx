@@ -84,7 +84,7 @@ function Agendar() {
           />
         </label>
         <label>
-          Observação:
+          Nota:
           <textarea
             value={form.observacao}
             onChange={e => handleChange('observacao', e.target.value)}
