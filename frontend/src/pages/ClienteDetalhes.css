@@ -35,3 +35,9 @@
   gap: 12px;
   margin-top: 30px;
 }
+
+/* ClienteDetalhes.css */
+/* Mantém o visual do ClientesFull; só dá um respiro maior no título desta página */
+.cliente-detalhes h2 {
+  margin-bottom: 30px; /* um pouco mais espaçado que o padrão */
+}

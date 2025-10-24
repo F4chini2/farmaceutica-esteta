@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import './ClienteDetalhes.css';
+import './ClientesFull.css';            // <- usa o mesmo visual do ClientesFull
+import './ClienteDetalhes.css';         // <- só para pequenos ajustes locais
 import { useParams, useNavigate } from 'react-router-dom';
 import { API, authHeaders } from '../config/api';
 
 const booleanFields = new Set(['gravida', 'autoriza_fotos', 'usa_filtro_solar', 'usa_acido_peeling']);
+const textAreas = new Set(['descricao', 'procedimentos']);
 
 function ClienteDetalhes() {
   const { id } = useParams();
@@ -19,10 +21,10 @@ function ClienteDetalhes() {
         const dados = await resposta.json();
         if (resposta.ok) {
           const norm = { ...dados };
-          // normaliza booleans para 'true'/'false' nos <select>
           booleanFields.forEach((k) => {
             if (k in norm) norm[k] = String(Boolean(norm[k]));
           });
+          if (norm.idade == null) norm.idade = '';
           setForm(norm);
         } else {
           alert(dados?.erro || 'Erro ao carregar cliente');
@@ -31,7 +33,6 @@ function ClienteDetalhes() {
         alert('Erro ao conectar com o servidor');
       }
     };
-
     fetchCliente();
   }, [id]);
 
@@ -42,7 +43,6 @@ function ClienteDetalhes() {
   const handleSave = async () => {
     try {
       const body = { ...form };
-      // Converte 'true'/'false' em boolean para API
       booleanFields.forEach((k) => {
         if (k in body) body[k] = body[k] === 'true';
       });
@@ -50,10 +50,7 @@ function ClienteDetalhes() {
 
       const resposta = await fetch(`${API}/clientesfull/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...authHeaders(),
-        },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify(body),
       });
       const dados = await resposta.json();
@@ -69,52 +66,59 @@ function ClienteDetalhes() {
 
   if (!form) return <p>Carregando cliente...</p>;
 
-  // Campos fixos no topo
-  const fixedOrder = ['nome', 'endereco', 'telefone', 'procedimentos', 'autoriza_fotos'];
+  // Mesma ideia do ClientesFull: campos em grid 2 colunas + textareas ocupam 2 colunas
+  // Você pode ajustar a ordem priorizando os principais no topo:
+  const ordemPrimeiros = ['nome', 'telefone', 'cpf', 'endereco', 'instagram', 'idade', 'procedimentos', 'descricao', 'autoriza_fotos'];
+  const todosCampos = Object.keys(form).filter(k => k !== 'id');
 
-  const renderCampo = (campo, valor) => (
-    <label key={campo} className="campo-formulario">
-      <strong>{campo.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}</strong>
-      {booleanFields.has(campo) ? (
-        <select value={valor} onChange={(e) => handleChange(campo, e.target.value)}>
-          <option value="false">Não</option>
-          <option value="true">Sim</option>
-        </select>
-      ) : (
-        <input
-          value={valor ?? ''}
-          onChange={(e) => handleChange(campo, e.target.value)}
-          type={campo === 'idade' ? 'number' : 'text'}
-        />
-      )}
-    </label>
-  );
+  const camposOrdenados = [
+    ...ordemPrimeiros,
+    ...todosCampos.filter(k => !ordemPrimeiros.includes(k)),
+  ];
 
-  const remainingEntries = Object.entries(form).filter(([k]) => !['id', ...fixedOrder].includes(k));
+  const renderCampo = (campo) => {
+    const valor = form[campo] ?? '';
+    return (
+      <label
+        key={campo}
+        className={`campo-formulario ${textAreas.has(campo) ? 'full-span' : ''}`}
+      >
+        {campo.replaceAll('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+        {booleanFields.has(campo) ? (
+          <select value={valor} onChange={(e) => handleChange(campo, e.target.value)}>
+            <option value="false">Não</option>
+            <option value="true">Sim</option>
+          </select>
+        ) : textAreas.has(campo) ? (
+          <textarea value={valor} onChange={(e) => handleChange(campo, e.target.value)} />
+        ) : (
+          <input
+            type={campo === 'idade' ? 'number' : 'text'}
+            value={valor}
+            onChange={(e) => handleChange(campo, e.target.value)}
+          />
+        )}
+      </label>
+    );
+  };
 
   return (
-    <div className="container-box">
-      <button onClick={() => navigate('/dashboard')} className="btn-voltar">
-        ⬅ Voltar para Clientes
-      </button>
-
+    <div className="container-box cliente-detalhes">
+      <button onClick={() => navigate('/dashboard')} className="btn-voltar">⬅ Voltar para Clientes</button>
       <h2>Editar Cliente: {form.nome}</h2>
 
-      <div className="descricao-cliente editar-descricao">
-        {/* Ordem fixa solicitada */}
-        {renderCampo('nome', form.nome)}
-        {renderCampo('endereco', form.endereco)}
-        {renderCampo('telefone', form.telefone)}
-        {renderCampo('procedimentos', form.procedimentos)}
-        {renderCampo('autoriza_fotos', form.autoriza_fotos)}
+      <form className="form-agendamento">
+        {camposOrdenados.map(renderCampo)}
 
-        {/* Demais campos */}
-        {remainingEntries.map(([campo, valor]) => renderCampo(campo, valor))}
-      </div>
-
-      <button className="btn-primary" onClick={handleSave}>
-        💾 Salvar Alterações
-      </button>
+        <button
+          type="button"
+          className="btn-primary"
+          style={{ gridColumn: 'span 2' }}
+          onClick={handleSave}
+        >
+          💾 Salvar Alterações
+        </button>
+      </form>
     </div>
   );
 }
