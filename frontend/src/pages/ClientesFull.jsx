@@ -100,12 +100,27 @@ function ClientesFull() {
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify(body)
       });
+
+      // tenta ler JSON; se não vier JSON, cria objeto vazio
       const dados = await resposta.json().catch(() => ({}));
+      const erroTxt = String(dados?.erro || dados?.message || '').toLowerCase();
+
       if (resposta.ok) {
         alert('Cliente cadastrado com sucesso!');
         navigate('/dashboard');
       } else {
-        alert(dados?.erro || 'Erro ao cadastrar cliente');
+        // mensagens claras para CPF duplicado / unique constraint
+        if (
+          [400, 409, 422].includes(resposta.status) &&
+          (erroTxt.includes('cpf') ||
+           erroTxt.includes('duplic') ||     // duplicado/duplicate
+           erroTxt.includes('unique') ||     // unique violation
+           erroTxt.includes('constraint'))   // constraint
+        ) {
+          alert('⚠️ CPF já cadastrado.');
+        } else {
+          alert(dados?.erro || 'Erro ao cadastrar cliente');
+        }
       }
     } catch {
       alert('Erro de conexão com o servidor');
