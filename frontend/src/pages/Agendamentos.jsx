@@ -88,6 +88,8 @@ function Agendamentos() {
   const filtrados = agendamentos.filter((ag) =>
     ((ag?.nome_cliente) || '').toLowerCase().includes(busca.toLowerCase()) ||
     ((ag?.servico) || '').toLowerCase().includes(busca.toLowerCase())
+    ((ag?.data) || '').toLowerCase().includes(busca.toLowerCase())
+    ((ag?.horario) || '').toLowerCase().includes(busca.toLowerCase())
   );
 
   const ordenados = [...filtrados].sort((a, b) => {
