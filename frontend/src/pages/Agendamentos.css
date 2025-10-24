@@ -1,14 +1,42 @@
-.topo-agendamentos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 30px;
+/* === VOLTAR AO LAYOUT ANTIGO DOS AGENDAMENTOS === */
+
+/* grid como antes */
+.lista-agendamentos{
+  display:flex;
+  flex-wrap:wrap;
+  gap:24px;
+  justify-content:center;
 }
 
-.lista-agendamentos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
+/* card compacto (sem ocupar a largura toda) */
+.lista-agendamentos .card{
+  width:320px;           /* << tamanho antigo */
+  max-width:100%;
+  padding:14px;
+  margin:0;
+  border:1px solid #e0cfc6;
+  border-radius:12px;
+  background:#fffaf8;
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
 }
 
+/* rótulos alinhados em coluna fixa, como antes */
+.lista-agendamentos .card p{ margin:6px 0; line-height:1.25; }
+.lista-agendamentos .card p strong{
+  width:90px;            /* << mesma largura de rótulo de antes */
+  display:inline-block;
+  color:#6d4c41;
+}
+
+/* botões lado a lado, espaçados (não 100% de largura) */
+.lista-agendamentos .card button{
+  width:auto;
+  padding:8px 12px;
+  margin-top:8px;
+}
+.lista-agendamentos .card button + button{ margin-left:10px; }
+
+/* campo de busca no tamanho antigo */
+.barra-pesquisa{
+  max-width:360px;
+}
