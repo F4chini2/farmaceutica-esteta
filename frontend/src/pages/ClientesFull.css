@@ -1,8 +1,7 @@
-/* Específicos do formulário de cliente */
-
+/* Formulário de Cliente */
 .form-agendamento {
   display: grid;
-  grid-template-columns: repeat(2, 2fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   max-width: 700px;
   margin: 0 auto;
@@ -15,21 +14,17 @@
   color: #7b4a3a;
   font-size: 15px;
   letter-spacing: 0.3px;
-  padding-bottom: 2px;
-  transition: all 0.3s ease;
 }
 
-/* ocupar as duas colunas no grid */
-.full-span { grid-column: span 2; }
-
-/* textareas maiores e confortáveis */
-.campo-formulario textarea {
-  min-height: 120px;
-  resize: vertical;
-  line-height: 1.35;
-}
-
-.campo-formulario.full-span {
+/* Campos que ocupam as duas colunas */
+.full-span {
+  grid-column: span 2;
   margin-top: 10px;
 }
 
+/* Textareas maiores e confortáveis */
+.campo-formulario textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.4;
+}

@@ -10,8 +10,7 @@ function ClientesFull() {
     motivo_avaliacao: '', tratamento_anterior: '', alergia_medicamento: '', uso_medicamento: '',
     usa_filtro_solar: 'false', usa_acido_peeling: 'false', problema_pele: '', gravida: 'false',
     cor_pele: '', biotipo_pele: '', hidratacao: '', acne: '',
-    textura_pele: '', envelhecimento: '', rugas: '',
-    procedimentos: '', autoriza_fotos: 'false', descricao: ''
+    textura_pele: '', envelhecimento: '', rugas: '',autoriza_fotos: 'false', procedimentos: '', descricao: ''
   });
 
   const handleChange = (campo, valor) => setForm(prev => ({ ...prev, [campo]: valor }));
