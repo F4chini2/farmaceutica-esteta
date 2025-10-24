@@ -101,33 +101,41 @@ function Dashboard() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      <div className="card" key={cliente.id}>
-  <p><strong>👤 Nome:</strong> {cliente.nome}</p>
-  <p><strong>📞 Telefone:</strong> {cliente.telefone || '-'}</p>
-  <p><strong>🆔 CPF:</strong> {cliente.cpf || '-'}</p>
+      <div className="clientes-lista">
+        {visiveis.map((cliente) => (
+          <div key={cliente.id} className="card">
+            <p><strong>👤 Nome:</strong> {cliente.nome}</p>
+            <p><strong>📞 Telefone:</strong> {cliente.telefone || '-'}</p>
+            <p><strong>🆔 CPF:</strong> {cliente.cpf || '-'}</p>
+            <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
 
-  <div className="botoes-card">
-    <button
-      className="btn-secondary"
-      onClick={() => navigate(`/clientes/${cliente.id}`)}
-    >
-      🔍 Detalhes
-    </button>
-    <button
-      className="btn-primary"
-      onClick={() => navigate(`/clientes/${cliente.id}/agendar`)}
-    >
-      📅 Agendar
-    </button>
-    <button
-      className="btn-danger"
-      onClick={() => excluirCliente(cliente.id)}
-    >
-      🗑️ Excluir
-    </button>
-  </div>
-</div>
+            <button
+              className="btn-secondary"
+              onClick={() => navigate(`/clientes/${cliente.id}`)}
+            >
+              🔍Detalhes
+            </button>
 
+            <button
+              className="btn-primary"
+              onClick={() => navigate(`/clientes/${cliente.id}/agendar`)}
+            >
+              📅Agendar
+            </button>
+
+            <button
+              className="btn-danger"
+              onClick={() => excluirCliente(cliente.id)}
+            >
+              🗑️Excluir
+            </button>
+          </div>
+        ))}
+
+        {ordenados.length === 0 && (
+          <div className="card vazio">Nenhum cliente encontrado para a busca.</div>
+        )}
+      </div>
 
       {/* Paginação só quando existir item */}
       {ordenados.length > 0 && (
