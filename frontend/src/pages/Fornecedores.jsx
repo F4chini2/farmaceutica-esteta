@@ -151,7 +151,7 @@ function Fornecedores() {
             <p><strong>📞 Contato:</strong> {f.contato || '-'}</p>
             <p><strong>📧 Email:</strong> {f.email || '-'}</p>
             <p><strong>📦 Produtos:</strong> {f.produtos || 'Não informado'}</p>
-            <p><strong>📝 Observações:</strong> {f.observacoes || 'Nenhuma'}</p>
+            <p><strong>📝 Nota:</strong> {f.observacoes || 'Nenhuma'}</p>
             <button className="btn-secondary" onClick={() => navigate(`/fornecedores/${f.id}/boletos`)}>➕ Cadastrar Boleto</button>
             <button className="btn-danger" onClick={() => excluirFornecedor(f.id)}>🗑️ Excluir Fornecedor</button>
           </div>
