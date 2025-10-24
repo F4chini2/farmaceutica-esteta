@@ -51,10 +51,30 @@ function Dashboard() {
   const [page, setPage] = useState(1);
   useEffect(() => { setPage(1); }, [busca, clientes]);
 
-  // Filtro + ordenação (novos → antigos; fallback id)
-  const filtrados = clientes.filter((cliente) =>
-    ((cliente?.nome) || '').toLowerCase().includes(busca.toLowerCase())
-  );
+  // Helper: remove tudo que não for dígito (para comparar CPF/telefone)
+  const apenasDigitos = (str = '') => (str + '').replace(/\D/g, '');
+
+  // Filtro: busca por nome (texto) ou por CPF/telefone (números parciais)
+  const filtrados = clientes.filter((cliente) => {
+    if (!busca) return true;
+    const termo = busca.trim().toLowerCase();
+    const termoDig = apenasDigitos(termo);
+
+    // nome
+    const nome = (cliente?.nome || '').toLowerCase();
+    if (nome.includes(termo)) return true;
+
+    // cpf
+    const cpf = apenasDigitos(cliente?.cpf || '');
+    if (termoDig && cpf.includes(termoDig)) return true;
+
+    // telefone
+    const tel = apenasDigitos(cliente?.telefone || '');
+    if (termoDig && tel.includes(termoDig)) return true;
+
+    return false;
+  });
+
   const ordenados = [...filtrados].sort((a, b) => (b?.id || 0) - (a?.id || 0));
 
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
@@ -76,7 +96,7 @@ function Dashboard() {
       <input
         className="barra-pesquisa"
         type="text"
-        placeholder="🔍 Buscar cliente por nome..."
+        placeholder="🔍 Buscar por nome, CPF ou telefone..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
@@ -86,6 +106,7 @@ function Dashboard() {
           <div key={cliente.id} className="card">
             <p><strong>👤 Nome:</strong> {cliente.nome}</p>
             <p><strong>📞 Telefone:</strong> {cliente.telefone || '-'}</p>
+            <p><strong>🆔 CPF:</strong> {cliente.cpf || '-'}</p>
             <p><strong>⚠ Alergias:</strong> {cliente.alergias || 'Nenhuma'}</p>
 
             <button
