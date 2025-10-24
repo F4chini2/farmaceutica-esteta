@@ -152,7 +152,7 @@ function ClientesFull() {
                 // Para limitar 2 dígitos em idade, usamos texto + filtro no onChange
                 type={campo === 'idade' ? 'text' : 'text'}
                 {...(campo === 'idade'
-                  ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '0–99' }
+                  ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '' }
                   : {})}
                 value={form[campo]}
                 onChange={e => handleChange(campo, e.target.value)}
