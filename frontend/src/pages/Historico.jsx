@@ -156,7 +156,7 @@ function Historico() {
             <p><strong>📝 Nota:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
             <div className="uploader">
-  <p><strong>📸 Enviar fotos:</strong></p>
+  <p><strong>📸 Fotos:</strong></p>
   <input
     id={`fotos-${proc.id}`}
     type="file"
