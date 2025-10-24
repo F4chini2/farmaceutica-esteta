@@ -120,10 +120,10 @@ function Agendamentos() {
         {visiveis.map((ag) => (
           <div key={ag.id} className="card">
             <p><strong>👤 Cliente:</strong> {ag.nome_cliente}</p>
-            <p><strong>🗓 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
+            <p><strong>📆 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
             <p><strong>⏰ Horário:</strong> {(ag?.horario || '').slice(0, 5) || '-'}</p>
             <p><strong>💼 Serviço:</strong> {ag.servico}</p>
-            <p><strong>📝 Observações:</strong> {ag.observacoes || 'Nenhuma'}</p>
+            <p><strong>📝 Nota:</strong> {ag.observacoes || 'Nenhuma'}</p>
 
             <button className="btn-secondary" onClick={() => enviarParaHistorico(ag)}>
               📁 Enviar para Histórico
