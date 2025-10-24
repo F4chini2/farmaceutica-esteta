@@ -29,36 +29,36 @@ function Agendamentos() {
   }, []);
 
   const enviarParaHistorico = async (agendamento) => {
-  if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
+    if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
 
-  try {
-    const resposta = await fetch(
-      `${API}/historico/clientes/${agendamento.cliente_id}/historico`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...authHeaders(),
-        },
-        body: JSON.stringify({
-          data: agendamento.data,
-          horario: agendamento.horario,
-          servico: agendamento.servico,
-          observacoes: agendamento.observacoes || null,
-        }),
+    try {
+      const resposta = await fetch(
+        `${API}/historico/clientes/${agendamento.cliente_id}/historico`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders(),
+          },
+          body: JSON.stringify({
+            data: agendamento.data,
+            horario: agendamento.horario,
+            servico: agendamento.servico,
+            observacoes: agendamento.observacoes || null,
+          }),
+        }
+      );
+
+      const dados = await resposta.json().catch(() => ({}));
+      if (resposta.ok) {
+        setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
+      } else {
+        alert(dados.erro || 'Erro ao mover para histórico');
       }
-    );
-
-    const dados = await resposta.json().catch(() => ({}));
-    if (resposta.ok) {
-      setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
-    } else {
-      alert(dados.erro || 'Erro ao mover para histórico');
+    } catch (err) {
+      alert('Erro de conexão');
     }
-  } catch (err) {
-    alert('Erro de conexão');
-  }
-};
+  };
 
   const excluirAgendamento = async (agendamento) => {
     if (!window.confirm('Tem certeza que deseja excluir este agendamento?')) return;
@@ -84,14 +84,18 @@ function Agendamentos() {
   const [page, setPage] = useState(1);
   useEffect(() => { setPage(1); }, [busca, agendamentos]);
 
-  // filtro + ordenação (data desc; fallback id)
-  const filtrados = agendamentos.filter((ag) =>
-    ((ag?.nome_cliente) || '').toLowerCase().includes(busca.toLowerCase()) ||
-    ((ag?.servico) || '').toLowerCase().includes(busca.toLowerCase())
-    ((ag?.data) || '').toLowerCase().includes(busca.toLowerCase())
-    ((ag?.horario) || '').toLowerCase().includes(busca.toLowerCase())
-  );
+  // ===== FILTRO (cliente, serviço, data, horário) =====
+  const filtrados = agendamentos.filter((ag) => {
+    const termo = (busca || '').toLowerCase();
+    return (
+      ((ag?.nome_cliente) || '').toLowerCase().includes(termo) ||
+      ((ag?.servico) || '').toLowerCase().includes(termo) ||
+      ((ag?.data) || '').toString().toLowerCase().includes(termo) ||
+      ((ag?.horario) || '').toString().toLowerCase().includes(termo)
+    );
+  });
 
+  // ===== ORDENAR =====
   const ordenados = [...filtrados].sort((a, b) => {
     const da = a?.data ? new Date(a.data).getTime() : 0;
     const db = b?.data ? new Date(b.data).getTime() : 0;
