@@ -85,13 +85,10 @@ function Agendamentos() {
   useEffect(() => { setPage(1); }, [busca, agendamentos]);
 
   // filtro + ordenação (data desc; fallback id)
-  const filtrados = agendamentos.filter(a =>
-    a.cliente_nome.toLowerCase().includes(filtro.toLowerCase()) ||
-    a.servico.toLowerCase().includes(filtro.toLowerCase()) ||
-    a.data.includes(filtro) ||
-    a.horario.includes(filtro)
+  const filtrados = agendamentos.filter((ag) =>
+    ((ag?.nome_cliente) || '').toLowerCase().includes(busca.toLowerCase()) ||
+    ((ag?.servico) || '').toLowerCase().includes(busca.toLowerCase())
   );
-
 
   const ordenados = [...filtrados].sort((a, b) => {
     const da = a?.data ? new Date(a.data).getTime() : 0;
@@ -111,16 +108,13 @@ function Agendamentos() {
         <h1>🗓️ Agendamentos</h1>
       </div>
 
-      <div className="barra-filtros">
-  <input
-    type="text"
-    placeholder="🔍 Buscar por cliente, serviço, data ou horário..."
-    value={filtro}
-    onChange={(e) => setFiltro(e.target.value)}
-    className="barra-pesquisa"
-  />
-</div>
-
+      <input
+        className="barra-pesquisa"
+        type="text"
+        placeholder="🔍 Buscar por cliente ou serviço..."
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
 
       <div className="lista-agendamentos">
         {visiveis.map((ag) => (
