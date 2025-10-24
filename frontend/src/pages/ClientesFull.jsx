@@ -21,7 +21,7 @@ function validaCPF(cpfStr) {
   return true;
 }
 
-// Máscara de CPF (bloqueia letras; só números; formata 000.000.000-00)
+// Máscara de CPF (só números; 000.000.000-00)
 function formatCPF(input) {
   const nums = String(input || '').replace(/\D/g, '').slice(0, 11);
   let out = nums;
@@ -29,6 +29,16 @@ function formatCPF(input) {
   else if (nums.length > 6) out = `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6)}`;
   else if (nums.length > 3) out = `${nums.slice(0,3)}.${nums.slice(3)}`;
   return out;
+}
+
+// Máscara de telefone BR (só números; (DD) 9XXXX-XXXX ou (DD) XXXX-XXXX)
+function formatTelefone(input) {
+  const d = String(input || '').replace(/\D/g, '').slice(0, 11); // até 11 dígitos
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`; // 8 ou 9? ajusta abaixo
+  // 11 dígitos (celular)
+  return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7,11)}`;
 }
 
 function ClientesFull() {
@@ -54,13 +64,17 @@ function ClientesFull() {
       setForm(prev => ({ ...prev, cpf: formatCPF(valor) }));
       return;
     }
+    if (campo === 'telefone') {
+      setForm(prev => ({ ...prev, telefone: formatTelefone(valor) }));
+      return;
+    }
     setForm(prev => ({ ...prev, [campo]: valor }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Nome obrigatório; CPF opcional
+    // Nome obrigatório; CPF/Telefone opcionais
     if (!form.nome || !form.nome.trim()) return alert('O Nome é obrigatório.');
 
     // CPF: se preenchido, validar
@@ -68,6 +82,13 @@ function ClientesFull() {
     const cpfNumeros = cpfTrim.replace(/\D/g, '');
     if (cpfNumeros.length > 0 && !validaCPF(cpfTrim)) {
       return alert('CPF inválido. Verifique e tente novamente.');
+    }
+
+    // Telefone: se preenchido, precisa ter 10 ou 11 dígitos (fixo/celular)
+    const telTrim = (form.telefone || '').trim();
+    const telNums = telTrim.replace(/\D/g, '');
+    if (telNums.length > 0 && (telNums.length < 10 || telNums.length > 11)) {
+      return alert('Telefone inválido. Use DDD + número (10 ou 11 dígitos).');
     }
 
     const body = { ...form };
@@ -83,6 +104,9 @@ function ClientesFull() {
 
     // CPF: null se vazio; senão, envia com máscara (ou troque por cpfNumeros se preferir só dígitos)
     body.cpf = cpfNumeros.length ? cpfTrim : null;
+
+    // Telefone: envia com máscara mesmo (se preferir só dígitos, mude para telNums)
+    body.telefone = telNums.length ? telTrim : null;
 
     // booleanos reais
     for (const k of booleanFields) {
@@ -101,7 +125,6 @@ function ClientesFull() {
         body: JSON.stringify(body)
       });
 
-      // tenta ler JSON; se não vier JSON, cria objeto vazio
       const dados = await resposta.json().catch(() => ({}));
       const erroTxt = String(dados?.erro || dados?.message || '').toLowerCase();
 
@@ -109,13 +132,13 @@ function ClientesFull() {
         alert('Cliente cadastrado com sucesso!');
         navigate('/dashboard');
       } else {
-        // mensagens claras para CPF duplicado / unique constraint
+        // mensagem amigável para CPF duplicado
         if (
           [400, 409, 422].includes(resposta.status) &&
           (erroTxt.includes('cpf') ||
-           erroTxt.includes('duplic') ||     // duplicado/duplicate
-           erroTxt.includes('unique') ||     // unique violation
-           erroTxt.includes('constraint'))   // constraint
+           erroTxt.includes('duplic') ||
+           erroTxt.includes('unique') ||
+           erroTxt.includes('constraint'))
         ) {
           alert('⚠️ CPF já cadastrado.');
         } else {
@@ -171,7 +194,9 @@ function ClientesFull() {
                 {...(campo === 'idade'
                   ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '0–99' }
                   : campo === 'cpf'
-                  ? { inputMode: 'numeric', /* pattern removido para não conflitar com a máscara */ maxLength: 14, placeholder: '000.000.000-00' }
+                  ? { inputMode: 'numeric', maxLength: 14, placeholder: '000.000.000-00' }
+                  : campo === 'telefone'
+                  ? { inputMode: 'tel', maxLength: 16, placeholder: '(42) 9 9999-9999' }
                   : {})}
                 value={form[campo]}
                 onChange={e => handleChange(campo, e.target.value)}
