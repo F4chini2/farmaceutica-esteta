@@ -1,13 +1,10 @@
 services:
   api:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: .
     image: farm-api:local
     container_name: api
     ports:
       - "3001:3001"
-    env_file: ./backend/.env
-    volumes:
-      - /opt/app/uploads:/app/uploads
-    restart: always
+    env_file:
+      - .env
+    restart: unless-stopped
