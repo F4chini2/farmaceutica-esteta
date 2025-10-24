@@ -156,18 +156,19 @@ function Historico() {
             <p><strong>📝 Nota:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
             <div className="uploader">
-              <span>📸 Enviar fotos:</span>
-              <input
-                id={`fotos-${proc.id}`}
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => handleFotoUpload(e, proc.id)}
-              />
-              <label className="upload-label" htmlFor={`fotos-${proc.id}`}>
-                ⬆️ Escolher arquivos
-              </label>
-            </div>
+  <p><strong>📸 Enviar fotos:</strong></p>
+  <input
+    id={`fotos-${proc.id}`}
+    type="file"
+    multiple
+    accept="image/*"
+    onChange={(e) => handleFotoUpload(e, proc.id)}
+  />
+  <label className="upload-label" htmlFor={`fotos-${proc.id}`}>
+    ⬆️ Escolher arquivos
+  </label>
+</div>
+
 
             {fotos[proc.id] && fotos[proc.id].length > 0 && (
               <div className="fotos-wrapper">
