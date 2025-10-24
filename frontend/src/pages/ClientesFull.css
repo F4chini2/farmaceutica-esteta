@@ -28,3 +28,8 @@
   resize: vertical;
   line-height: 1.35;
 }
+
+.campo-formulario.full-span {
+  margin-top: 10px;
+}
+
