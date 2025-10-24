@@ -25,7 +25,7 @@ function validaCPF(cpfStr) {
   return true;
 }
 
-// Máscara de CPF (só números; formata 000.000.000-00)
+// Máscara de CPF (só números; 000.000.000-00)
 function formatCPF(input) {
   const nums = String(input || '').replace(/\D/g, '').slice(0, 11);
   let out = nums;
@@ -33,6 +33,16 @@ function formatCPF(input) {
   else if (nums.length > 6) out = `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6)}`;
   else if (nums.length > 3) out = `${nums.slice(0,3)}.${nums.slice(3)}`;
   return out;
+}
+
+// Máscara de telefone BR (só números; (DD) 9XXXX-XXXX ou (DD) XXXX-XXXX)
+function formatTelefone(input) {
+  const d = String(input || '').replace(/\D/g, '').slice(0, 11); // até 11 dígitos
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  // 11 dígitos (celular)
+  return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7,11)}`;
 }
 
 function ClienteDetalhes() {
@@ -50,8 +60,9 @@ function ClienteDetalhes() {
         if (resposta.ok) {
           const norm = { ...dados };
 
-          // garante que CPF exista no form (mesmo se o backend não mandar)
+          // garante que CPF/telefone existam no form (mesmo se o backend não mandar)
           if (!('cpf' in norm) || norm.cpf == null) norm.cpf = '';
+          if (!('telefone' in norm) || norm.telefone == null) norm.telefone = '';
 
           // normaliza booleanos para "true"/"false" (string) no form
           booleanFields.forEach((k) => {
@@ -61,8 +72,9 @@ function ClienteDetalhes() {
           // idade vazia vira string vazia no formulário
           if (norm.idade == null) norm.idade = '';
 
-          // aplica máscara visual no CPF
+          // aplica máscaras visuais
           norm.cpf = formatCPF(norm.cpf);
+          norm.telefone = formatTelefone(norm.telefone);
 
           setForm(norm);
         } else {
@@ -85,6 +97,10 @@ function ClienteDetalhes() {
       setForm((prev) => ({ ...prev, cpf: formatCPF(valor) }));
       return;
     }
+    if (campo === 'telefone') {
+      setForm((prev) => ({ ...prev, telefone: formatTelefone(valor) }));
+      return;
+    }
     setForm((prev) => ({ ...prev, [campo]: valor }));
   };
 
@@ -100,6 +116,15 @@ function ClienteDetalhes() {
         return;
       }
       body.cpf = cpfNumeros.length ? cpfTrim : null;
+
+      // Telefone: se preenchido, precisa ter 10 ou 11 dígitos
+      const telTrim = (body.telefone || '').trim();
+      const telNums = telTrim.replace(/\D/g, '');
+      if (telNums.length > 0 && (telNums.length < 10 || telNums.length > 11)) {
+        alert('Telefone inválido. Use DDD + número (10 ou 11 dígitos).');
+        return;
+      }
+      body.telefone = telNums.length ? telTrim : null;
 
       // booleanos como true/false reais
       booleanFields.forEach((k) => {
@@ -128,11 +153,24 @@ function ClienteDetalhes() {
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify(body),
       });
-      const dados = await resposta.json();
+      const dados = await resposta.json().catch(() => ({}));
+      const erroTxt = String(dados?.erro || dados?.message || '').toLowerCase();
+
       if (resposta.ok) {
         alert('Dados do cliente atualizados!');
       } else {
-        alert(dados?.erro || 'Erro ao atualizar');
+        // mensagem amigável para CPF duplicado/unique
+        if (
+          [400, 409, 422].includes(resposta.status) &&
+          (erroTxt.includes('cpf') ||
+           erroTxt.includes('duplic') ||
+           erroTxt.includes('unique') ||
+           erroTxt.includes('constraint'))
+        ) {
+          alert('⚠️ CPF já cadastrado.');
+        } else {
+          alert(dados?.erro || 'Erro ao atualizar');
+        }
       }
     } catch {
       alert('Erro de conexão');
@@ -179,7 +217,9 @@ function ClienteDetalhes() {
             {...(campo === 'idade'
               ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '0–99' }
               : campo === 'cpf'
-              ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 14, placeholder: '000.000.000-00' }
+              ? { inputMode: 'numeric', /* pattern removido para não conflitar com a máscara */ maxLength: 14, placeholder: '000.000.000-00' }
+              : campo === 'telefone'
+              ? { inputMode: 'tel', maxLength: 16, placeholder: '(42) 9 9999-9999' }
               : {})}
             value={valor}
             onChange={(e) => handleChange(campo, e.target.value)}
