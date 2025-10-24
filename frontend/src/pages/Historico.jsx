@@ -153,7 +153,7 @@ function Historico() {
             <p><strong>🗓 Data:</strong> {proc?.data ? new Date(proc.data).toLocaleDateString() : '-'}</p>
             <p><strong>⏰ Horário:</strong> {(proc?.horario || '').slice(0, 5) || '-'}</p>
             <p><strong>💆 Serviço:</strong> {proc.servico}</p>
-            <p><strong>📝 Observações:</strong> {proc.observacoes || 'Nenhuma'}</p>
+            <p><strong>📝 Nota:</strong> {proc.observacoes || 'Nenhuma'}</p>
 
             <div className="uploader">
               <span>📸 Enviar fotos:</span>
