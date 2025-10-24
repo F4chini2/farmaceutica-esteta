@@ -156,7 +156,7 @@ function ClientesFull() {
                 {...(campo === 'idade'
                   ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 2, placeholder: '0–99' }
                   : campo === 'cpf'
-                  ? { inputMode: 'numeric', pattern: '[0-9]*', maxLength: 14, placeholder: '000.000.000-00' }
+                  ? { inputMode: 'numeric', /* pattern removido para não conflitar com a máscara */ maxLength: 14, placeholder: '000.000.000-00' }
                   : {})}
                 value={form[campo]}
                 onChange={e => handleChange(campo, e.target.value)}
