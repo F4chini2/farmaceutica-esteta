@@ -7,7 +7,7 @@ import { API, authHeaders } from '../config/api';
 const booleanFields = new Set(['gravida', 'autoriza_fotos', 'usa_filtro_solar', 'usa_acido_peeling']);
 const textAreas = new Set(['descricao', 'procedimentos']);
 
-// Validação de CPF
+// Validação de CPF (algoritmo oficial)
 function validaCPF(cpfStr) {
   const cpf = (cpfStr || '').replace(/\D/g, '');
   if (cpf.length !== 11) return false;
@@ -25,7 +25,7 @@ function validaCPF(cpfStr) {
   return true;
 }
 
-// Máscara CPF
+// Máscara de CPF (só números; formata 000.000.000-00)
 function formatCPF(input) {
   const nums = String(input || '').replace(/\D/g, '').slice(0, 11);
   let out = nums;
@@ -49,14 +49,21 @@ function ClienteDetalhes() {
         const dados = await resposta.json();
         if (resposta.ok) {
           const norm = { ...dados };
+
+          // garante que CPF exista no form (mesmo se o backend não mandar)
+          if (!('cpf' in norm) || norm.cpf == null) norm.cpf = '';
+
           // normaliza booleanos para "true"/"false" (string) no form
           booleanFields.forEach((k) => {
             if (k in norm) norm[k] = String(Boolean(norm[k]));
           });
+
           // idade vazia vira string vazia no formulário
           if (norm.idade == null) norm.idade = '';
+
           // aplica máscara visual no CPF
-          if ('cpf' in norm) norm.cpf = formatCPF(norm.cpf);
+          norm.cpf = formatCPF(norm.cpf);
+
           setForm(norm);
         } else {
           alert(dados?.erro || 'Erro ao carregar cliente');
@@ -139,9 +146,14 @@ function ClienteDetalhes() {
     (k) => k !== 'id' && k !== 'criado_em'
   );
 
-  // envia procedimentos e descricao para o fim
+  // força ordem inicial: Nome, CPF, Telefone; resto; e por fim Procedimentos e Descrição
   const camposOrdenados = [
-    ...todosCampos.filter((k) => !['procedimentos', 'descricao'].includes(k)),
+    'nome',
+    'cpf',
+    'telefone',
+    ...todosCampos.filter((k) =>
+      !['nome', 'cpf', 'telefone', 'procedimentos', 'descricao'].includes(k)
+    ),
     'procedimentos',
     'descricao',
   ];
