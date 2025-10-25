@@ -91,12 +91,11 @@ function Usuarios() {
       <div className="usuarios-lista">
         {visiveis.map((u) => (
           <div key={u.id} className="card">
-            <p><strong>🆔 ID:</strong> {u.id}</p>
             <p><strong>👤 Nome:</strong> {u.nome || '-'}</p>
-            <p><strong>✉ E-mail:</strong> {u.email || '-'}</p>
+            <p><strong>📧 E-mail:</strong> {u.email || '-'}</p>
             <p><strong>🔒 Tipo:</strong> {u.tipo || 'comum'}</p>
             <p><strong>📞 Telefone:</strong> {u.telefone || '-'}</p>
-            <p><strong>📝 Descrição:</strong> {u.descricao || '-'}</p>
+            <p><strong>📝 Nota:</strong> {u.descricao || '-'}</p>
 
             <div className="acoes-card">
               <button className="btn-danger" onClick={() => deletar(u.id)}>
