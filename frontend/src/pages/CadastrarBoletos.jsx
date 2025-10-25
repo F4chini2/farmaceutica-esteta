@@ -52,7 +52,7 @@ function CadastrarBoleto() {
       <form onSubmit={handleSubmit} className="form-boleto">
         <label>
           Número do Boleto:
-          <input value={numero} onChange={(e) => setNumero(e.target.value)} required />
+          <input value={numero} onChange={(e) => setNumero(e.target.value)}/>
         </label>
 
         <label>
@@ -62,6 +62,7 @@ function CadastrarBoleto() {
             step="0.01"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
+            required
           />
         </label>
 
