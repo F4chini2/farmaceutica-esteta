@@ -1,23 +1,20 @@
-/* Específicos da tela de fornecedores */
-
-.fornecedores-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: var(--cor-fundo-claro);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+/* Barra de pesquisa da tela de fornecedores */
+.barra-pesquisa {
+  width: 100%;
+  max-width: 700px;
+  display: block;
+  margin: 22px auto 30px;
+  padding: 14px 16px; /* altura um pouco maior */
+  font-size: 16px;
+  border: 1.5px solid #c9b4aa;
+  border-radius: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.fornecedores-form textarea {
-  grid-column: span 2;
-  resize: vertical;
-  min-height: 60px;
-}
-
-.fornecedores-form button {
-  grid-column: span 2;
+.barra-pesquisa:focus {
+  border-color: #8a5d4b;
+  box-shadow: 0 0 0 3px rgba(138,93,75,0.12), 0 4px 10px rgba(0,0,0,0.08);
 }

@@ -96,7 +96,7 @@ function Dashboard() {
       <input
         className="barra-pesquisa"
         type="text"
-        placeholder="🔍 Buscar por nome, CPF ou telefone..."
+        placeholder="🔍 Buscar por nome, CPF ou Contato..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />
