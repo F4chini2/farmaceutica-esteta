@@ -62,7 +62,6 @@ function CadastrarBoleto() {
             step="0.01"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
-            required
           />
         </label>
 
