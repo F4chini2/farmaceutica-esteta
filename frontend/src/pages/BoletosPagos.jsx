@@ -119,13 +119,11 @@ function BoletosPagos() {
           </div>
         ))}
 
-        {/* card vazio no mesmo estilo dos clientes */}
         {ordenados.length === 0 && (
           <div className="card vazio">Nenhum boleto pago encontrado.</div>
         )}
       </div>
 
-      {/* paginação só quando existir item */}
       {ordenados.length > 0 && (
         <Pagination page={page} total={totalPages} onPage={setPage} />
       )}
