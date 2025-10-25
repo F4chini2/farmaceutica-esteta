@@ -80,11 +80,25 @@ function Fornecedores() {
   useEffect(() => { setPage(1); }, [busca, fornecedores]);
 
   // filtro + ordenação (novos → antigos; fallback id)
-  const filtrados = fornecedores.filter((f) =>
-    ((f?.nome) || '').toLowerCase().includes(busca.toLowerCase()) ||
-    ((f?.email) || '').toLowerCase().includes(busca.toLowerCase()) ||
-    ((f?.contato) || '').toLowerCase().includes(busca.toLowerCase())
-  );
+  const query = (busca || '').toLowerCase().trim();
+  const queryDigits = (busca || '').replace(/\D/g, ''); // para buscar CNPJ por números
+
+  const filtrados = fornecedores.filter((f) => {
+    const nome = (f?.nome || '').toLowerCase();
+    const email = (f?.email || '').toLowerCase();
+    const contato = (f?.contato || '').toLowerCase();
+    const produtos = (f?.produtos || '').toLowerCase();
+    const cnpjDigits = (f?.cnpj || '').replace(/\D/g, '');
+
+    return (
+      nome.includes(query) ||
+      email.includes(query) ||
+      contato.includes(query) ||
+      produtos.includes(query) ||
+      (queryDigits && cnpjDigits.includes(queryDigits))
+    );
+  });
+
   const ordenados = [...filtrados].sort((a, b) => (b?.id || 0) - (a?.id || 0));
 
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
@@ -138,7 +152,7 @@ function Fornecedores() {
       <input
         className="barra-pesquisa"
         type="text"
-        placeholder="🔍 Buscar por nome, email ou telefone..."
+        placeholder="🔍 Buscar por nome, email, contato, CNPJ ou produto..."
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
       />

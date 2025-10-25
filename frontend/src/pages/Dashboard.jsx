@@ -105,7 +105,7 @@ function Dashboard() {
         {visiveis.map((cliente) => (
           <div key={cliente.id} className="card">
             <p><strong>👤 Nome:</strong> {cliente.nome}</p>
-            <p><strong>📞 Tel:</strong> {cliente.telefone || '-'}</p>
+            <p><strong>📞 Contato:</strong> {cliente.telefone || '-'}</p>
             <p><strong>🆔 CPF:</strong> {cliente.cpf || '-'}</p>
 
             <button
