@@ -94,7 +94,7 @@ function Usuarios() {
             <p><strong>👤 Nome:</strong> {u.nome || '-'}</p>
             <p><strong>📧 E-mail:</strong> {u.email || '-'}</p>
             <p><strong>🔒 Tipo:</strong> {u.tipo || 'comum'}</p>
-            <p><strong>📞 Telefone:</strong> {u.telefone || '-'}</p>
+            <p><strong>📞 Contato:</strong> {u.telefone || '-'}</p>
             <p><strong>📝 Nota:</strong> {u.descricao || '-'}</p>
 
             <div className="acoes-card">
