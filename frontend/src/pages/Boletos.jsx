@@ -26,28 +26,20 @@ function Boletos() {
 
   const marcarComoPago = async (id) => {
     try {
-      // Data do clique (fallback caso o backend não grave)
-      const agoraISO = new Date().toISOString();
-
       const res = await fetch(`${API}/boletos/${id}/pagar`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...authHeaders(),
-        },
-        // Se o backend aceitar corpo, já enviamos pago_em
-        body: JSON.stringify({ pago_em: agoraISO }),
+        headers: { ...authHeaders() }
       });
 
-      let dados = {};
-      if (res.status !== 204) {
-        try { dados = await res.json(); } catch { /* sem corpo */ }
-      }
+      const dados = await res.json().catch(() => ({}));
 
       if (res.ok) {
-        const quando = dados?.pago_em || agoraISO;
-        alert(`Boleto marcado como pago em ${new Date(quando).toLocaleDateString()}.`);
-        // Remove da lista de pendentes
+        // se o backend retornar pago_em, mostre a data do clique gravada
+        if (dados?.pago_em) {
+          const dataBr = new Date(dados.pago_em).toLocaleDateString();
+          alert(`Boleto marcado como pago em ${dataBr}.`);
+        }
+        // remove da lista de pendentes
         setBoletos((prev) => prev.filter((b) => b.id !== id));
       } else {
         alert(dados?.erro || 'Erro ao marcar como pago');
@@ -150,11 +142,13 @@ function Boletos() {
           </div>
         ))}
 
+        {/* card vazio com o mesmo visual dos clientes */}
         {ordenados.length === 0 && (
           <div className="card vazio">Nenhum boleto encontrado.</div>
         )}
       </div>
 
+      {/* Paginação só quando existir item */}
       {ordenados.length > 0 && (
         <Pagination page={page} total={totalPages} onPage={setPage} />
       )}
