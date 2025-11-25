@@ -80,8 +80,9 @@ function Boletos() {
   const ordenados = [...filtrados].sort((a, b) => {
     const da = a?.vencimento ? new Date(a.vencimento).getTime() : 0;
     const db = b?.vencimento ? new Date(b.vencimento).getTime() : 0;
-    return db - da || (b?.id || 0) - (a?.id || 0); // vencimento desc; fallback id
+    return da - db || (a?.id || 0) - (b?.id || 0); // vencimento asc; fallback id
   });
+
 
   // ===== PAGINAÇÃO GLOBAL (6 por página) =====
   const pageSize = 6;
