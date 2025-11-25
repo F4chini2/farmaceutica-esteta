@@ -75,7 +75,10 @@ function Dashboard() {
     return false;
   });
 
-  const ordenados = [...filtrados].sort((a, b) => (b?.id || 0) - (a?.id || 0));
+  const ordenados = [...filtrados].sort((a, b) =>
+  (a?.nome || '').localeCompare(b?.nome || '', 'pt-BR', { sensitivity: 'base' })
+  );
+
 
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
   const startIdx = (page - 1) * pageSize;
