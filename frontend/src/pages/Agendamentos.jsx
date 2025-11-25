@@ -97,10 +97,11 @@ function Agendamentos() {
 
   // ===== ORDENAR =====
   const ordenados = [...filtrados].sort((a, b) => {
-    const da = a?.data ? new Date(a.data).getTime() : 0;
-    const db = b?.data ? new Date(b.data).getTime() : 0;
-    return db - da || (b?.id || 0) - (a?.id || 0);
+    const da = a?.data ? a.data.replace(/-/g, '') : '0';
+    const db = b?.data ? b.data.replace(/-/g, '') : '0';
+    return Number(db) - Number(da) || (b?.id || 0) - (a?.id || 0);
   });
+
 
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
   const startIdx = (page - 1) * pageSize;
