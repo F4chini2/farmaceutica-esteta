@@ -121,7 +121,7 @@ function Agendamentos() {
 
     const da = norm(a.data);
     const db = norm(b.data);
-    return Number(db) - Number(da) || (b?.id || 0) - (a?.id || 0);
+    return Number(da) - Number(db) || (a?.id || 0) - (b?.id || 0);
   });
 
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
