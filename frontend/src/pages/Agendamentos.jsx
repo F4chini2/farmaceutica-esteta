@@ -79,6 +79,22 @@ function Agendamentos() {
     }
   };
 
+  // helper pra formatar a data SEM mexer com timezone
+  const formatarData = (raw) => {
+    if (!raw) return '-';
+
+    // se vier "2025-11-25T00:00:00.000Z"
+    if (raw.includes('T')) {
+      const [datePart] = raw.split('T'); // "2025-11-25"
+      const [ano, mes, dia] = datePart.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // se vier "2025-11-25"
+    const [ano, mes, dia] = raw.split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
+
   // ===== PAGINAÇÃO (6 por página) =====
   const pageSize = 6;
   const [page, setPage] = useState(1);
@@ -97,11 +113,16 @@ function Agendamentos() {
 
   // ===== ORDENAR =====
   const ordenados = [...filtrados].sort((a, b) => {
-    const da = a?.data ? a.data.replace(/-/g, '') : '0';
-    const db = b?.data ? b.data.replace(/-/g, '') : '0';
+    const norm = (d) => {
+      if (!d) return '0';
+      const datePart = d.split('T')[0];     // pega só a parte "YYYY-MM-DD"
+      return datePart.replace(/-/g, '');    // "20251125"
+    };
+
+    const da = norm(a.data);
+    const db = norm(b.data);
     return Number(db) - Number(da) || (b?.id || 0) - (a?.id || 0);
   });
-
 
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
   const startIdx = (page - 1) * pageSize;
@@ -127,7 +148,7 @@ function Agendamentos() {
         {visiveis.map((ag) => (
           <div key={ag.id} className="card">
             <p><strong>👤 Cliente:</strong> {ag.cliente_nome}</p>
-            <p><strong>📆 Data:</strong> {ag?.data ? new Date(ag.data).toLocaleDateString() : '-'}</p>
+            <p><strong>📆 Data:</strong> {formatarData(ag.data)}</p>
             <p><strong>⏰ Horário:</strong> {(ag?.horario || '').slice(0, 5) || '-'}</p>
             <p><strong>💼 Serviço:</strong> {ag.servico}</p>
             <p><strong>📝 Nota:</strong> {ag.observacoes || 'Nenhuma'}</p>
@@ -141,13 +162,11 @@ function Agendamentos() {
           </div>
         ))}
 
-        {/* card vazio no mesmo estilo dos clientes */}
         {ordenados.length === 0 && (
           <div className="card vazio">Nenhum agendamento encontrado.</div>
         )}
       </div>
 
-      {/* paginação só quando existir item */}
       {ordenados.length > 0 && (
         <Pagination page={page} total={totalPages} onPage={setPage} />
       )}
