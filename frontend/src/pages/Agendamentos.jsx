@@ -3,6 +3,11 @@ import './Agendamentos.css';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
 import { API, authHeaders } from '../config/api';
+import { API } from "../config/api";
+
+useEffect(() => {
+  console.log("➡️ API EM USO:", API);
+}, []);
 
 function Agendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
