@@ -32,6 +32,7 @@ function Agendamentos() {
     if (!window.confirm('Deseja realmente mover este agendamento para o histórico?')) return;
 
     try {
+      // 1) Envia para o histórico
       const resposta = await fetch(
         `${API}/historico/clientes/${agendamento.cliente_id}/historico`,
         {
@@ -50,11 +51,26 @@ function Agendamentos() {
       );
 
       const dados = await resposta.json().catch(() => ({}));
-      if (resposta.ok) {
-        setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
-      } else {
+
+      if (!resposta.ok) {
         alert(dados.erro || 'Erro ao mover para histórico');
+        return;
       }
+
+      // 2) Depois de salvar no histórico, exclui o agendamento da tabela de agendamentos
+      const respDelete = await fetch(`${API}/agendamentos/${agendamento.id}`, {
+        method: 'DELETE',
+        headers: { ...authHeaders() },
+      });
+
+      if (!respDelete.ok) {
+        const dadosDel = await respDelete.json().catch(() => ({}));
+        alert(dadosDel.erro || 'Erro ao excluir agendamento depois de enviar para o histórico');
+        return;
+      }
+
+      // 3) Atualiza a lista na tela
+      setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
     } catch (err) {
       alert('Erro de conexão');
     }
