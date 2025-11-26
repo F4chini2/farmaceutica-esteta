@@ -1,3 +1,4 @@
+// routes/usuarios.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const pool = require('../db');
@@ -6,20 +7,20 @@ const adminOnly = require('../middleware/adminOnly');
 
 const router = express.Router();
 
-// Normaliza entrada de "tipo"/"perfil"
+// NORMALIZAR entrada de "tipo"/"perfil"
 function normalizeTipo(reqBody, fallback = 'comum') {
   const raw = (reqBody?.tipo ?? reqBody?.perfil ?? fallback)?.toString().toLowerCase().trim();
   return raw === 'admin' ? 'admin' : 'comum';
 }
 
-// Remove campo "senha" do objeto retornado
+// REMOVER campo "senha" do objeto retornado
 function stripSenha(u) {
   if (!u) return u;
   const { senha, ...rest } = u;
   return rest;
 }
 
-// -------- LISTAR (somente autenticado) --------
+// LISTAR somente autenticado
 router.get('/', autenticarToken, async (_req, res) => {
   try {
     const { rows } = await pool.query(
@@ -32,7 +33,7 @@ router.get('/', autenticarToken, async (_req, res) => {
   }
 });
 
-// -------- CRIAR (apenas ADMIN) --------
+// CRIAR apenas ADMIN
 router.post('/', autenticarToken, adminOnly, async (req, res) => {
   try {
     const { nome, email, senha, telefone, descricao } = req.body;
@@ -41,7 +42,7 @@ router.post('/', autenticarToken, adminOnly, async (req, res) => {
       return res.status(400).json({ erro: 'email e senha são obrigatórios' });
     }
 
-    // e-mail único
+    // E-mail único
     const exists = await pool.query('SELECT 1 FROM usuarios WHERE email=$1', [email]);
     if (exists.rowCount > 0) {
       return res.status(409).json({ erro: 'email já cadastrado' });
@@ -64,7 +65,7 @@ router.post('/', autenticarToken, adminOnly, async (req, res) => {
   }
 });
 
-// -------- ATUALIZAR (apenas ADMIN modifica tipo/senha; usuário comum pode editar seus dados não sensíveis se desejar adaptar) --------
+// ATUALIZAR apenas ADMIN modifica tipo/senha; usuário comum pode editar seus dados não sensíveis se desejar adaptar
 router.put('/:id', autenticarToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,7 +89,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
     const descricao = req.body?.descricao ?? undefined;
     const email = req.body?.email ?? undefined;
 
-    // Monta UPDATE dinâmico
+    // MONTAR UPDATE dinâmico
     const sets = [];
     const vals = [];
     let i = 1;
@@ -121,7 +122,7 @@ router.put('/:id', autenticarToken, async (req, res) => {
   }
 });
 
-// -------- REMOVER (apenas ADMIN) --------
+// REMOVER apenas ADMIN
 router.delete('/:id', autenticarToken, adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
