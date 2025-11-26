@@ -2,22 +2,17 @@ import React, { useEffect, useState } from 'react';
 import './Agendamentos.css';
 import Tabs from '../components/Tabs';
 import { Pagination } from '../styles/Global';
-import { API, authHeaders } from '../config/api'; // ✅ só esse import
+import { API, authHeaders } from '../config/api';
 
 function Agendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
   const [busca, setBusca] = useState('');
 
-  // ✅ useEffect só DENTRO do componente
-  useEffect(() => {
-    console.log('➡️ API EM USO:', API);
-  }, []);
-
   useEffect(() => {
     const fetchAgendamentos = async () => {
       try {
         const resposta = await fetch(`${API}/agendamentos`, {
-        headers: { ...authHeaders() }
+          headers: { ...authHeaders() }
         });
         const dados = await resposta.json();
         if (resposta.ok) {
@@ -55,24 +50,11 @@ function Agendamentos() {
       );
 
       const dados = await resposta.json().catch(() => ({}));
-
-      if (!resposta.ok) {
+      if (resposta.ok) {
+        setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
+      } else {
         alert(dados.erro || 'Erro ao mover para histórico');
-        return;
       }
-
-      const respDelete = await fetch(`${API}/agendamentos/${agendamento.id}`, {
-        method: 'DELETE',
-        headers: { ...authHeaders() },
-      });
-
-      if (!respDelete.ok) {
-        const dadosDel = await respDelete.json().catch(() => ({}));
-        alert(dadosDel.erro || 'Erro ao excluir agendamento depois de enviar para o histórico');
-        return;
-      }
-
-      setAgendamentos((prev) => prev.filter((a) => a.id !== agendamento.id));
     } catch (err) {
       alert('Erro de conexão');
     }
@@ -97,21 +79,28 @@ function Agendamentos() {
     }
   };
 
+  // helper pra formatar a data SEM mexer com timezone
   const formatarData = (raw) => {
     if (!raw) return '-';
+
+    // se vier "2025-11-25T00:00:00.000Z"
     if (raw.includes('T')) {
-      const [datePart] = raw.split('T');
+      const [datePart] = raw.split('T'); // "2025-11-25"
       const [ano, mes, dia] = datePart.split('-');
       return `${dia}/${mes}/${ano}`;
     }
+
+    // se vier "2025-11-25"
     const [ano, mes, dia] = raw.split('-');
     return `${dia}/${mes}/${ano}`;
   };
 
+  // ===== PAGINAÇÃO (6 por página) =====
   const pageSize = 6;
   const [page, setPage] = useState(1);
   useEffect(() => { setPage(1); }, [busca, agendamentos]);
 
+  // ===== FILTRO (cliente, serviço, data, horário) =====
   const filtrados = agendamentos.filter((ag) => {
     const termo = (busca || '').toLowerCase();
     return (
@@ -122,11 +111,12 @@ function Agendamentos() {
     );
   });
 
+  // ===== ORDENAR =====
   const ordenados = [...filtrados].sort((a, b) => {
     const norm = (d) => {
       if (!d) return '0';
-      const datePart = d.split('T')[0];
-      return datePart.replace(/-/g, '');
+      const datePart = d.split('T')[0];     // pega só a parte "YYYY-MM-DD"
+      return datePart.replace(/-/g, '');    // "20251125"
     };
 
     const da = norm(a.data);
@@ -137,6 +127,7 @@ function Agendamentos() {
   const totalPages = Math.max(1, Math.ceil(ordenados.length / pageSize));
   const startIdx = (page - 1) * pageSize;
   const visiveis = ordenados.slice(startIdx, startIdx + pageSize);
+  // ====================================
 
   return (
     <div className="dashboard-container">
