@@ -6,7 +6,6 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Origens permitidas
 const ALLOWED_ORIGINS = [
   'https://farmaceutica-esteta.com.br',
   'https://www.farmaceutica-esteta.com.br',
@@ -14,7 +13,6 @@ const ALLOWED_ORIGINS = [
   'http://localhost:5173'
 ].filter(Boolean);
 
-// CORS – usa função pra validar origem e responder preflight
 const corsOptions = {
   origin(origin, cb) {
     if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
@@ -27,7 +25,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// responde TODOS os preflights
 app.options('/*', cors(corsOptions));
 
 app.use(express.json({ limit: '10mb' }));
