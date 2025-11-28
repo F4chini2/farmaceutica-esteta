@@ -38,7 +38,8 @@ export default function PreCadastro() {
         autoriza_fotos: form.autoriza_fotos === 'true',
       };
 
-      const resp = await fetch(`/api/pre-cadastro`, {
+      const resp = await fetch(`${API}/pre-cadastro`, {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
